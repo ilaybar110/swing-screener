@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LLMBrief",
+  "description": "One brief per stock, written by the routine agent from work/brief_inputs/<TICKER>.json only.",
+  "type": "object",
+  "required": ["summary", "upcoming_catalysts", "red_flags", "recent_positive_events", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "ticker": {"type": "string", "description": "Optional; must match the file name if present."},
+    "summary": {"type": "string", "maxLength": 600},
+    "upcoming_catalysts": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": ["event", "date"],
+        "additionalProperties": false,
+        "properties": {
+          "event": {"type": "string", "minLength": 1, "maxLength": 300},
+          "date": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}
+        }
+      }
+    },
+    "red_flags": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
+    "recent_positive_events": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
+    "sources": {"type": "array", "maxItems": 40, "items": {"type": "string", "minLength": 1, "maxLength": 500}}
+  }
+}

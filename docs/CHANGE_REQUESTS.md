@@ -44,3 +44,9 @@ File: src/data/edgar_client.py
 Request: Add a streaming download method, e.g. `download_file(url, dest_path, resume=True)`, that goes through the client's session/User-Agent/throttle and writes to disk with HTTP Range resume (no in-memory/raw-cache buffering).
 Why: `submissions.zip` is ~1.5 GB; `_get` buffers the whole body and hex-encodes it into the raw cache. `edgar_bulk.download_file` is a local workaround that uses the client's `_session` and `_throttle()` directly.
 Status: open
+
+## 2026-10-01 — Bot 6
+File: src/stats.py
+Request: `summary(conn, "live")` raises `KeyError: 'id'` (line ~195, `base[base["parent_rec_id"].isin(sub["id"])]`) when recommendations exist but none has closed yet (empty `closed` frame loses its columns after the `.map(...)` filter, so `sub["id"]` fails). Please make the per-module `contains` loop robust to an empty `closed` (e.g. skip modules when `closed.empty`, or build `sub` with `closed.loc[mask]`).
+Why: This is the normal state for the first days/weeks of live running. Bot 6's report works around it with a counts-only fallback, so the report never fails, but the module/baseline table is blank until fixed.
+Status: open

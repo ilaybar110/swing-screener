@@ -1,0 +1,145 @@
+# {{ title | md }}
+
+**Market regime: {{ regime.label | md }}**{% if regime.banner %} - {{ regime.banner | md }}{% endif %}
+
+{% if suppressed %}
+> **No new recommendations today.** Unfavorable regime: candidates are still tracked, but the table is suppressed.
+
+{% endif %}
+{% for note in data_quality %}
+> Data quality: {{ note | md }}
+
+{% endfor %}
+## New recommendations ({{ n_new }})
+
+{% if suppressed %}
+No new recommendations (Unfavorable regime).
+
+{% elif no_recs_today %}
+No new recommendations today.
+
+{% endif %}
+{% for c in cards %}
+### {% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker | md }}{% if c.company %} - {{ c.company | md }}{% endif %}
+
+
+{{ c.modules | join(", ") | md }}{% if c.sector %} | {{ c.sector | md }}{% if c.industry %} / {{ c.industry | md }}{% endif %}{% endif %}
+
+{{ c.rationale | md }}
+
+- **Entry (buy-stop):** {{ c.entry }}
+- **Stop:** {{ c.stop }} ({{ c.stop_pct }})
+- **Target ({{ c.target_r }}R):** {{ c.target }} ({{ c.target_pct }})
+- **Time stop:** {{ c.time_stop }}
+- **Valid until:** {{ c.valid_until }}
+- **Guardrail:** {{ c.guardrail }}{% if c.guardrail_reasons %} - {{ c.guardrail_reasons | join("; ") | md }}{% endif %}
+
+{% if c.ev_fcf %}
+- **EV/FCF:** {{ c.ev_fcf | md }}
+{% endif %}
+{% if c.earnings %}
+- **Earnings:** {{ c.earnings.date }}{% if c.earnings.warning %} - &#9888; {{ c.earnings.warning | md }}{% endif %}
+
+{% endif %}
+{% if c.insiders %}
+- **Insider buys:** {{ c.insiders | join("; ") | md }}
+{% endif %}
+- **{{ c.primary_module | md }} record:** {{ c.track | md }}
+{% if c.brief %}
+
+**Summary.** {{ c.brief.summary | md }}
+
+{% if c.brief.red_flags %}
+&#9873; **Red flags**
+{% for f in c.brief.red_flags %}
+- {{ f | md }}
+{% endfor %}
+
+{% endif %}
+{% if c.brief.positives %}
+**Recent positives**
+{% for f in c.brief.positives %}
+- {{ f | md }}
+{% endfor %}
+
+{% endif %}
+{% if c.brief.catalysts %}
+**Upcoming catalysts**
+{% for k in c.brief.catalysts %}
+- {{ k.event | md }}{% if k.date %} ({{ k.date }}){% endif %}
+
+{% endfor %}
+
+{% endif %}
+{% if c.brief.sources %}
+Sources: {{ c.brief.sources | join(" ; ") | md }}
+{% endif %}
+{% endif %}
+
+{% endfor %}
+{% if catch_up %}
+## Catch-up: recommendations from missed days
+
+New recommendations since the previous report ({{ since }}).
+
+| Date | Ticker | Modules | Entry | Stop | Target | Status | R |
+|---|---|---|---|---|---|---|---|
+{% for r in catch_up %}
+| {{ r.date }} | {{ r.ticker | md }} | {{ r.modules | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.status | md }} | {{ r.current_r }} |
+{% endfor %}
+
+{% endif %}
+## Tracking updates since {{ since }}
+
+{% if updates %}
+| Date | Ticker | Event | R | Return | Note |
+|---|---|---|---|---|---|
+{% for u in updates %}
+| {{ u.date }} | {{ u.ticker | md }} | {{ u.label }} | {{ u.r }} | {{ u.pct }} | {{ u.note | md }} |
+{% endfor %}
+{% else %}
+No changes since the previous report.
+{% endif %}
+
+## Open recommendations ({{ open_recs | length }})
+
+{% if open_recs %}
+| Ticker | Signal | Status | Entry | Stop | Target | Current R | Valid until |
+|---|---|---|---|---|---|---|---|
+{% for r in open_recs %}
+| {{ r.ticker | md }} | {{ r.date }} | {{ r.status | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.current_r }} | {{ r.valid_until }} |
+{% endfor %}
+{% else %}
+None.
+{% endif %}
+
+## Statistics (live)
+
+{% if stats %}
+{{ stats.counts.get("recommendations", 0) }} recommendations tracked: {{ stats.counts.get("open", 0) }} open, {{ stats.counts.get("pending", 0) }} pending, {{ stats.counts.get("closed", 0) }} closed, {{ stats.counts.get("expired", 0) }} expired unfilled. Closed-trade averages vs SPY {{ stats.excess_spy }}, vs sector ETF {{ stats.excess_sector }}.
+
+### By module vs baseline
+
+| Module | Closed | Win | Avg R | Expect. | PF | vs SPY | Baseline R | Edge (R) | Note |
+|---|---|---|---|---|---|---|---|---|---|
+{% for m in [stats.overall] + stats.modules %}
+| {{ m.name | md }} | {{ m.count }} | {{ m.win_rate }} | {{ m.avg_r }} | {{ m.expectancy }} | {{ m.profit_factor }} | {{ m.vs_spy }} | {{ m.baseline_r }} | {{ m.vs_baseline }} | {{ m.note | md }} |
+{% endfor %}
+
+{% if stats.rank_buckets %}
+### By rank bucket
+
+| Rank | Closed | Win | Avg R | Expect. | vs SPY | Baseline R |
+|---|---|---|---|---|---|---|
+{% for m in stats.rank_buckets %}
+| {{ m.name | md }} | {{ m.count }} | {{ m.win_rate }} | {{ m.avg_r }} | {{ m.expectancy }} | {{ m.vs_spy }} | {{ m.baseline_r }} |
+{% endfor %}
+
+{% endif %}
+Modules need {{ stats.min_closed }} closed live results before their record is shown as meaningful.
+{% else %}
+Statistics unavailable.
+{% endif %}
+
+---
+*{{ footer | md }}*

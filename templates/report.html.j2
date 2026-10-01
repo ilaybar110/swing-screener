@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{ title }}</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:12px}
+h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}
+.banner{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
+.banner.Favorable{background:var(--goodbg);border-color:var(--good)}.banner.Caution{background:var(--warnbg);border-color:var(--warn)}.banner.Unfavorable{background:var(--badbg);border-color:var(--bad)}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
+.co{color:var(--mut);font-size:.9rem}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
+.chip.pass{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
+dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
+.warn{color:var(--warn);font-weight:600}
+.flags{background:var(--badbg);border:1px solid var(--bad);border-radius:8px;padding:6px 12px;margin:8px 0}.flags b{color:var(--bad)}
+ul{margin:.3rem 0;padding-left:1.2rem}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+td.wrap{white-space:normal}
+.src{font-size:.78rem;color:var(--mut);word-break:break-all}
+footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>{{ title }}</h1>
+<div class="banner {{ regime.label }}"><b>Market regime: {{ regime.label }}</b>{% if regime.banner %}<br>{{ regime.banner }}{% endif %}
+{% if suppressed %}<br><b>No new recommendations today.</b> Candidates are still tracked; the table is suppressed in an Unfavorable regime.{% endif %}</div>
+{% for note in data_quality %}
+<div class="note">Data quality: {{ note }}</div>
+{% endfor %}
+
+<h2>New recommendations ({{ n_new }})</h2>
+{% if suppressed %}
+<p>No new recommendations (Unfavorable regime).</p>
+{% elif no_recs_today %}
+<p>No new recommendations today.</p>
+{% endif %}
+{% for c in cards %}
+<article class="card">
+<div class="head"><h3>{% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker }} <span class="co">{{ c.company }}</span></h3><span class="chip {{ c.guardrail }}">guardrail: {{ c.guardrail }}</span></div>
+<div>{% for m in c.modules %}<span class="chip">{{ m }}</span>{% endfor %}{% if c.sector %}<span class="chip">{{ c.sector }}{% if c.industry %} / {{ c.industry }}{% endif %}</span>{% endif %}</div>
+<p>{{ c.rationale }}</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>{{ c.entry }}</b></div>
+<div class="lv"><span>Stop</span><b>{{ c.stop }}</b>{{ c.stop_pct }}</div>
+<div class="lv"><span>Target ({{ c.target_r }}R)</span><b>{{ c.target }}</b>{{ c.target_pct }}</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>{{ c.time_stop }}</dd>
+<dt>Valid until</dt><dd>{{ c.valid_until }}</dd>
+{% if c.guardrail_reasons %}<dt>Guardrail</dt><dd>{{ c.guardrail_reasons | join("; ") }}</dd>{% endif %}
+{% if c.ev_fcf %}<dt>EV/FCF</dt><dd>{{ c.ev_fcf }}</dd>{% endif %}
+{% if c.earnings %}<dt>Earnings</dt><dd>{{ c.earnings.date }}{% if c.earnings.warning %} <span class="warn">&#9888; {{ c.earnings.warning }}</span>{% endif %}</dd>{% endif %}
+{% if c.insiders %}<dt>Insider buys</dt><dd>{{ c.insiders | join("; ") }}</dd>{% endif %}
+<dt>{{ c.primary_module }} record</dt><dd>{{ c.track }}</dd>
+</dl>
+{% if c.brief %}
+<p><b>Summary.</b> {{ c.brief.summary }}</p>
+{% if c.brief.red_flags %}<div class="flags"><b>&#9873; Red flags</b><ul>{% for f in c.brief.red_flags %}<li>{{ f }}</li>{% endfor %}</ul></div>{% endif %}
+{% if c.brief.positives %}<div><b>Recent positives</b><ul>{% for f in c.brief.positives %}<li>{{ f }}</li>{% endfor %}</ul></div>{% endif %}
+{% if c.brief.catalysts %}<div><b>Upcoming catalysts</b><ul>{% for k in c.brief.catalysts %}<li>{{ k.event }}{% if k.date %} ({{ k.date }}){% endif %}</li>{% endfor %}</ul></div>{% endif %}
+{% if c.brief.sources %}<div class="src">Sources: {{ c.brief.sources | join(" · ") }}</div>{% endif %}
+{% endif %}
+</article>
+{% endfor %}
+
+{% if catch_up %}
+<h2>Catch-up: recommendations from missed days</h2>
+<p>New recommendations since the previous report ({{ since }}).</p>
+<div class="tbl"><table>
+<tr><th>Date</th><th>Ticker</th><th>Modules</th><th>Entry</th><th>Stop</th><th>Target</th><th>Status</th><th>R</th></tr>
+{% for r in catch_up %}<tr><td>{{ r.date }}</td><td><b>{{ r.ticker }}</b></td><td>{{ r.modules }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.status }}</td><td>{{ r.current_r }}</td></tr>
+{% endfor %}</table></div>
+{% endif %}
+
+<h2>Tracking updates since {{ since }}</h2>
+{% if updates %}
+<div class="tbl"><table>
+<tr><th>Date</th><th>Ticker</th><th>Event</th><th>R</th><th>Return</th><th>Note</th></tr>
+{% for u in updates %}<tr><td>{{ u.date }}</td><td><b>{{ u.ticker }}</b></td><td>{{ u.label }}</td><td>{{ u.r }}</td><td>{{ u.pct }}</td><td>{{ u.note }}</td></tr>
+{% endfor %}</table></div>
+{% else %}<p>No changes since the previous report.</p>{% endif %}
+
+<h2>Open recommendations ({{ open_recs | length }})</h2>
+{% if open_recs %}
+<div class="tbl"><table>
+<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th></tr>
+{% for r in open_recs %}<tr><td><b>{{ r.ticker }}</b></td><td>{{ r.date }}</td><td>{{ r.status }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.current_r }}</td><td>{{ r.valid_until }}</td></tr>
+{% endfor %}</table></div>
+{% else %}<p>None.</p>{% endif %}
+
+<h2>Statistics (live)</h2>
+{% if stats %}
+<p>{{ stats.counts.get("recommendations", 0) }} recommendations tracked: {{ stats.counts.get("open", 0) }} open, {{ stats.counts.get("pending", 0) }} pending, {{ stats.counts.get("closed", 0) }} closed, {{ stats.counts.get("expired", 0) }} expired unfilled. Closed-trade averages vs SPY {{ stats.excess_spy }}, vs sector ETF {{ stats.excess_sector }}.</p>
+<h3>By module vs baseline</h3>
+<div class="tbl"><table>
+<tr><th>Module</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>PF</th><th>vs SPY</th><th>Baseline R</th><th>Edge (R)</th><th></th></tr>
+{% for m in [stats.overall] + stats.modules %}<tr><td>{{ m.name }}</td><td>{{ m.count }}</td><td>{{ m.win_rate }}</td><td>{{ m.avg_r }}</td><td>{{ m.expectancy }}</td><td>{{ m.profit_factor }}</td><td>{{ m.vs_spy }}</td><td>{{ m.baseline_r }}</td><td>{{ m.vs_baseline }}</td><td class="wrap">{{ m.note }}</td></tr>
+{% endfor %}</table></div>
+{% if stats.rank_buckets %}
+<h3>By rank bucket</h3>
+<div class="tbl"><table>
+<tr><th>Rank</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>vs SPY</th><th>Baseline R</th></tr>
+{% for m in stats.rank_buckets %}<tr><td>{{ m.name }}</td><td>{{ m.count }}</td><td>{{ m.win_rate }}</td><td>{{ m.avg_r }}</td><td>{{ m.expectancy }}</td><td>{{ m.vs_spy }}</td><td>{{ m.baseline_r }}</td></tr>
+{% endfor %}</table></div>
+{% endif %}
+<p class="src">Modules need {{ stats.min_closed }} closed live results before their record is shown as meaningful.</p>
+{% else %}<p>Statistics unavailable.</p>{% endif %}
+
+<footer>{{ footer }}</footer>
+</main>
+</body>
+</html>

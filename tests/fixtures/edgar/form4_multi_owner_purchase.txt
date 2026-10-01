@@ -1,0 +1,424 @@
+<SEC-DOCUMENT>0000921895-26-002677.txt : 20260929
+<SEC-HEADER>0000921895-26-002677.hdr.sgml : 20260929
+<ACCEPTANCE-DATETIME>20260929172659
+ACCESSION NUMBER:		0000921895-26-002677
+CONFORMED SUBMISSION TYPE:	4
+PUBLIC DOCUMENT COUNT:		1
+CONFORMED PERIOD OF REPORT:	20260925
+FILED AS OF DATE:		20260929
+DATE AS OF CHANGE:		20260929
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Pale Fire Capital SE
+		CENTRAL INDEX KEY:			0001922318
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-40275
+		FILM NUMBER:		261424915
+
+	BUSINESS ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+		BUSINESS PHONE:		420 777-767-773
+
+	MAIL ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Barta Jan
+		CENTRAL INDEX KEY:			0001892479
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-40275
+		FILM NUMBER:		261424911
+
+	MAIL ADDRESS:	
+		ADDRESS IS A NON US LOCATION: 	YES
+		STREET 1:		NA BATERIICH 104/35, BREVNOV
+		CITY:			PRAGUE
+		PROVINCE COUNTRY:   	2N
+		ZIP:			16200
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Pale Fire Capital investicni spolecnost a.s.
+		CENTRAL INDEX KEY:			0002055254
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-40275
+		FILM NUMBER:		261424913
+
+	BUSINESS ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+		BUSINESS PHONE:		420 777-767-773
+
+	MAIL ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Senkypl Dusan
+		CENTRAL INDEX KEY:			0001922405
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-40275
+		FILM NUMBER:		261424912
+
+	MAIL ADDRESS:	
+		STREET 1:		JESTRABI 493, OSNICE
+		CITY:			JESENICE
+		STATE:			2N
+		ZIP:			252 42
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Pale Fire Capital SICAV a.s.
+		CENTRAL INDEX KEY:			0001959667
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-40275
+		FILM NUMBER:		261424914
+
+	BUSINESS ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+		BUSINESS PHONE:		420 777-767-773
+
+	MAIL ADDRESS:	
+		STREET 1:		ZATECKA 55/14, JOSEFOV
+		CITY:			PRAGUE
+		STATE:			2N
+		ZIP:			110 00
+
+ISSUER:		
+
+	COMPANY DATA:	
+		COMPANY CONFORMED NAME:			Coursera, Inc.
+		CENTRAL INDEX KEY:			0001651562
+		STANDARD INDUSTRIAL CLASSIFICATION:	SERVICES-PREPACKAGED SOFTWARE [7372]
+		ORGANIZATION NAME:           	06 Technology
+		EIN:				453560292
+		STATE OF INCORPORATION:			DE
+		FISCAL YEAR END:			1231
+
+	BUSINESS ADDRESS:	
+		STREET 1:		2440 WEST EL CAMINO REAL
+		CITY:			MOUNTAIN VIEW
+		STATE:			CA
+		ZIP:			94040
+		BUSINESS PHONE:		6509639884
+
+	MAIL ADDRESS:	
+		STREET 1:		2440 WEST EL CAMINO REAL
+		CITY:			MOUNTAIN VIEW
+		STATE:			CA
+		ZIP:			94040
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>4
+<SEQUENCE>1
+<FILENAME>form413335011_09292026.xml
+<DESCRIPTION>OWNERSHIP DOCUMENT
+<TEXT>
+<XML>
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <schemaVersion>X0609</schemaVersion>
+
+    <documentType>4</documentType>
+
+    <periodOfReport>2026-09-25</periodOfReport>
+
+    <notSubjectToSection16>0</notSubjectToSection16>
+
+    <issuer>
+        <issuerCik>0001651562</issuerCik>
+        <issuerName>Coursera, Inc.</issuerName>
+        <issuerTradingSymbol>COUR</issuerTradingSymbol>
+        <issuerForeignTradingSymbol></issuerForeignTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001922318</rptOwnerCik>
+            <rptOwnerName>Pale Fire Capital SE</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>ZATECKA 55/14, JOSEFOV</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>PRAGUE</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>2N</rptOwnerCountry>
+            <rptOwnerZipCode>110 00</rptOwnerZipCode>
+            <rptOwnerStateDescription>CZECH REPUBLIC</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>1</isTenPercentOwner>
+            <isOther>0</isOther>
+            <officerTitle></officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001959667</rptOwnerCik>
+            <rptOwnerName>Pale Fire Capital SICAV a.s.</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>ZATECKA 55/14, JOSEFOV</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>PRAGUE</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>2N</rptOwnerCountry>
+            <rptOwnerZipCode>110 00</rptOwnerZipCode>
+            <rptOwnerStateDescription>CZECH REPUBLIC</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>1</isTenPercentOwner>
+            <isOther>0</isOther>
+            <officerTitle></officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0002055254</rptOwnerCik>
+            <rptOwnerName>Pale Fire Capital investicni spolecnost a.s.</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>ZATECKA 55/14, JOSEFOV</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>PRAGUE</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>2N</rptOwnerCountry>
+            <rptOwnerZipCode>110 00</rptOwnerZipCode>
+            <rptOwnerStateDescription>CZECH REPUBLIC</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>1</isTenPercentOwner>
+            <isOther>0</isOther>
+            <officerTitle></officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001922405</rptOwnerCik>
+            <rptOwnerName>Senkypl Dusan</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>JESTRABI 493, OSNICE</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>JESENICE</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>2N</rptOwnerCountry>
+            <rptOwnerZipCode>252 42</rptOwnerZipCode>
+            <rptOwnerStateDescription>CZECH REPUBLIC</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>1</isTenPercentOwner>
+            <isOther>0</isOther>
+            <officerTitle></officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001892479</rptOwnerCik>
+            <rptOwnerName>Barta Jan</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>NA BATERIICH 104/35, BREVNOV</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>PRAGUE</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>2N</rptOwnerCountry>
+            <rptOwnerZipCode>16200</rptOwnerZipCode>
+            <rptOwnerStateDescription>CZECH REPUBLIC</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>1</isTenPercentOwner>
+            <isOther>0</isOther>
+            <officerTitle></officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <aff10b5One>0</aff10b5One>
+
+    <nonDerivativeTable>
+        <nonDerivativeTransaction>
+            <securityTitle>
+                <value>Common Stock, $0.00001 par value per share</value>
+                <footnoteId id="F1"/>
+            </securityTitle>
+            <transactionDate>
+                <value>2026-09-25</value>
+            </transactionDate>
+            <deemedExecutionDate></deemedExecutionDate>
+            <transactionCoding>
+                <transactionFormType>4</transactionFormType>
+                <transactionCode>P</transactionCode>
+                <equitySwapInvolved>0</equitySwapInvolved>
+            </transactionCoding>
+            <transactionTimeliness></transactionTimeliness>
+            <transactionAmounts>
+                <transactionShares>
+                    <value>1332742</value>
+                </transactionShares>
+                <transactionPricePerShare>
+                    <value>5.0639</value>
+                </transactionPricePerShare>
+                <transactionAcquiredDisposedCode>
+                    <value>A</value>
+                </transactionAcquiredDisposedCode>
+            </transactionAmounts>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>27806415</value>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>I</value>
+                </directOrIndirectOwnership>
+                <natureOfOwnership>
+                    <value>By Pale Fire Capital SICAV a.s.</value>
+                    <footnoteId id="F2"/>
+                </natureOfOwnership>
+            </ownershipNature>
+        </nonDerivativeTransaction>
+        <nonDerivativeTransaction>
+            <securityTitle>
+                <value>Common Stock, $0.00001 par value per share</value>
+                <footnoteId id="F1"/>
+            </securityTitle>
+            <transactionDate>
+                <value>2026-09-29</value>
+            </transactionDate>
+            <deemedExecutionDate></deemedExecutionDate>
+            <transactionCoding>
+                <transactionFormType>4</transactionFormType>
+                <transactionCode>P</transactionCode>
+                <equitySwapInvolved>0</equitySwapInvolved>
+            </transactionCoding>
+            <transactionTimeliness></transactionTimeliness>
+            <transactionAmounts>
+                <transactionShares>
+                    <value>1000000</value>
+                </transactionShares>
+                <transactionPricePerShare>
+                    <value>4.6062</value>
+                    <footnoteId id="F3"/>
+                </transactionPricePerShare>
+                <transactionAcquiredDisposedCode>
+                    <value>A</value>
+                </transactionAcquiredDisposedCode>
+            </transactionAmounts>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>28806415</value>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>I</value>
+                </directOrIndirectOwnership>
+                <natureOfOwnership>
+                    <value>By Pale Fire Capital SICAV a.s.</value>
+                    <footnoteId id="F2"/>
+                </natureOfOwnership>
+            </ownershipNature>
+        </nonDerivativeTransaction>
+    </nonDerivativeTable>
+
+    <footnotes>
+        <footnote id="F1">This Form 4 is filed jointly by Pale Fire Capital SE (&quot;Pale Fire Capital&quot;), Pale Fire Capital SICAV a.s. (&quot;PFC SICAV&quot;), Pale Fire Capital investicni spolecnost a.s. (&quot;PFC IS&quot;), Dusan Senkypl and Jan Barta (collectively, the &quot;Reporting Persons&quot;). Each of the Reporting Persons may be deemed to be a member of a Section 13(d) group that collectively beneficially owns more than 10% of the Issuer's outstanding shares of Common Stock, $0.00001 par value per share. Each Reporting Person disclaims beneficial ownership of the securities reported herein except to the extent of his or its pecuniary interest therein.</footnote>
+        <footnote id="F2">Represents securities directly owned by PFC SICAV. PFC IS, as the investment manager of PFC SICAV, may be deemed to beneficially own the securities directly owned by PFC SICAV. Pale Fire Capital, as the controlling person and sole shareholder of each of PFC SICAV and PFC IS, may be deemed to beneficially own the securities beneficially owned directly by PFC SICAV. Mr. Senkypl, as a control person and Chairman of the board of Pale Fire Capital, may be deemed to beneficially own the securities beneficially owned directly by PFC SICAV. Mr. Barta, as a control person and Chairman of the supervisory board of Pale Fire Capital and Chief Investment Officer of PFC IS, may be deemed to beneficially own the securities beneficially owned directly by PFC SICAV.</footnote>
+        <footnote id="F3">Represents a weighted average price. These shares were purchased in multiple transactions at prices ranging from $4.5759 to $4.6268, inclusive. The Reporting Persons undertake to provide the Issuer, any security holder of the Issuer or the staff of the Securities and Exchange Commission, upon request, full information regarding the number of shares purchased in each transaction.</footnote>
+    </footnotes>
+
+    <ownerSignature>
+        <signatureName>Pale Fire Capital SE, By: /s/ Dusan Senkypl, Chairman of the Board</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+
+    <ownerSignature>
+        <signatureName>Pale Fire Capital SICAV a.s., By: /s/ Dusan Senkypl, Authorized Representative</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+
+    <ownerSignature>
+        <signatureName>Pale Fire Capital investicni spolecnost a.s., By: /s/ Dusan Senkypl, Board Member</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+
+    <ownerSignature>
+        <signatureName>By: /s/ Dusan Senkypl</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+
+    <ownerSignature>
+        <signatureName>By: /s/ Jan Barta</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+</ownershipDocument>
+</XML>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>

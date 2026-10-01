@@ -32,3 +32,15 @@ Request: Add the module parameters that the strategy spec fixes but config does 
 - d_base_breakout: `contraction_ratio: 0.7`
 Why: "All parameters come from config.yaml" -- these are the remaining hard-coded numbers. (Existing keys already cover RS top 20% = pct >= 80, 75% of 52w high, and base 3-8 weeks = 15-40 sessions.)
 Status: open
+
+## 2026-10-01 — Bot 3
+File: .gitignore
+Request: Change the `data/` line to `/data/` (anchored to the repo root).
+Why: the unanchored pattern also ignores `src/data/`, so NOTHING under `src/data/` is tracked by git -- including Bot 0's `edgar_client.py`/`raw_cache.py` and every data module from Bots 1-3 (`git status` doesn't even list them). A fresh clone in the cloud routine would have no `src/data/` package at all. Bot 3 commits its own files there with `git add -f` as a workaround; Bots 0/1/2 files under `src/data/` are still untracked.
+Status: open
+
+## 2026-10-01 — Bot 3
+File: src/data/edgar_client.py
+Request: Add a streaming download method, e.g. `download_file(url, dest_path, resume=True)`, that goes through the client's session/User-Agent/throttle and writes to disk with HTTP Range resume (no in-memory/raw-cache buffering).
+Why: `submissions.zip` is ~1.5 GB; `_get` buffers the whole body and hex-encodes it into the raw cache. `edgar_bulk.download_file` is a local workaround that uses the client's `_session` and `_throttle()` directly.
+Status: open

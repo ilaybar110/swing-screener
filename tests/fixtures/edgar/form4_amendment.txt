@@ -1,0 +1,170 @@
+<SEC-DOCUMENT>0001258134-26-000004.txt : 20260929
+<SEC-HEADER>0001258134-26-000004.hdr.sgml : 20260929
+<ACCEPTANCE-DATETIME>20260929165737
+ACCESSION NUMBER:		0001258134-26-000004
+CONFORMED SUBMISSION TYPE:	4/A
+PUBLIC DOCUMENT COUNT:		1
+CONFORMED PERIOD OF REPORT:	20230928
+FILED AS OF DATE:		20260929
+DATE AS OF CHANGE:		20260929
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			HOFFMAN LLOYD
+		CENTRAL INDEX KEY:			0001258134
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4/A
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-15725
+		FILM NUMBER:		261424605
+
+	MAIL ADDRESS:	
+		ADDRESS IS A NON US LOCATION: 	YES
+		STREET 1:		C/O ALPHA PRO TECH LTD
+		STREET 2:		60 CENTURIAN DRIVE STE 112
+		CITY:			MARKHAM ONTARIO CANADA
+		PROVINCE COUNTRY:   	A1
+		ZIP:			L3R9R2
+
+ISSUER:		
+
+	COMPANY DATA:	
+		COMPANY CONFORMED NAME:			ALPHA PRO TECH LTD
+		CENTRAL INDEX KEY:			0000884269
+		STANDARD INDUSTRIAL CLASSIFICATION:	ORTHOPEDIC, PROSTHETIC & SURGICAL APPLIANCES & SUPPLIES [3842]
+		ORGANIZATION NAME:           	08 Industrial Applications and Services
+		EIN:				631030494
+		STATE OF INCORPORATION:			DE
+		FISCAL YEAR END:			1231
+
+	BUSINESS ADDRESS:	
+		ADDRESS IS A NON US LOCATION: 	YES
+		STREET 1:		53 WELLINGTON STREET EAST
+		CITY:			AURORA
+		PROVINCE COUNTRY:   	A6
+		ZIP:			L4G 1H6
+		BUSINESS PHONE:		9054790654
+
+	MAIL ADDRESS:	
+		ADDRESS IS A NON US LOCATION: 	YES
+		STREET 1:		53 WELLINGTON STREET EAST
+		CITY:			AURORA
+		PROVINCE COUNTRY:   	A6
+		ZIP:			L4G 1H6
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	BFD INDUSTRIES INC
+		DATE OF NAME CHANGE:	19930328
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>4/A
+<SEQUENCE>1
+<FILENAME>form4a-09292026_080933.xml
+<TEXT>
+<XML>
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <schemaVersion>X0609</schemaVersion>
+
+    <documentType>4/A</documentType>
+
+    <periodOfReport>2023-09-28</periodOfReport>
+
+    <dateOfOriginalSubmission>2023-10-02</dateOfOriginalSubmission>
+
+    <issuer>
+        <issuerCik>0000884269</issuerCik>
+        <issuerName>ALPHA PRO TECH LTD</issuerName>
+        <issuerTradingSymbol>APT</issuerTradingSymbol>
+        <issuerForeignTradingSymbol></issuerForeignTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001258134</rptOwnerCik>
+            <rptOwnerName>HOFFMAN LLOYD</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>true</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>53 WELLINGTON STREET EAST</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>AURORA</rptOwnerCity>
+            <rptOwnerNonUSStateTerritory></rptOwnerNonUSStateTerritory>
+            <rptOwnerCountry>A6</rptOwnerCountry>
+            <rptOwnerZipCode>L4G 1H6</rptOwnerZipCode>
+            <rptOwnerStateDescription>ONTARIO, CANADA</rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>true</isDirector>
+            <isOfficer>true</isOfficer>
+            <isTenPercentOwner>false</isTenPercentOwner>
+            <isOther>false</isOther>
+            <officerTitle>CEO AND PRESIDENT</officerTitle>
+            <otherText></otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <aff10b5One>0</aff10b5One>
+
+    <nonDerivativeTable>
+        <nonDerivativeTransaction>
+            <securityTitle>
+                <value>common stock</value>
+            </securityTitle>
+            <transactionDate>
+                <value>2023-09-28</value>
+            </transactionDate>
+            <transactionCoding>
+                <transactionFormType>4</transactionFormType>
+                <transactionCode>A</transactionCode>
+                <equitySwapInvolved>0</equitySwapInvolved>
+                <footnoteId id="F1"/>
+            </transactionCoding>
+            <transactionAmounts>
+                <transactionShares>
+                    <value>50000</value>
+                </transactionShares>
+                <transactionPricePerShare>
+                    <value>0</value>
+                </transactionPricePerShare>
+                <transactionAcquiredDisposedCode>
+                    <value>A</value>
+                </transactionAcquiredDisposedCode>
+            </transactionAmounts>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>122505</value>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>D</value>
+                </directOrIndirectOwnership>
+                <natureOfOwnership>
+                    <value></value>
+                </natureOfOwnership>
+            </ownershipNature>
+        </nonDerivativeTransaction>
+    </nonDerivativeTable>
+
+    <derivativeTable></derivativeTable>
+
+    <footnotes>
+        <footnote id="F1">Represents shares of time-based restricted stock units (&quot;RSUs&quot;) granted under the Alpha Pro Tech, Ltd. 2020 Omnibus Plan (the &quot;Plan&quot;) that will vest in full on the third anniversary of the grant date, subject to the terms of the Plan and the applicable award agreement</footnote>
+    </footnotes>
+
+    <remarks>This amendment is being filed solely to correct the type of securities acquired by the reporting person.  The original Form 4 erroneously reported that the person acquired shares of restricted stock.</remarks>
+
+    <ownerSignature>
+        <signatureName>/s/ Lloyd Hoffman</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+</ownershipDocument>
+</XML>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>

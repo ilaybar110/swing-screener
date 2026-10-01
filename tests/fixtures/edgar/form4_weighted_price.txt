@@ -1,0 +1,165 @@
+<SEC-DOCUMENT>0001079973-26-001308.txt : 20260929
+<SEC-HEADER>0001079973-26-001308.hdr.sgml : 20260929
+<ACCEPTANCE-DATETIME>20260929160758
+ACCESSION NUMBER:		0001079973-26-001308
+CONFORMED SUBMISSION TYPE:	4
+PUBLIC DOCUMENT COUNT:		1
+CONFORMED PERIOD OF REPORT:	20260922
+FILED AS OF DATE:		20260929
+DATE AS OF CHANGE:		20260929
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			Rossa Alexander William
+		CENTRAL INDEX KEY:			0002157492
+		ORGANIZATION NAME:           	
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-43193
+		FILM NUMBER:		261423735
+
+	MAIL ADDRESS:	
+		ADDRESS IS A NON US LOCATION: 	YES
+		STREET 1:		4039 HOLLYDENE PLACE
+		CITY:			VICTORIA
+		PROVINCE COUNTRY:   	A1
+		ZIP:			V8N 3Z8
+
+ISSUER:		
+
+	COMPANY DATA:	
+		COMPANY CONFORMED NAME:			American Fusion, Inc.
+		CENTRAL INDEX KEY:			0000096664
+		STANDARD INDUSTRIAL CLASSIFICATION:	ELECTRIC SERVICES [4911]
+		ORGANIZATION NAME:           	01 Energy & Transportation
+		EIN:				221436279
+		STATE OF INCORPORATION:			TX
+		FISCAL YEAR END:			1231
+
+	BUSINESS ADDRESS:	
+		STREET 1:		401 N CARROLL AVE., STE. 192
+		CITY:			SOUTHLAKE
+		STATE:			TX
+		ZIP:			76092
+		BUSINESS PHONE:		480-788-7420
+
+	MAIL ADDRESS:	
+		STREET 1:		401 N CARROLL AVE., STE. 192
+		CITY:			SOUTHLAKE
+		STATE:			TX
+		ZIP:			76092
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	Renewal Fuels, Inc.
+		DATE OF NAME CHANGE:	20070918
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	TECH LABORATORIES INC
+		DATE OF NAME CHANGE:	19990706
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>4
+<SEQUENCE>1
+<FILENAME>ownership.xml
+<TEXT>
+<XML>
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <schemaVersion>X0609</schemaVersion>
+
+    <documentType>4</documentType>
+
+    <periodOfReport>2026-09-22</periodOfReport>
+
+    <notSubjectToSection16>0</notSubjectToSection16>
+
+    <issuer>
+        <issuerCik>0000096664</issuerCik>
+        <issuerName>American Fusion, Inc.</issuerName>
+        <issuerTradingSymbol>AMFN</issuerTradingSymbol>
+        <issuerForeignTradingSymbol></issuerForeignTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0002157492</rptOwnerCik>
+            <rptOwnerName>Rossa Alexander William</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerNonUSAddressFlag>false</rptOwnerNonUSAddressFlag>
+            <rptOwnerStreet1>C/O AMERICAN FUSION, INC.</rptOwnerStreet1>
+            <rptOwnerStreet2>401 N CARROLL AVE., STE 192</rptOwnerStreet2>
+            <rptOwnerCity>SOUTHLAKE</rptOwnerCity>
+            <rptOwnerState>TX</rptOwnerState>
+            <rptOwnerZipCode>76092</rptOwnerZipCode>
+            <rptOwnerStateDescription></rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>0</isDirector>
+            <isOfficer>0</isOfficer>
+            <isTenPercentOwner>0</isTenPercentOwner>
+            <isOther>1</isOther>
+            <officerTitle></officerTitle>
+            <otherText>Chief Revenue Officer</otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <aff10b5One>0</aff10b5One>
+
+    <nonDerivativeTable>
+        <nonDerivativeTransaction>
+            <securityTitle>
+                <value>Common Stock</value>
+            </securityTitle>
+            <transactionDate>
+                <value>2026-09-22</value>
+            </transactionDate>
+            <deemedExecutionDate></deemedExecutionDate>
+            <transactionCoding>
+                <transactionFormType>4</transactionFormType>
+                <transactionCode>P</transactionCode>
+                <equitySwapInvolved>0</equitySwapInvolved>
+            </transactionCoding>
+            <transactionTimeliness></transactionTimeliness>
+            <transactionAmounts>
+                <transactionShares>
+                    <value>842775</value>
+                    <footnoteId id="F1"/>
+                </transactionShares>
+                <transactionPricePerShare>
+                    <value>0.102</value>
+                </transactionPricePerShare>
+                <transactionAcquiredDisposedCode>
+                    <value>A</value>
+                </transactionAcquiredDisposedCode>
+            </transactionAmounts>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>3000000</value>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>D</value>
+                </directOrIndirectOwnership>
+            </ownershipNature>
+        </nonDerivativeTransaction>
+    </nonDerivativeTable>
+
+    <footnotes>
+        <footnote id="F1">Represents shares of Common Stock acquired through open market purchases on September 22, 2026, at a weighted average price of $0.102 per share.</footnote>
+    </footnotes>
+
+    <ownerSignature>
+        <signatureName>/s/ Alec Rossa</signatureName>
+        <signatureDate>2026-09-29</signatureDate>
+    </ownerSignature>
+</ownershipDocument>
+</XML>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>

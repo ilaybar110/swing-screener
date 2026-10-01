@@ -59,6 +59,11 @@ class ModuleAConfig(BaseModel):
     pct_of_52w_high_max: float
     sma_fast: int
     sma_slow: int
+    pullback_touch_window: int = 5
+    pullback_touch_pct: float = 0.02
+    pullback_close_floor: float = 0.97
+    sma_slope_sessions: int = 10
+    stop_atr_buffer: float = 0.1
 
 
 class ModuleBConfig(BaseModel):
@@ -67,6 +72,8 @@ class ModuleBConfig(BaseModel):
     min_volume_multiple: float
     hold_days_min: int
     hold_days_max: int
+    tight_range_atr_multiple: float = 1.5
+    stop_atr_buffer: float = 0.1
 
 
 class ModuleCConfig(BaseModel):
@@ -77,6 +84,8 @@ class ModuleCConfig(BaseModel):
     cluster_window_days: int
     sma_confirm_days: int
     atr_stop_multiple: float
+    completion_window_sessions: int = 20
+    stop_lookback_sessions: int = 10
 
 
 class ModuleDConfig(BaseModel):
@@ -86,6 +95,7 @@ class ModuleDConfig(BaseModel):
     base_max_weeks: int
     min_volume_multiple: float
     atr_stop_multiple: float
+    contraction_ratio: float = 0.7
 
 
 class ModulesConfig(BaseModel):

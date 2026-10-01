@@ -9,6 +9,7 @@ needs to mutate a DB, it should copy fixture.db to a tmp_path first (see
 
 from __future__ import annotations
 
+import os
 import shutil
 import sqlite3
 from pathlib import Path
@@ -16,6 +17,10 @@ from pathlib import Path
 import pytest
 
 from src.data_access import DataAccess
+
+# EdgarClient refuses to start without a contact email; tests never reach the network
+# (live tests are opt-in) so a placeholder is enough.
+os.environ.setdefault("SEC_EMAIL", "test@example.com")
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 FIXTURE_DB_PATH = FIXTURES_DIR / "fixture.db"

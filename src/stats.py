@@ -191,7 +191,9 @@ def summary(conn: sqlite3.Connection, source: str) -> dict[str, Any]:
     contains: dict[str, dict[str, Any]] = {}
     mods = sorted({m for lst in recs["module_list"] for m in lst})
     for m in mods:
-        sub = closed[closed["module_list"].map(lambda lst, m=m: m in lst)]
+        # .loc + astype(bool): an empty `closed` (nothing has closed yet -- the normal state
+        # in the first weeks of live running) must keep its columns
+        sub = closed.loc[closed["module_list"].map(lambda lst, m=m: m in lst).astype(bool)]
         contains[m] = _metrics(sub, base[base["parent_rec_id"].isin(sub["id"])])
     out["by_module_contains"] = contains
 

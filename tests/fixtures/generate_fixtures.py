@@ -96,6 +96,16 @@ def _ohlcv_from_close(rng: np.random.Generator, close: np.ndarray, base_volume: 
     )
 
 
+def _open_gap(df: pd.DataFrame, idx: int, gap: float) -> None:
+    """Make the session at ``idx`` really *open* ``gap`` above the prior close (the OHLC
+    builder only derives open[i] from close[i-1] with ~0.3% noise), keeping
+    low <= open <= high. Does not consume any random numbers."""
+    open_ = float(df.at[idx - 1, "close"]) * (1 + gap)
+    df.at[idx, "open"] = open_
+    df.at[idx, "high"] = max(float(df.at[idx, "high"]), open_)
+    df.at[idx, "low"] = min(float(df.at[idx, "low"]), open_)
+
+
 def build_spy_and_sector_etfs(rng: np.random.Generator) -> dict[str, pd.DataFrame]:
     out = {}
     spy_close = _gbm_path(rng, N, 400.0, 0.0003, 0.009)
@@ -253,6 +263,7 @@ def build_prices(rng_master: np.random.Generator) -> dict[str, pd.DataFrame]:
             close, volume, earn_date = build_module_b_trigger(rng)
             df = _ohlcv_from_close(rng, close, 2e6)
             df["volume"] = volume.astype(int)
+            _open_gap(df, N - 20, 0.07)  # the earnings session opens +7% (docs/CHANGE_REQUESTS.md)
             extras[spec.ticker] = {"earnings_date": earn_date}
         elif spec.scenario == "module_c_trigger":
             close, d1, d2 = build_module_c_trigger(rng)
@@ -269,6 +280,7 @@ def build_prices(rng_master: np.random.Generator) -> dict[str, pd.DataFrame]:
             close, volume, earn_date = build_negative_b(rng)
             df = _ohlcv_from_close(rng, close, 2e6)
             df["volume"] = volume.astype(int)
+            _open_gap(df, N - 20, 0.03)
             extras[spec.ticker] = {"earnings_date": earn_date}
         elif spec.scenario == "module_c_near_miss_single_insider":
             close, d1 = build_negative_c(rng)

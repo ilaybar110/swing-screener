@@ -78,9 +78,19 @@ def test_module_b_triggers_on_momb1_not_negb1(pdata):
     assert "NEGB1" not in hits
 
 
-def test_module_b_needs_a_real_opening_gap(data_access):
-    """On the unpatched fixture the +7% is close-to-close only, so B must stay quiet."""
-    assert "MOMB1" not in _by_ticker(_hits("earnings_gap_drift", data_access))
+def test_module_b_triggers_on_the_shipped_fixture_and_needs_a_real_opening_gap(writable_fixture_conn):
+    """The regenerated fixture opens MOMB1's earnings session +7%, so B fires on it as shipped;
+    with the open pulled back to the prior close (a close-to-close gap only) it must stay quiet."""
+    data = DataAccess(writable_fixture_conn)
+    assert "MOMB1" in _by_ticker(_hits("earnings_gap_drift", data))
+
+    prev = writable_fixture_conn.execute(
+        "SELECT close FROM prices WHERE ticker='MOMB1' AND date<? ORDER BY date DESC LIMIT 1", (GAP_DATE,)
+    ).fetchone()[0]
+    writable_fixture_conn.execute(
+        "UPDATE prices SET open=? WHERE ticker='MOMB1' AND date=?", (prev, GAP_DATE))
+    writable_fixture_conn.commit()
+    assert "MOMB1" not in _by_ticker(_hits("earnings_gap_drift", data))
 
 
 def test_module_c_triggers_on_momc1_not_negc1(pdata):

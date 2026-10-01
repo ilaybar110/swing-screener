@@ -1,0 +1,4 @@
+# Everything needed on your own machine: the runtime requirements + dashboard + tests.
+-r requirements.txt
+streamlit>=1.50
+pytest>=8.0

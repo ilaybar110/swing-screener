@@ -64,6 +64,11 @@ Everything not listed under another bot: skeleton, `config.yaml` / `src/config.p
 - `docs/ROUTINE_*.md`
 - `README.md`
 - `tests/e2e/*`
+- `src/jobs.py` (shared plumbing of the entrypoints: job_log helper, session calendar, price plan)
+- `requirements-local.txt`
+
+Bot 7 also wrote the files Bots 1/2 never delivered: `src/data/prices.py`, `src/guardrail.py`,
+`src/valuation.py` (see docs/CHANGE_REQUESTS.md).
 
 Each bot owns `tests/test_<its modules>.py` as listed above and may add more test
 files under the same naming convention.

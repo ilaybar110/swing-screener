@@ -47,12 +47,19 @@ modules:
     pct_of_52w_high_max: 0.25
     sma_fast: 20
     sma_slow: 50
+    pullback_touch_window: 5      # sessions (ending on the trigger day) that may touch the SMA
+    pullback_touch_pct: 0.02      # a low within 2% above the SMA counts as a touch
+    pullback_close_floor: 0.97    # closes must stay above 97% of the SMA
+    sma_slope_sessions: 10        # the 50-day SMA must be rising over this many sessions
+    stop_atr_buffer: 0.1          # stop = pullback low - 0.1 ATR
   b_earnings_gap_drift:
     enabled: true
     min_gap_pct: 0.05
     min_volume_multiple: 2.0
     hold_days_min: 2
     hold_days_max: 5
+    tight_range_atr_multiple: 1.5
+    stop_atr_buffer: 0.1
   c_insider_cluster:
     enabled: true
     min_distinct_insiders: 2
@@ -61,6 +68,8 @@ modules:
     cluster_window_days: 30
     sma_confirm_days: 20
     atr_stop_multiple: 2.0
+    completion_window_sessions: 20   # trigger must come within this many sessions of the cluster completing
+    stop_lookback_sessions: 10       # recent swing low window for the stop
   d_base_breakout:
     enabled: true
     pct_of_52w_high_max: 0.15
@@ -68,6 +77,7 @@ modules:
     base_max_weeks: 8
     min_volume_multiple: 1.5
     atr_stop_multiple: 2.0
+    contraction_ratio: 0.7           # ATR at the end of the base < 0.7x ATR before it
   stop_distance_pct_min: 0.02
   stop_distance_pct_max: 0.12
 

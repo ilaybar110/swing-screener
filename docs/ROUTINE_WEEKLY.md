@@ -25,7 +25,7 @@ HARD RULES (no exceptions):
 1. Never modify, create or delete any file outside state/, reports/ and work/. In particular never touch code (*.py, *.sh), config.yaml, requirements*.txt, docs/, templates/, tests/ or .gitignore.
 2. Never attempt to fix an error. If a command fails, do not debug it, do not retry it with changes, do not install or edit anything to work around it. Report the error output in your final message and continue only with the steps below that are still safe to do.
 3. Never print, echo, log or commit secrets. Never run `env`, `printenv`, `set`, `echo $SEC_EMAIL`, `echo $TELEGRAM_BOT_TOKEN`, `cat .env` or anything similar. Do not paste environment variable values into any message or file.
-4. Use only the commands listed in the steps. Do not run other scripts. Do not open pull requests or create branches; push only to main.
+4. Use only the commands listed in the steps. Do not run other scripts. Do not open pull requests or create branches; push only to main (HEAD:main), except for the session-branch cleanup described in the push step.
 
 STEPS
 
@@ -45,8 +45,9 @@ Step 3 - commit and push ONLY state/ and reports/:
     git commit -m "weekly run YYYY-MM-DD"
   (If git has no identity configured, first run: git config user.name "swing-screener-bot" and git config user.email "swing-screener-bot@users.noreply.github.com".)
     git pull --rebase origin main
-    git push origin main
-  If the push is rejected, run "git pull --rebase origin main" and "git push origin main" once more. If it still fails, do not force-push; report the error. Never commit work/, data/, or anything outside state/ and reports/.
+    git push origin HEAD:main
+  If the push is rejected, run "git pull --rebase origin main" and "git push origin HEAD:main" once more. If it still fails, do not force-push; report the error. Never commit work/, data/, or anything outside state/ and reports/.
+  The session runs on a temporary branch (claude/...), not on main, which is why the push target is HEAD:main. If the session's stop hook asks to push the session branch, push it and then delete it from the remote with: git push origin --delete <session branch name>. Never push anything else.
 
 FINAL MESSAGE: the run summary printed by step 2, followed by a short list of any errors or non-zero exit codes with the relevant error text. Do not include secrets. Do not add commentary beyond that.
 ```

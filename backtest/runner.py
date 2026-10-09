@@ -26,14 +26,16 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sqlite3
+from pathlib import Path
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Callable, Optional
 
 import numpy as np
 
 from src.baseline import create_for
-from src.config import Config, load_config
+from src.config import BASE_DIR_ENV, Config, load_config
 from src.contracts import Candidate, Recommendation
 from src.data_access import DataAccess
 from src.db import init_db
@@ -309,7 +311,10 @@ def main() -> None:
     ap.add_argument("--start", required=True, type=date.fromisoformat)
     ap.add_argument("--end", required=True, type=date.fromisoformat)
     ap.add_argument("--notes", default="")
+    ap.add_argument("--base-dir", type=Path, help="root holding data/research.db (default: the repo)")
     a = ap.parse_args()
+    if a.base_dir:
+        os.environ[BASE_DIR_ENV] = str(a.base_dir)
     run(a.start, a.end, a.notes)
 
 

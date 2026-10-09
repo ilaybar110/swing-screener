@@ -21,7 +21,7 @@ def test_load_config_reads_all_sections():
     cfg = load_config()
     assert cfg.modules.a_momentum_pullback.enabled is True
     assert cfg.tracking.sector_etfs["Technology"] == "XLK"
-    assert cfg.secrets.sec_email == "test@example.com"
+    assert cfg.secrets.sec_email == os.environ["SEC_EMAIL"]
 
 
 def test_init_db_creates_all_tables(tmp_path):

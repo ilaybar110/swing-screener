@@ -20,6 +20,7 @@ from datetime import date
 from typing import Any, Optional, Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    import pandas as pd
     from src.data_access import DataAccess
 
 

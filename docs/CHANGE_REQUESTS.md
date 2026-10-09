@@ -43,7 +43,7 @@ Status: applied by Bot 7 (2026-10-01): the line is now `/data/`, so all of `src/
 File: src/data/edgar_client.py
 Request: Add a streaming download method, e.g. `download_file(url, dest_path, resume=True)`, that goes through the client's session/User-Agent/throttle and writes to disk with HTTP Range resume (no in-memory/raw-cache buffering).
 Why: `submissions.zip` is ~1.5 GB; `_get` buffers the whole body and hex-encodes it into the raw cache. `edgar_bulk.download_file` is a local workaround that uses the client's `_session` and `_throttle()` directly.
-Status: open (not blocking: edgar_bulk's local workaround is used by run_backfill; left for a future cleanup)
+Status: declined by Bot 8 audit (2026-10-01): not needed. `edgar_bulk.download_file` (Range resume via the client session/throttle) was exercised for real by the audit backfill (1.5 GB submissions.zip + 1.4 GB companyfacts.zip, 0 errors), so a second public method would only duplicate it.
 
 ## 2026-10-01 — Bot 6
 File: src/stats.py
@@ -70,4 +70,4 @@ Status: applied
 ## 2026-10-01 — Bot 7
 File: tests/fixtures/generate_fixtures.py (observation, not changed)
 Note: SPLIT1's price series is stored *unadjusted* (the generator comment says "yfinance-style adjusted", but pre-split prices are 2x), and its split-day bar keeps the pre-split open/high. Live yfinance history is split-adjusted, so the e2e price stub (`tests/e2e/conftest.py::_as_yahoo_adjusted`) serves SPLIT1 adjusted and repairs that bar. Bot 5's tracker handles both raw and adjusted history.
-Status: open (low priority; fix the generator comment/series if the fixture is ever reshaped)
+Status: declined by Bot 8 audit (2026-10-01): cosmetic and already handled (tracker supports both raw and adjusted history, e2e stub serves adjusted); regenerating the fixtures would churn every committed fixture file for no behavioural gain.

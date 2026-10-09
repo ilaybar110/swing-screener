@@ -123,7 +123,10 @@ python run_daily.py  --dry-run --limit 50     # whole pipeline, nothing written 
 
 `--dry-run` still downloads data and uses a scratch DB (`data/run_dry.db`). Other flags:
 `--date YYYY-MM-DD` (treat that session as the latest), `--stage prepare|finalize|all`,
-`--force` (redo an already-complete day), `--limit N` (trial runs).
+`--force` (redo an already-complete day), `--limit N` (trial runs), `--base-dir DIR` (put
+`state/`, `reports/`, `data/` and `work/` under DIR instead of the repo - use a temporary copy
+for realistic trial runs that must not touch the committed state; same as setting `SWING_BASE_DIR`;
+`run_weekly.py`, `run_daily.py`, `run_backfill.py` and `python -m backtest.runner` all accept it).
 
 ## Setting up the cloud routines
 

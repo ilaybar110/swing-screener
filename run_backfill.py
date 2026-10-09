@@ -22,6 +22,7 @@ list is today's listing, so backtests on this data are an upper bound (docs/PLAN
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 from datetime import date, datetime, timedelta
@@ -32,7 +33,7 @@ import numpy as np
 import pandas as pd
 
 from src import universe
-from src.config import Config, load_config
+from src.config import BASE_DIR_ENV, Config, load_config
 from src.data import edgar_bulk, fundamentals, prices, universe_source
 from src.data.edgar_client import EdgarClient
 from src.db import init_db
@@ -298,7 +299,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     ap.add_argument("--start", type=date.fromisoformat, help="history start (default prices.research_start_date)")
     ap.add_argument("--end", type=date.fromisoformat, help="history end (default: latest completed session)")
     ap.add_argument("--db", type=Path, help="database path (default data/research.db)")
+    ap.add_argument("--base-dir", type=Path, help="root holding state/, reports/, data/, work/ (default: the repo; "
+                                                  "use a temporary copy for trial runs)")
     args = ap.parse_args(argv)
+    if args.base_dir:
+        os.environ[BASE_DIR_ENV] = str(args.base_dir)
     stages = [s.strip() for s in args.stages.split(",") if s.strip()]
     bad = [s for s in stages if s not in STAGES]
     if bad:

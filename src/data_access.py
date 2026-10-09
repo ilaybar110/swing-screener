@@ -70,11 +70,14 @@ class DataAccess:
         """All fundamentals rows for ticker with filed_date <= as_of, one row per
         (metric, period_end) keeping only the latest filed_date (i.e. the most
         recently amended value known as of as_of)."""
+        # Rows are stored under one ticker per CIK, so a second share class (GOOGL vs
+        # GOOG) is matched through the shared CIK.
         query = (
-            "SELECT * FROM fundamentals WHERE ticker = ? AND filed_date <= ? "
+            "SELECT * FROM fundamentals WHERE (ticker = ? OR cik = "
+            "(SELECT cik FROM tickers WHERE ticker = ?)) AND filed_date <= ? "
             "ORDER BY metric, period_end, filed_date"
         )
-        df = pd.read_sql_query(query, self.conn, params=(ticker, as_of.isoformat()))
+        df = pd.read_sql_query(query, self.conn, params=(ticker, ticker, as_of.isoformat()))
         if df.empty:
             return df
         return df.groupby(["metric", "period_end"], as_index=False).last()

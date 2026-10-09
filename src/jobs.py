@@ -14,10 +14,9 @@ import sqlite3
 import traceback
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Iterator, Optional
 
-import pandas as pd
 import pandas_market_calendars as mcal
 
 from src.config import Config

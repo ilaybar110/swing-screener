@@ -42,8 +42,12 @@ def _sector_industry(data, ticker: str) -> tuple[Optional[str], Optional[str]]:
 
 
 def next_earnings(data, ticker: str, as_of: date) -> Optional[date]:
-    """Next known earnings date on/after ``as_of``, honoring point-in-time: an event
-    row whose acceptance timestamp is after ``as_of`` was not yet knowable."""
+    """Next known earnings date whose market reaction is still ahead of ``as_of``,
+    honoring point-in-time: an event row whose acceptance timestamp is after ``as_of``
+    was not yet knowable. An event whose reaction session is ``as_of`` or earlier (the
+    trade cannot be entered before it) is not a risk for the holding window. 8-K derived
+    rows carry the reaction session as their date; a calendar row holds the report date,
+    whose reaction is the next session unless it is known to be before the open."""
     events = data.get_earnings_events(
         ticker, as_of, as_of + timedelta(days=EARNINGS_LOOKAHEAD_CALENDAR_DAYS)
     )
@@ -51,7 +55,16 @@ def next_earnings(data, ticker: str, as_of: date) -> Optional[date]:
         acc = ev.get("acceptance_datetime")
         if pd.notna(acc) and acc and str(acc)[:10] > as_of.isoformat():
             continue
-        return date.fromisoformat(str(ev["event_date"])[:10])
+        day = date.fromisoformat(str(ev["event_date"])[:10])
+        source = str(ev.get("source") or "").lower()
+        timing = ev.get("timing")
+        calendar_row = not source.startswith(("8k", "8-k"))
+        reaction = day
+        if calendar_row and not (isinstance(timing, str) and timing.upper() in ("BMO", "BEFORE_OPEN", "DURING")):
+            reaction = add_trading_days(day, 1)
+        if reaction <= as_of:
+            continue
+        return day
     return None
 
 

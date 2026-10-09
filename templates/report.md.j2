@@ -38,7 +38,7 @@ No new recommendations today.
 - **EV/FCF:** {{ c.ev_fcf | md }}
 {% endif %}
 {% if c.earnings %}
-- **Earnings:** {{ c.earnings.date }}{% if c.earnings.warning %} - &#9888; {{ c.earnings.warning | md }}{% endif %}
+- **Earnings:** {{ c.earnings.date }}{% if c.earnings.warning %} - ⚠ {{ c.earnings.warning | md }}{% endif %}
 
 {% endif %}
 {% if c.insiders %}
@@ -50,7 +50,7 @@ No new recommendations today.
 **Summary.** {{ c.brief.summary | md }}
 
 {% if c.brief.red_flags %}
-&#9873; **Red flags**
+⚑ **Red flags**
 {% for f in c.brief.red_flags %}
 - {{ f | md }}
 {% endfor %}

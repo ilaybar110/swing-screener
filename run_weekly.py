@@ -11,6 +11,7 @@ considered (trial runs).
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -19,7 +20,7 @@ from typing import Optional
 import pandas as pd
 
 from src import universe
-from src.config import Config, load_config
+from src.config import BASE_DIR_ENV, Config, load_config
 from src.data import earnings, fundamentals, prices
 from src.db import init_db
 from src.jobs import (
@@ -162,7 +163,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     ap.add_argument("--date", type=date.fromisoformat, help="as-of trading day (default: latest completed session)")
     ap.add_argument("--dry-run", action="store_true", help="write nothing to state/, send nothing")
     ap.add_argument("--limit", type=int, help="only the N largest companies (trial runs)")
+    ap.add_argument("--base-dir", type=Path, help="root holding state/, reports/, data/, work/ (default: the repo; "
+                                                  "use a temporary copy for trial runs)")
     args = ap.parse_args(argv)
+    if args.base_dir:
+        os.environ[BASE_DIR_ENV] = str(args.base_dir)
     cfg = load_config()
     setup_logging(Path(cfg.paths.logs_dir))
     return run(cfg, as_of=args.date, dry_run=args.dry_run, limit=args.limit)

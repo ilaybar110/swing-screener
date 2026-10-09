@@ -131,6 +131,28 @@ def test_upsert_tickers_maps_sector_etf_and_cik(writable_fixture_conn):
     assert report["count"] == 1
 
 
+def test_upsert_tickers_normalizes_nasdaq_sector_labels(writable_fixture_conn):
+    """Regression: Nasdaq says 'Finance'/'Basic Materials'/'Telecommunications', but the
+    sector-ETF map and the guardrail's Financials exception use GICS-style names."""
+    conn = writable_fixture_conn
+    conn.execute("DELETE FROM tickers")
+    conn.commit()
+    names = {"FIN": "Finance", "MAT": "Basic Materials", "COM": "Telecommunications",
+             "MIS": "Miscellaneous", "NAN": float("nan")}
+    df = pd.DataFrame([
+        {"ticker": t, "name": t, "exchange": "NYSE", "sector": s, "industry": "x", "sic": None,
+         "market_cap": 2e9, "price": 10.0} for t, s in names.items()
+    ])
+    universe_source.upsert_tickers(conn, df, FakeEdgarClient())
+    got = {r["ticker"]: (r["sector"], r["sector_etf"])
+           for r in conn.execute("SELECT ticker, sector, sector_etf FROM tickers")}
+    assert got["FIN"] == ("Financials", "XLF")
+    assert got["MAT"] == ("Materials", "XLB")
+    assert got["COM"] == ("Communication Services", "XLC")
+    assert got["MIS"] == ("Miscellaneous", None)
+    assert got["NAN"] == (None, None)
+
+
 def _insert_price_series(conn, ticker, days, price, volume=2_000_000):
     rows = [
         (ticker, d.isoformat(), price, price, price, price, price, volume, "yfinance")
@@ -296,3 +318,50 @@ def test_build_historical_universe_flags_fallback_market_cap(writable_fixture_co
     row = df[df["ticker"] == "AAA"].iloc[0]
     assert row["market_cap"] == pytest.approx(3_000_000_000.0)
     assert bool(row["market_cap_is_approx"]) is True
+
+
+def test_upsert_tickers_finds_cik_for_slash_share_classes(writable_fixture_conn):
+    """Regression: Nasdaq lists 'BRK/B', SEC's map has 'BRK-B' -> cik was NULL."""
+    conn = writable_fixture_conn
+    conn.execute("DELETE FROM tickers")
+    conn.commit()
+    df = pd.DataFrame([{"ticker": "BRK/B", "name": "Berkshire", "exchange": "NYSE", "sector": "Finance",
+                        "industry": "x", "sic": None, "market_cap": 9e11, "price": 450.0}])
+    universe_source.upsert_tickers(conn, df, FakeEdgarClient({"BRK-B": "0001067983"}))
+    assert conn.execute("SELECT cik FROM tickers WHERE ticker='BRK/B'").fetchone()["cik"] == "0001067983"
+
+
+def test_build_historical_universe_uses_filed_shares_when_no_summary(writable_fixture_conn):
+    """Regression (backtest smoke run): a research DB built by run_backfill has no
+    fundamentals_summary history, so the historical universe was always empty and the
+    backtest produced no signals."""
+    conn = writable_fixture_conn
+    conn.execute("DELETE FROM fundamentals_summary")
+    conn.execute("DELETE FROM universe_snapshots")
+    conn.execute("DELETE FROM splits WHERE ticker='CTRL03'")
+    conn.commit()
+    from src.data_access import DataAccess
+
+    data = DataAccess(conn)
+    as_of = date(2024, 6, 7)
+    assert universe.build_historical_universe(data, as_of).empty  # nothing to compute a cap from
+    price = float(conn.execute("SELECT close FROM prices WHERE ticker='CTRL03' AND date<=? ORDER BY date DESC LIMIT 1",
+                               (as_of.isoformat(),)).fetchone()[0])
+    conn.execute(
+        "INSERT INTO fundamentals (cik, ticker, metric, period_start, period_end, period_type, value, form, filed_date, accession, tag_used, is_proxy) "
+        "VALUES ('0000000003','CTRL03','shares_outstanding',NULL,'2024-03-31','instant',?, '10-Q','2024-05-01','a','t',0)",
+        (3e9 / price,))
+    # a filing made after as_of must not be used
+    conn.execute(
+        "INSERT INTO fundamentals (cik, ticker, metric, period_start, period_end, period_type, value, form, filed_date, accession, tag_used, is_proxy) "
+        "VALUES ('0000000003','CTRL03','shares_outstanding',NULL,'2024-06-30','instant',1, '10-Q','2024-08-01','b','t',0)")
+    conn.commit()
+    df = universe.build_historical_universe(data, as_of)
+    row = df[df["ticker"] == "CTRL03"]
+    assert len(row) == 1 and float(row["market_cap"].iloc[0]) == pytest.approx(3e9)
+    assert not bool(row["market_cap_is_approx"].iloc[0])
+    # a later 2:1 split (price history is adjusted for it, the old share count is not)
+    conn.execute("INSERT INTO splits (ticker, date, ratio) VALUES ('CTRL03','2024-09-03',2.0)")
+    conn.commit()
+    row = universe.build_historical_universe(data, as_of)
+    assert float(row[row["ticker"] == "CTRL03"]["market_cap"].iloc[0]) == pytest.approx(6e9)

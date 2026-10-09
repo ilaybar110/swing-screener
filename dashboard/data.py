@@ -15,7 +15,7 @@ from typing import Any, Optional
 
 import pandas as pd
 
-from src.config import REPO_ROOT, load_config
+from src.config import data_root, load_config
 from src.db import init_db
 from src.state_io import import_state
 
@@ -25,13 +25,13 @@ LIVE = "live"
 def state_dir() -> Path:
     cfg = load_config()
     p = Path(cfg.paths.state_dir)
-    return p if p.is_absolute() else REPO_ROOT / p
+    return p if p.is_absolute() else data_root() / p
 
 
 def research_db_path() -> Path:
     cfg = load_config()
     p = Path(cfg.paths.research_db)
-    return p if p.is_absolute() else REPO_ROOT / p
+    return p if p.is_absolute() else data_root() / p
 
 
 def connect_live(directory: Optional[Path] = None) -> sqlite3.Connection:

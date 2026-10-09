@@ -100,7 +100,15 @@ def evaluate(
             f"TTM operating income ({op:,.0f}) and free cash flow ({fcf:,.0f}) are both negative"
         )
 
-    shares = _instants(df, "shares_outstanding", as_of)
+    shares = _instants(df, "shares_outstanding", as_of).copy()
+    if not shares.empty:
+        # A split inside the comparison window would read as massive dilution: put every
+        # count on the share basis in force at as_of (splits known by then only).
+        splits = data.get_splits(ticker)
+        splits = splits[splits["date"] <= as_of.isoformat()] if not splits.empty else splits
+        for _, sp in splits.iterrows():
+            before = shares["period_end"] < sp["date"]
+            shares.loc[before, "value"] = shares.loc[before, "value"].astype(float) * float(sp["ratio"])
     growth: Optional[float] = None
     if len(shares) >= 2:
         latest = shares.iloc[-1]

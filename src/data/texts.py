@@ -80,7 +80,7 @@ def html_to_text(raw: str) -> str:
                 elif tag in ("td", "th"):  # keep table cells apart: "(94,575) (93,210)"
                     el.tail = " " + (el.tail or "")
             text = root.text_content()
-    text = html_lib.unescape(text).replace("\xa0", " ").replace("​", "")
+    text = html_lib.unescape(text).replace("\xa0", " ").replace("\u200b", "")
     lines = []
     for line in text.splitlines():
         line = re.sub(r"[ \t\r\f\v]+", " ", line).strip()
@@ -163,24 +163,28 @@ def get_8k_texts(
     """
     start = (as_of - timedelta(days=days)).isoformat()
     rows = conn.execute(
-        "SELECT accession, filed_date, items, primary_doc_url, exhibit_991_url FROM filings "
+        "SELECT accession, filed_date, items, primary_doc_url, exhibit_991_url, cik FROM filings "
         "WHERE ticker = ? AND form IN ('8-K', '8-K/A') AND filed_date >= ? AND filed_date <= ? "
         "ORDER BY filed_date DESC, accession DESC",
         (ticker, start, as_of.isoformat()),
     ).fetchall()
 
     results: list[dict[str, Any]] = []
-    for acc, filed, items_s, primary_url, ex99_url in rows:
+    for acc, filed, items_s, primary_url, ex99_url, cik in rows:
         items = [i.strip() for i in (items_s or "").split(",") if i.strip()]
         if not any(i in WANTED_ITEMS for i in items):
             continue
 
         sections = _cached_sections(conn, acc)
         if sections is None:
-            if not (primary_url or ex99_url):
-                log.debug("no document URLs recorded for %s; cannot fetch text", acc)
-                continue
             client = client or _default_client()
+            if not (primary_url or ex99_url):
+                # state/filings.csv does not persist the document URLs, so a filing from an
+                # earlier run has none: re-derive them from the filing index page.
+                primary_url, ex99_url = _derive_urls(conn, client, cik, acc)
+                if not (primary_url or ex99_url):
+                    log.debug("no document URLs for %s; cannot fetch text", acc)
+                    continue
             try:
                 sections = _fetch_sections(client, items, primary_url, ex99_url)
             except Exception as exc:  # noqa: BLE001 -- skip this filing, keep the rest
@@ -200,6 +204,28 @@ def get_8k_texts(
                      "section": section, "text": text}
                 )
     return results
+
+
+def _derive_urls(
+    conn: sqlite3.Connection, client: EdgarClient, cik: Optional[str], accession: str
+) -> tuple[Optional[str], Optional[str]]:
+    """Primary document and EX-99.1 URLs of an 8-K from its filing index page (stored back
+    on the ``filings`` row). Returns (None, None) when the page cannot be fetched/parsed."""
+    from src.data.edgar_daily import _filing_index_url, parse_filing_index
+
+    if not cik:
+        return None, None
+    try:
+        idx = parse_filing_index(client.get_text(_filing_index_url(cik, accession)))
+    except Exception as exc:  # noqa: BLE001 -- retried by the next run
+        log.warning("filing index fetch failed for %s: %s", accession, exc)
+        return None, None
+    conn.execute(
+        "UPDATE filings SET primary_doc_url = ?, exhibit_991_url = ? WHERE accession = ?",
+        (idx.primary_doc_url, idx.exhibit_991_url, accession),
+    )
+    conn.commit()
+    return idx.primary_doc_url, idx.exhibit_991_url
 
 
 def _default_client() -> EdgarClient:

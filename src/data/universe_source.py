@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import pandas as pd
 
@@ -120,6 +120,31 @@ def get_universe_source(
         return df, "sec"
 
 
+# Nasdaq's screener uses its own sector labels; the rest of the system (sector-ETF map in
+# config.tracking.sector_etfs, the guardrail's Financials exception) uses GICS-style names.
+NASDAQ_SECTOR_ALIASES = {
+    "Finance": "Financials",
+    "Basic Materials": "Materials",
+    "Telecommunications": "Communication Services",
+}
+
+
+def normalize_sector(sector: Any) -> Optional[str]:
+    """Map a Nasdaq screener sector label to the config/GICS spelling (None if blank/NaN)."""
+    if sector is None or (isinstance(sector, float) and sector != sector):
+        return None
+    s = str(sector).strip()
+    return NASDAQ_SECTOR_ALIASES.get(s, s) or None
+
+
+def _lookup_cik(cik_map: dict[str, str], ticker: str) -> Optional[str]:
+    """SEC spells share classes with a dash ('BRK-B'); Nasdaq uses '/' (and sometimes '.')."""
+    for key in (ticker, ticker.replace("/", "-"), ticker.replace(".", "-")):
+        if key in cik_map:
+            return cik_map[key]
+    return None
+
+
 def upsert_tickers(
     conn: sqlite3.Connection, df: pd.DataFrame, edgar_client: EdgarClient
 ) -> dict[str, Any]:
@@ -144,8 +169,8 @@ def upsert_tickers(
     rows = []
     for _, r in df.iterrows():
         ticker = str(r["ticker"]).upper()
-        cik = r["cik"] if "cik" in df.columns and pd.notna(r.get("cik")) else cik_map.get(ticker)
-        sector = r.get("sector") or None
+        cik = r["cik"] if "cik" in df.columns and pd.notna(r.get("cik")) else _lookup_cik(cik_map, ticker)
+        sector = normalize_sector(r.get("sector"))
         sector_etf = sector_etf_map.get(sector) if sector else None
         rows.append((
             ticker,

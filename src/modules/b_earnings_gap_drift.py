@@ -5,9 +5,11 @@ An earnings event whose reaction session opened >= min_gap_pct above the prior c
 the gap-day low inside a tight range, then a close above that range.
 
 Interpretation notes (also in docs/status/BOT_4.md):
-  * Reaction session: ``before_open``/``during`` -> the event date itself;
-    ``after_close`` -> the next session; unknown timing -> whichever of the two
-    qualifies (first one wins).  Events from every source in ``earnings_dates`` count.
+  * Reaction session: events derived from an 8-K (source ``8k_2.02``/``8-K_2.02``) carry
+    the reaction session as ``event_date`` already; for calendar events (report date)
+    ``before_open``/``BMO``/``during`` -> the event date itself, ``after_close``/``AMC`` ->
+    the next session, unknown timing -> whichever of the two qualifies (first one wins).
+    Events from every source in ``earnings_dates`` count.
   * Gap = open[g] / close[g-1] - 1 (a true opening gap, not a close-to-close move).
   * Volume baseline = 50-day average ending the session *before* the gap; the "pre-gap
     ATR14" is the ATR ending the same session.
@@ -31,6 +33,10 @@ STOP_ATR_BUFFER = 0.1
 EVENT_LOOKBACK_DAYS = 30
 
 
+def _text(value) -> str:
+    return value if isinstance(value, str) else ""
+
+
 class EarningsGapDrift(PanelModule):
     name = "earnings_gap_drift"
 
@@ -49,9 +55,13 @@ class EarningsGapDrift(PanelModule):
         found: set[int] = set()
         for _, ev in events.iterrows():
             pos = int(cal.searchsorted(pd.Timestamp(ev["event_date"])))
-            timing = (ev.get("timing") or "").lower()
+            timing = _text(ev.get("timing")).lower()  # NULL arrives as NaN (a float) from pandas
+            source = _text(ev.get("source")).lower()
             on_day = pos < len(cal) and cal[pos] == pd.Timestamp(ev["event_date"])
-            if timing == "after_close" and on_day:
+            if source.startswith(("8k", "8-k")):
+                # derived from the 8-K acceptance time: event_date is already the reaction session
+                found.add(pos)
+            elif timing in ("after_close", "amc") and on_day:
                 found.add(pos + 1)
             elif timing in ("before_open", "during", "bmo") or not on_day:
                 found.add(pos)

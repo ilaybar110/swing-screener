@@ -23,6 +23,7 @@ Exit codes: 0 ok, 2 critical failure (alert sent), 1 unexpected crash.
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import sys
 from datetime import date, datetime
@@ -31,9 +32,9 @@ from typing import Optional
 
 from backtest.runner import insert_recommendations
 from notify import telegram
-from run_weekly import PRICE_HISTORY_CALENDAR_DAYS, open_db, refresh_universe_job
+from run_weekly import open_db, refresh_universe_job
 from src import baseline, report, tracker
-from src.config import Config, load_config
+from src.config import BASE_DIR_ENV, Config, load_config
 from src.contracts import Recommendation
 from src.data import earnings, edgar_daily, prices
 from src.data_access import DataAccess
@@ -168,6 +169,9 @@ def _process_day(conn, cfg: Config, jl: JobLog, day: date, modules, data: DataAc
             candidates.extend(res.value)
     out["candidates"] = len(candidates)
 
+    if candidates:  # share counts in the guardrail must be split-adjusted
+        jl.run("splits_candidates", lambda: prices.update_splits(conn, sorted({c.ticker for c in candidates})), day,
+               message_fn=lambda n_rows: f"{n_rows} split row(s)")
     ranked = jl.run("rank", lambda: rank(candidates, day, data, conn, cfg, "live"), day,
                     message_fn=lambda recs: f"{len(recs)} recommendation(s)")
     recs = ranked.value or []
@@ -378,7 +382,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="no state/report writes, no Telegram")
     ap.add_argument("--limit", type=int, help="trial runs: at most N universe tickers")
     ap.add_argument("--force", action="store_true", help="redo a day that is already complete")
+    ap.add_argument("--base-dir", type=Path, help="root holding state/, reports/, data/, work/ (default: the repo; "
+                                                  "use a temporary copy for trial runs)")
     args = ap.parse_args(argv)
+    if args.base_dir:
+        os.environ[BASE_DIR_ENV] = str(args.base_dir)
     cfg = load_config()
     setup_logging(Path(cfg.paths.logs_dir))
     code = 0

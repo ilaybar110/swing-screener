@@ -12,7 +12,6 @@ survivorship-bias caveat.
 
 from __future__ import annotations
 
-import re
 import sqlite3
 from datetime import date, timedelta
 from typing import Any, Optional
@@ -105,12 +104,35 @@ def refresh_universe(conn: sqlite3.Connection, as_of: date) -> None:
     )
 
 
+def _market_cap_from_filings(data: DataAccess, ticker: str, as_of: date, price: float) -> Optional[float]:
+    """Point-in-time market cap from the newest shares-outstanding fact filed by ``as_of``
+    (the weekly summary only exists for the live DB). ``price`` comes from split-adjusted
+    history (adjusted for every split up to today), while the reported share count is on
+    the basis of its own date, so it is scaled by every split dated after that fact."""
+    facts = data.get_fundamentals(ticker, as_of)
+    if facts.empty:
+        return None
+    shares = facts[facts["metric"] == "shares_outstanding"].sort_values("period_end")
+    if shares.empty:
+        return None
+    latest = shares.iloc[-1]
+    value = float(latest["value"])
+    if value <= 0:
+        return None
+    splits = data.get_splits(ticker)
+    if not splits.empty:
+        for _, sp in splits[splits["date"] > latest["period_end"]].iterrows():
+            value *= float(sp["ratio"])
+    return value * price
+
+
 def build_historical_universe(data: DataAccess, as_of: date) -> pd.DataFrame:
     """Point-in-time approximation of the universe as of `as_of`, for backtesting.
 
     Market cap is `shares outstanding (filed as of as_of) x price`, using the
-    weekly fundamentals_summary snapshot in effect on as_of. When no summary is
-    available yet for a ticker, falls back to that ticker's most recent known
+    weekly fundamentals_summary snapshot in effect on as_of, else the newest
+    shares-outstanding fact filed by as_of (split-adjusted; this is what a research DB
+    built by run_backfill has). When neither is available, falls back to that ticker's most recent known
     market cap (from any universe_snapshots row, regardless of date) and flags the
     row with market_cap_is_approx=True, since that fallback is not point-in-time.
 
@@ -146,6 +168,8 @@ def build_historical_universe(data: DataAccess, as_of: date) -> pd.DataFrame:
         market_cap_is_approx = False
         if summary and summary.get("shares"):
             market_cap = float(summary["shares"]) * price
+        elif (shares_cap := _market_cap_from_filings(data, ticker, as_of, price)) is not None:
+            market_cap = shares_cap
         else:
             fallback = conn.execute(
                 "SELECT market_cap FROM universe_snapshots WHERE ticker = ? "

@@ -31,7 +31,8 @@ SENIOR_TITLES = ("chief executive", "ceo", "chief financial", "cfo", "president"
 
 
 def _seniority(row: pd.Series) -> float:
-    title = (row.get("officer_title") or "").lower()
+    title = row.get("officer_title")
+    title = title.lower() if isinstance(title, str) else ""
     if any(s in title for s in SENIOR_TITLES):
         return 1.0
     if row.get("is_officer"):

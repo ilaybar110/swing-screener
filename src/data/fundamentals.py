@@ -80,69 +80,56 @@ def quarterize(raw_entries: list[dict]) -> list[dict]:
     filed) into discrete-quarter rows: {period_start, period_end, value, form,
     filed_date, accession}.
 
-    Entries are grouped by fiscal year (`fy`, as SEC reports it on every fact --
-    falling back to the fact's `start` date if `fy` is absent) and walked in
-    end-date order, keeping a running "covered so far" total for that fiscal
-    year:
-    - A fact whose duration is ~1 quarter (80-100 days) is already discrete;
-      its value is used as-is and added to the running total.
-    - A longer (YTD-cumulative or annual) fact is discretized as
-      `value - running_total_so_far` -- e.g. Q4 = FY - 9mo YTD, Q2 = 6mo YTD -
-      Q1, or, when only discrete quarters plus an annual total are tagged (no
-      explicit YTD facts), Q4 = FY - sum(Q1, Q2, Q3). The running total is then
-      reset to the fact's own (authoritative, already-cumulative) value.
-    - A cumulative-duration fact with nothing earlier in its fiscal year to
-      subtract against (e.g. an isolated 6-month YTD fact with no Q1) cannot be
-      derived and is skipped rather than guessed.
+    Facts are grouped by their real period: every cumulative fact of one fiscal year
+    (3/6/9/12 months) shares the same ``start`` date. (SEC's ``fy`` field is the fiscal
+    year of the *filing*, so it also labels prior-year comparatives -- it must not be
+    used for grouping.) Walking the facts in end-date order:
+    - a fact of ~1 quarter (80-100 days) is already discrete and used as-is;
+    - a longer fact (6/9/12-month YTD) is discretized as ``value`` minus the discrete
+      quarters already known inside the same cumulative window (Q2 = 6mo - Q1,
+      Q4 = FY - 9mo, ...). It is derived only when those earlier quarters tile the window
+      from its start up to the previous quarter end; otherwise it is skipped rather
+      than guessed.
+    When one period was reported several times, the first-filed value is kept, so
+    nothing becomes visible before it was actually public (point-in-time).
     """
-    by_fy: dict[Any, dict[date, dict]] = {}
+    facts: dict[tuple[date, date], dict] = {}
     for e in raw_entries:
         if "start" not in e or "end" not in e or e.get("val") is None:
             continue
-        days = _duration_days(e)
-        if days is None:
+        key = (_parse_date(e["start"]), _parse_date(e["end"]))
+        existing = facts.get(key)
+        if existing is None or e["filed"] < existing["filed"]:
+            facts[key] = e
+
+    quarters: dict[date, dict] = {}  # period_end -> row (discrete quarter)
+    for (start, end), e in sorted(facts.items(), key=lambda kv: (kv[0][1], -kv[0][0].toordinal())):
+        days = (end - start).days
+        if _QUARTER_MIN_DAYS <= days <= _QUARTER_MAX_DAYS:
+            quarters.setdefault(end, {
+                "period_start": start, "period_end": end, "value": float(e["val"]),
+                "form": e.get("form"), "filed_date": e.get("filed"), "accession": e.get("accn"),
+            })
             continue
-        fy_key = e.get("fy", _parse_date(e["start"]))
-        end = _parse_date(e["end"])
-        bucket = by_fy.setdefault(fy_key, {})
-        existing = bucket.get(end)
-        if existing is None or e["filed"] > existing["filed"]:
-            bucket[end] = e
-
-    rows: list[dict] = []
-    for fy_key, by_end in by_fy.items():
-        ordered = sorted(by_end.values(), key=lambda e: _parse_date(e["end"]))
-        cum_value = 0.0
-        prev_end: Optional[date] = None
-        for i, e in enumerate(ordered):
-            end = _parse_date(e["end"])
-            days = _duration_days(e)
-            is_direct_quarter = _QUARTER_MIN_DAYS <= days <= _QUARTER_MAX_DAYS
-            if is_direct_quarter:
-                discrete_value = float(e["val"])
-                cum_value += discrete_value
-            else:
-                if i == 0:
-                    # Nothing earlier in this fiscal year to subtract against.
-                    prev_end = end
-                    continue
-                discrete_value = float(e["val"]) - cum_value
-                cum_value = float(e["val"])  # authoritative going forward
-
-            period_start = (prev_end + timedelta(days=1)) if prev_end else _parse_date(e["start"])
-            rows.append(
-                {
-                    "period_start": period_start,
-                    "period_end": end,
-                    "value": discrete_value,
-                    "form": e.get("form"),
-                    "filed_date": e.get("filed"),
-                    "accession": e.get("accn"),
-                }
-            )
-            prev_end = end
-
-    return sorted(rows, key=lambda r: r["period_end"])
+        if days < _QUARTER_MAX_DAYS:
+            continue
+        prior = sorted(
+            (q for q in quarters.values() if q["period_start"] >= start and q["period_end"] < end),
+            key=lambda q: q["period_end"],
+        )
+        if not prior or abs((prior[0]["period_start"] - start).days) > 5:
+            continue
+        gaps_ok = all(
+            abs((b["period_start"] - a["period_end"]).days) <= 5 for a, b in zip(prior, prior[1:])
+        )
+        if not gaps_ok or (end - prior[-1]["period_end"]).days > _QUARTER_MAX_DAYS:
+            continue
+        quarters.setdefault(end, {
+            "period_start": prior[-1]["period_end"] + timedelta(days=1), "period_end": end,
+            "value": float(e["val"]) - sum(q["value"] for q in prior),
+            "form": e.get("form"), "filed_date": e.get("filed"), "accession": e.get("accn"),
+        })
+    return sorted(quarters.values(), key=lambda r: r["period_end"])
 
 
 # ---------------------------------------------------------------------------

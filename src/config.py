@@ -14,6 +14,15 @@ import yaml
 from pydantic import BaseModel, Field
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+BASE_DIR_ENV = "SWING_BASE_DIR"
+
+
+def data_root() -> Path:
+    """Directory that holds state/, reports/, data/ and work/: the repo root, unless the
+    SWING_BASE_DIR environment variable (the --base-dir flag of the entrypoints) points
+    elsewhere -- used for trial runs against a temporary copy of the state."""
+    override = os.environ.get(BASE_DIR_ENV)
+    return Path(override).resolve() if override else REPO_ROOT
 
 
 class PathsConfig(BaseModel):
@@ -203,5 +212,5 @@ def load_config(path: Optional[Path] = None, base_dir: Optional[Path] = None) ->
     }
 
     config = Config.model_validate(raw)
-    config.resolve_paths(base_dir or REPO_ROOT)
+    config.resolve_paths(base_dir or data_root())
     return config

@@ -95,7 +95,7 @@ def update_baselines(
         if after.empty:
             continue  # next open not yet known: stays pending
         entry = float(after.iloc[0]["open"])
-        pseudo = _pseudo_rec(row, entry)
+        pseudo = _pseudo_rec(row, entry, config)
         res = simulate(pseudo, frame, None, config, entry_mode="open")
         if res.is_final:
             conn.execute(
@@ -111,9 +111,9 @@ def update_baselines(
     return len(rows), newly_final
 
 
-def _pseudo_rec(row: sqlite3.Row, entry: float) -> Recommendation:
+def _pseudo_rec(row: sqlite3.Row, entry: float, config) -> Recommendation:
     stop = entry * (1.0 - row["stop_pct"])
-    target = entry + 2.0 * (entry - stop)  # recomputed in simulate(); placeholder
+    target = entry + config.trade_plan.target_r_multiple * (entry - stop)  # simulate() re-derives it from the fill
     sig = date.fromisoformat(row["signal_date"])
     return Recommendation(
         id=row["id"], source=row["source"], signal_date=sig, ticker=row["ticker"],

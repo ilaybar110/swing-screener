@@ -317,3 +317,50 @@ def test_coverage_report_reports_percent_resolved_per_metric(writable_fixture_co
     assert report["revenue"]["resolved"] == 1
     assert report["revenue"]["total"] == 2
     assert report["operating_income"]["resolved"] == 0
+
+
+def test_quarterize_ignores_filing_fy_label_on_prior_year_comparatives():
+    """Regression (found on real AAPL/CSCO data): every 10-Q/10-K carries its own fiscal
+    year in ``fy`` even on prior-year comparative facts, so grouping by ``fy`` mixed two
+    years into one running total and produced nonsense (e.g. a -$64B quarter)."""
+    e = _entry
+    raw = [
+        # FY2025 as first reported (Sep fiscal year-end): YTD facts, all start 2024-09-29
+        e("2024-09-29", "2024-12-28", 40.0, "a1", 2025, "Q1", "10-Q", "2025-01-31"),
+        e("2024-09-29", "2025-03-29", 70.0, "a2", 2025, "Q2", "10-Q", "2025-05-02"),
+        e("2024-09-29", "2025-06-28", 100.0, "a3", 2025, "Q3", "10-Q", "2025-08-01"),
+        e("2024-09-29", "2025-09-27", 135.0, "a4", 2025, "FY", "10-K", "2025-10-31"),
+        # FY2026 filings repeat the prior-year comparatives, labelled fy=2026
+        e("2025-09-28", "2025-12-27", 50.0, "b1", 2026, "Q1", "10-Q", "2026-01-30"),
+        e("2024-09-29", "2024-12-28", 40.0, "b1", 2026, "Q1", "10-Q", "2026-01-30"),
+        e("2025-09-28", "2026-03-28", 90.0, "b2", 2026, "Q2", "10-Q", "2026-05-01"),
+        e("2024-09-29", "2025-03-29", 71.0, "b2", 2026, "Q2", "10-Q", "2026-05-01"),  # restated comparative
+        e("2025-09-28", "2026-06-27", 135.0, "b3", 2026, "Q3", "10-Q", "2026-07-31"),
+    ]
+    rows = fundamentals.quarterize(raw)
+    by_end = {r["period_end"]: r for r in rows}
+    assert by_end[date(2024, 12, 28)]["value"] == pytest.approx(40.0)
+    assert by_end[date(2025, 3, 29)]["value"] == pytest.approx(30.0)  # first-filed value (point-in-time)
+    assert by_end[date(2025, 3, 29)]["filed_date"] == "2025-05-02"
+    assert by_end[date(2025, 6, 28)]["value"] == pytest.approx(30.0)
+    assert by_end[date(2025, 9, 27)]["value"] == pytest.approx(35.0)
+    assert by_end[date(2025, 12, 27)]["value"] == pytest.approx(50.0)
+    assert by_end[date(2026, 3, 28)]["value"] == pytest.approx(40.0)
+    assert by_end[date(2026, 6, 27)]["value"] == pytest.approx(45.0)
+    assert sum(r["value"] for r in rows if r["period_end"] > date(2025, 6, 30)) == pytest.approx(35 + 50 + 40 + 45)
+
+
+def test_quarterize_prefers_direct_quarter_over_ytd_difference():
+    e = _entry
+    raw = [
+        e("2024-01-01", "2024-03-31", 10.0, "a", 2024, "Q1", "10-Q", "2024-04-30"),
+        e("2024-01-01", "2024-06-30", 30.0, "b", 2024, "Q2", "10-Q", "2024-07-30"),
+        e("2024-04-01", "2024-06-30", 20.5, "b", 2024, "Q2", "10-Q", "2024-07-30"),  # direct, slightly different rounding
+    ]
+    by_end = {r["period_end"]: r["value"] for r in fundamentals.quarterize(raw)}
+    assert by_end[date(2024, 6, 30)] == pytest.approx(20.5)
+
+
+def test_quarterize_skips_ytd_it_cannot_derive():
+    raw = [_entry("2024-01-01", "2024-06-30", 30.0, "b", 2024, "Q2", "10-Q", "2024-07-30")]
+    assert fundamentals.quarterize(raw) == []

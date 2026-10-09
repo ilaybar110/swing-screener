@@ -141,3 +141,28 @@ def test_html_to_text_strips_sgml_document_wrapper():
 def test_html_to_text_separates_table_cells():
     t = texts.html_to_text("<table><tr><td>Revenue</td><td>$109.4</td><td>(5)</td></tr><tr><td>EPS</td><td>2.02</td></tr></table>")
     assert [ln for ln in t.splitlines() if ln] == ["Revenue $109.4 (5)", "EPS 2.02"]
+
+
+INDEX_PAGE = (
+    '<div class="infoHead">Accepted</div><div class="info">2024-05-03 16:01:40</div>'
+    '<div class="infoHead">Items</div><div class="info">Item 8.01: Other Events<br></div>'
+    '<table><tr><td>1</td><td>8-K</td><td><a href="/ix?doc=/Archives/edgar/data/1/acme-8k.htm">acme-8k.htm</a></td><td>8-K</td></tr>'
+    '<tr><td>2</td><td>PR</td><td><a href="/Archives/edgar/data/1/ex99.htm">ex99.htm</a></td><td>EX-99.1</td></tr></table>'
+)
+
+
+def test_get_8k_texts_rederives_urls_lost_in_the_state_round_trip(conn):
+    """Regression (real run): state/filings.csv does not carry the document URLs, so a filing
+    processed by an earlier run (e.g. yesterday's earnings 8-K) had no URL and its text was
+    silently missing from the LLM brief inputs."""
+    _filing(conn, "0000000001-24-000001", "2024-05-03", "8.01", primary=None)
+    base = "https://www.sec.gov"
+    client = FakeClient({
+        f"{base}/Archives/edgar/data/1/000000000124000001/0000000001-24-000001-index.htm": INDEX_PAGE,
+        f"{base}/Archives/edgar/data/1/acme-8k.htm": MULTI_ITEM_DOC,
+        f"{base}/Archives/edgar/data/1/ex99.htm": EX99,
+    })
+    out = texts.get_8k_texts(conn, "ACME", date(2024, 5, 10), client=client)
+    assert [r["section"] for r in out] == ["item_8.01", "EX-99.1"]
+    row = conn.execute("SELECT primary_doc_url, exhibit_991_url FROM filings").fetchone()
+    assert row[0].endswith("acme-8k.htm") and row[1].endswith("ex99.htm")  # stored back for reuse

@@ -14,8 +14,9 @@ fixture data used to test against them.
   `guardrail_reasons`, `valuation_info`, `details`, `llm_brief`) are plain Python
   objects in the dataclass; `src/state_io.py` and any DB write path handle
   (de)serialization to/from the TEXT columns.
-- **GuardrailResult** — `status ("pass"/"fail"/"unknown"), reasons, metrics,
-  valuation_info`.
+- **GuardrailResult** — `status ("pass"/"pass_partial"/"fail"/"unknown"), reasons,
+  metrics, valuation_info`. `pass_partial` = evaluable checks passed, some could not be
+  evaluated (listed in `reasons`); ranking treats it like `pass`.
 - **TrackResult** — output of `tracker.simulate()`; `is_final=True` once a
   recommendation reaches a terminal state (stopped/target_hit/time_stop/expired)
   and its `recommendation_results` row should be written and never touched again.

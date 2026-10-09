@@ -10,6 +10,9 @@ paths:
   raw_cache_dir: "data/raw"
   logs_dir: "data/logs"
 
+daily:
+  max_catchup_days: 5            # missed trading days processed per daily run; the rest wait for the next run
+
 edgar:
   max_requests_per_second: 4
   daily_index_lookback_days: 10   # how far back to search for the latest published index
@@ -37,6 +40,7 @@ universe:
 regime:
   spy_sma_days: 200
   breadth_sma_days: 50
+  breadth_threshold_pct: 50       # breadth is "OK" when >= this % of the universe is above its 50-day SMA
 
 modules:
   a_momentum_pullback:

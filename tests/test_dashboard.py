@@ -29,8 +29,10 @@ class FakeModule:
         out = []
         for d in (date(2024, 6, 14), date(2024, 6, 21)):
             if start <= d <= end:
-                px = float(data.get_prices("MOMA1", d, d)["close"].iloc[0])
-                out.append(Candidate("MOMA1", self.name, d, px, px * 0.95, 70.0, "fake setup", {}))
+                # a different ticker on the second day: a repeat of a still-live ticker would be folded (D3)
+                tk = "MOMA1" if d == date(2024, 6, 14) else "MOMB1"
+                px = float(data.get_prices(tk, d, d)["close"].iloc[0])
+                out.append(Candidate(tk, self.name, d, px, px * 0.95, 70.0, "fake setup", {}))
         return out
 
 

@@ -187,7 +187,7 @@ def test_stock_split_is_not_counted_as_dilution(writable_fixture_conn):
     conn.execute("INSERT INTO splits (ticker, date, ratio) VALUES ('SPLT', '2024-06-10', 2.0)")
     conn.commit()
     adjusted = guardrail.evaluate("SPLT", AS_OF, data, fetch_fn=lambda *a: None)
-    assert adjusted.status == "pass"
+    assert adjusted.status == "pass_partial"  # debt not seeded -> that check is unevaluated (D2)
     assert adjusted.metrics["shares_growth_yoy"] == pytest.approx(0.02)
     # a split dated after as_of is not known yet and must not change the result
     conn.execute("DELETE FROM splits WHERE ticker='SPLT'")
@@ -205,7 +205,7 @@ def test_fundamentals_found_for_second_share_class_via_cik(writable_fixture_conn
     conn.commit()
     data = DataAccess(conn)
     assert not data.get_fundamentals("CLSB", AS_OF).empty
-    assert guardrail.evaluate("CLSB", AS_OF, data, fetch_fn=lambda *a: None).status == "pass"
+    assert guardrail.evaluate("CLSB", AS_OF, data, fetch_fn=lambda *a: None).status == "pass_partial"  # D2: no debt data
 
 
 # --- Module B: earnings timing -> reaction session; NULL timing / NULL titles (NaN) ----

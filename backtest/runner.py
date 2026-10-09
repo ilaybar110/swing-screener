@@ -282,12 +282,15 @@ def run(
         by_day.setdefault(c.signal_date, []).append(c)
     recs: list[Recommendation] = []
     for day in sorted(by_day):
-        recs.extend(_rank_day(by_day[day], day, data, conn, config, run_id))
-    for r in recs:
-        # ids are primary keys across all sources, so namespace them per run
-        r.source = run_id
-        r.id = f"{run_id}/{r.id}"
-    insert_recommendations(conn, recs)
+        day_recs = _rank_day(by_day[day], day, data, conn, config, run_id)
+        for r in day_recs:
+            # ids are primary keys across all sources, so namespace them per run
+            r.source = run_id
+            r.id = f"{run_id}/{r.id}"
+        # stored day by day: the next day's repeat-signal rule (src.repeats) looks for
+        # earlier recommendations of the same run that are still PENDING/ACTIVE
+        insert_recommendations(conn, day_recs)
+        recs.extend(day_recs)
     log.info("%d recommendations stored", len(recs))
 
     if track_until is None:

@@ -40,9 +40,9 @@ from src.data import earnings, edgar_daily, prices
 from src.data_access import DataAccess
 from src.db import init_db
 from src.jobs import (
-    BENCHMARK, DAY_JOB, FINALIZE_JOB, CriticalError, JobLog, finalize_done, last_completed_day,
-    latest_completed_session, live_start, missed_days, new_run_id, open_position_tickers,
-    price_message, price_plan, prune_job_log,
+    BENCHMARK, CATCHUP_JOB, DAY_JOB, FINALIZE_JOB, CriticalError, JobLog, catchup_remaining,
+    finalize_done, last_completed_day, latest_completed_session, live_start, missed_days, new_run_id,
+    open_position_tickers, price_message, price_plan, prune_job_log,
 )
 from src.llm import brief_io
 from src.modules import get_enabled_modules
@@ -213,6 +213,14 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
         print(f"prepare: already up to date through {last}; nothing to do")
         conn.close()
         return 0
+    # R2: at most daily.max_catchup_days sessions per run, oldest first; the rest wait for
+    # the next run. Everything below works on the last session actually processed.
+    remaining = max(0, len(days) - cfg.daily.max_catchup_days)
+    days = days[:cfg.daily.max_catchup_days]
+    if remaining:
+        log.warning("prepare: catch-up limited to %d day(s); %d day(s) remain for the next run",
+                    len(days), remaining)
+    target = days[-1]
     log.info("prepare: last completed day %s, processing %d day(s): %s..%s",
              last, len(days), days[0], days[-1])
 
@@ -233,6 +241,7 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
         modules = get_enabled_modules(cfg)
         per_day = [_process_day(conn, cfg, jl, d, modules, data) for d in days]
         summary["days"] = per_day
+        jl.record(CATCHUP_JOB, target, "ok", str(remaining))
         if not any(p["edgar_ok"] for p in per_day):
             raise CriticalError("EDGAR is unavailable: no daily filing index could be processed")
 
@@ -263,7 +272,8 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
     print(f"prepare {target}{' (dry run)' if dry_run else ''}: processed {len(days)} day(s) "
           f"({days[0]}..{days[-1]}), completed through {done}, "
           f"{sum(p['recs'] for p in summary.get('days', []))} recommendation(s), "
-          f"{len(jl.errors)} non-critical error(s)" + ("" if exit_code == 0 else f", FAILED (exit {exit_code})"))
+          + (f"{remaining} missed day(s) remaining for the next run, " if remaining else "")
+          + f"{len(jl.errors)} non-critical error(s)" + ("" if exit_code == 0 else f", FAILED (exit {exit_code})"))
     for e in jl.errors:
         print(f"  - {e}")
     conn.close()
@@ -318,15 +328,17 @@ def finalize(cfg: Config, *, target: Optional[date] = None, dry_run: bool = Fals
                message_fn=lambda rep: json.dumps({k: (len(v) if hasattr(v, "__len__") else v)
                                                   for k, v in rep.items()}))
         since = _previous_finalized(conn, target)
+        remaining = catchup_remaining(conn, target)
         if dry_run:
-            ctx = report.build_context(conn, target, cfg, since)
+            ctx = report.build_context(conn, target, cfg, since, remaining)
             log.info("dry run: report not written (%d new recommendation(s))", ctx["n_new"])
             summary_text = report.summary_text(ctx)
         else:
-            res = jl.run("report", lambda: report.build(conn, target, config=cfg, since=since), target,
-                         critical=True)
+            res = jl.run("report", lambda: report.build(conn, target, config=cfg, since=since,
+                                                         catchup_remaining=remaining), target, critical=True)
             html_path = res.value[0]
-            summary_text = report.build_summary(conn, target, config=cfg, since=since)
+            summary_text = report.build_summary(conn, target, config=cfg, since=since,
+                                                catchup_remaining=remaining)
         jl.record(FINALIZE_JOB, target, "ok", "")
     except Exception as exc:  # noqa: BLE001 - no report = no deliverable
         log.exception("finalize failed")

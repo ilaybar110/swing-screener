@@ -4,6 +4,9 @@ Yahoo's news endpoints return nothing from the cloud environment, so Google News
 the only source. Two queries are issued -- ``<TICKER> stock`` and the (cleaned)
 company name -- merged, de-duplicated (same URL, or near-identical title) and filtered
 to ``[as_of - days, as_of]`` (point-in-time: nothing published after ``as_of``).
+Google's search is fuzzy, so only items whose *title* names the company are kept: the
+ticker as a whole word, the cleaned company name, or its first distinctive word
+(``is_relevant``); the number of dropped items is logged.
 
 The RSS search also gets ``after:``/``before:`` operators so historical ``as_of`` dates
 (backtests) are served from the right window instead of "now".
@@ -44,6 +47,45 @@ def clean_company_name(name: str) -> str:
             break
         out = new
     return out or (name or "").strip()
+
+
+# Words too common to identify a company on their own ("First Financial Bancorp" -> "Bancorp").
+_GENERIC_WORDS = frozenset(
+    "the and of for first second new old north south east west american america united national "
+    "international global general financial bank bancorp bancshares trust capital group holdings "
+    "energy oil gas petroleum resources industries industrial technologies technology tech "
+    "systems solutions services software health healthcare medical pharma pharmaceuticals "
+    "therapeutics biosciences bio networks communications media entertainment partners "
+    "properties realty reit royalty acquisition enterprises brands products materials".split()
+)
+
+
+def name_terms(company_name: str) -> list[str]:
+    """Phrases that identify the company in a headline: the cleaned name and its first
+    distinctive word (>= 4 letters, not a generic business word)."""
+    name = clean_company_name(company_name)
+    if not name:
+        return []
+    terms = [name]
+    for word in re.findall(r"[A-Za-z][A-Za-z0-9&'\-]*", name):
+        if len(word) >= 4 and word.lower() not in _GENERIC_WORDS:
+            terms.append(word)
+            break
+    return terms
+
+
+def _whole_word(term: str, text: str, ignore_case: bool) -> bool:
+    flags = re.I if ignore_case else 0
+    return re.search(rf"(?<![A-Za-z0-9]){re.escape(term)}(?![A-Za-z0-9])", text, flags) is not None
+
+
+def is_relevant(title: str, ticker: str, company_name: str) -> bool:
+    """True when the headline contains the ticker as a whole word (case-sensitive, so
+    "ON" does not match "on") or a distinctive part of the company name (whole word,
+    case-insensitive)."""
+    if ticker and _whole_word(ticker, title, ignore_case=False):
+        return True
+    return any(_whole_word(t, title, ignore_case=True) for t in name_terms(company_name))
 
 
 def _norm_title(title: str) -> str:
@@ -149,6 +191,9 @@ def get_news(
 
     in_window = [it for it in collected if floor <= it["published"] < cutoff]
     in_window.sort(key=lambda it: it["published"], reverse=True)
+    relevant = [it for it in in_window if is_relevant(it["title"], ticker, company_name)]
+    filtered_out = len(in_window) - len(relevant)
+    in_window = relevant
 
     out = []
     for it in _dedupe(in_window):
@@ -163,5 +208,6 @@ def get_news(
                 "published": iso,
             }
         )
-    log.info("get_news %s as_of=%s: %d raw -> %d items", ticker, as_of, len(collected), len(out))
+    log.info("get_news %s as_of=%s: %d raw -> %d items (%d filtered as not naming the company)",
+             ticker, as_of, len(collected), len(out), filtered_out)
     return out

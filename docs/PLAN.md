@@ -32,8 +32,10 @@ no position sizing, no account management. The system is zero-cost to run.
 - Daily routine runs after US market sessions close, mornings Israel time, Tuesday
   through Saturday (i.e., covering Mon–Fri US trading days).
 - Weekly routine runs Sunday.
-- If a daily run is missed, the next daily run catches up every missed US trading day,
-  in chronological order, before/while producing the current day's report.
+- If a daily run is missed, the next daily run catches up the missed US trading days, in
+  chronological order, before/while producing the report. At most `daily.max_catchup_days`
+  (5) days are processed per run; the remaining days are processed by the next run, and the
+  report says "catch-up in progress, N days remaining".
 
 ## 4. Data sources
 
@@ -62,7 +64,8 @@ persistent on disk under `data/raw/` when run locally, per-run (ephemeral) in th
 
 ### 4.4 EDGAR
 - Daily form index: `daily-index/form.YYYYMMDD.idx`, used to find each day's Form 4 and
-  8-K filings.
+  8-K filings. The daily pass only fetches filings of companies in the current universe
+  (latest `universe_snapshots`), not of every listed company.
 - Submissions API for 8-K items and filing acceptance timestamps.
 - Form 4 XML for insider transaction detail.
 - `companyfacts` per company, fetched on demand (not bulk) for candidate fundamentals.
@@ -82,6 +85,8 @@ persistent on disk under `data/raw/` when run locally, per-run (ephemeral) in th
 ### 4.6 News
 - Google News RSS only. (Yahoo's news endpoints return nothing when called from the
   cloud environment.)
+- Relevance filter: only items whose title contains the ticker (as a whole word) or a
+  distinctive part of the company name are kept; the number filtered is logged.
 
 ## 5. Universe (rebuilt weekly)
 
@@ -101,7 +106,8 @@ A snapshot of the universe is saved every week (`universe_snapshots`).
 ## 6. Market regime (computed daily)
 
 - SPY vs its 200-day SMA.
-- Breadth = percentage of the universe trading above its own 50-day SMA.
+- Breadth = percentage of the universe trading above its own 50-day SMA. Breadth is "OK"
+  when it is at least `regime.breadth_threshold_pct` (config.yaml, 50).
 - **Favorable**: both conditions OK.
 - **Caution**: exactly one of the two fails.
 - **Unfavorable**: both fail.
@@ -152,21 +158,27 @@ Common rule for all modules: skip a signal if the resulting stop distance is
 ## 8. Fundamental guardrail
 
 Evaluated on demand, for candidates only (not the whole universe), result is one of
-`pass` / `fail` / `unknown`:
+`pass` / `pass_partial` / `fail` / `unknown`:
 
 - **Fail** if TTM operating income AND TTM free cash flow are both negative.
 - **Fail** if diluted shares outstanding grew more than 10% year-over-year.
 - **Fail** if total debt > 5x TTM operating income (this check is skipped for
   Financials sector companies, and whenever operating income ≤ 0).
-- Missing data always resolves to **unknown**, never to fail.
+- Missing data never resolves to fail. A check that cannot be evaluated is skipped:
+  - no check could be evaluated at all -> **unknown**;
+  - the evaluable checks pass but at least one could not be evaluated -> **pass_partial**,
+    with the unevaluated checks listed in `guardrail_reasons`. `pass_partial` is treated
+    exactly like `pass` for ranking and is shown as "Pass (partial)" in the report, naming
+    the missing checks.
 - Informational only, not a pass/fail input: EV/FCF percentile vs the company's sector,
   computed from the weekly fundamentals summary.
 
 ## 9. Ranking
 
-- Each of setup quality, relative strength, and overlap is converted to a 0–100
-  percentile within that day's candidates.
-- Overlap score: 1 module = 0, 2 modules = 70, 3+ modules = 100.
+- Setup quality and relative strength are each converted to a 0–100 percentile within
+  that day's candidates.
+- Overlap is **not** percentiled: its score is used directly as 0 / 70 / 100
+  (1 module = 0, 2 modules = 70, 3+ modules = 100).
 - Weights: setup quality 45%, relative strength 35%, overlap 20%.
 - A module's own historical track record contributes 0% until that module has at least
   30 closed live results; after that it contributes 10%, with the other weights scaled
@@ -174,7 +186,16 @@ Evaluated on demand, for candidates only (not the whole universe), result is one
 - The same ticker signaling on the same day from multiple modules becomes a single
   recommendation; the module with the highest setup score is primary and its entry/stop
   are used.
-- The report shows at most 2 recommendations per GICS industry.
+- The report shows at most 2 recommendations per industry. "Industry" is Nasdaq's
+  `industry` field from the stock screener (finer-grained than GICS; no GICS source is
+  used).
+- A ticker that already has a live recommendation with status PENDING or ACTIVE (`open`)
+  does not get a new one. The repeat signal is recorded in that recommendation's
+  `details["repeat_signals"]` (list of `{date, modules}`) and shown in the report as
+  "still valid from <signal date>". A new recommendation is allowed once the previous one
+  is final (stopped / target_hit / time_stop / expired). Liveness is decided by re-simulating
+  the earlier recommendation on prices up to the new signal date. Backtests apply the same
+  rule, so live and backtest statistics stay comparable.
 - Recommendations whose expected holding window (25 trading days) contains a known
   earnings date are flagged.
 

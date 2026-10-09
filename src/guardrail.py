@@ -1,13 +1,15 @@
 """Fundamental guardrail (docs/PLAN.md section 8), evaluated for candidates only.
 
-Result is ``pass`` / ``fail`` / ``unknown``:
+Result is ``pass`` / ``pass_partial`` / ``fail`` / ``unknown``:
 - fail if TTM operating income AND TTM free cash flow are both negative;
 - fail if shares outstanding grew more than ``guardrail.shares_growth_yoy_max`` YoY;
 - fail if total debt > ``guardrail.debt_to_op_income_max`` x TTM operating income
   (skipped for Financials and whenever operating income <= 0).
-Missing data never becomes a fail: a check that cannot be evaluated is skipped
-(listed in ``metrics["unevaluated"]``); if no check can be evaluated at all the
-result is ``unknown``.
+Missing data never becomes a fail: a check that cannot be evaluated is skipped. If no
+check can be evaluated at all the result is ``unknown``; if the evaluable checks pass
+but at least one could not be evaluated the result is ``pass_partial`` and the
+unevaluated checks are listed in ``reasons`` (and ``metrics["unevaluated"]``).
+Downstream, ``pass_partial`` is treated exactly like ``pass``.
 """
 
 from __future__ import annotations
@@ -148,4 +150,6 @@ def evaluate(
     if evaluated == 0:
         return GuardrailResult("unknown", missing, metrics, val)
     metrics["unevaluated"] = missing
+    if missing:
+        return GuardrailResult("pass_partial", [f"not evaluated: {m}" for m in missing], metrics, val)
     return GuardrailResult("pass", [], metrics, val)

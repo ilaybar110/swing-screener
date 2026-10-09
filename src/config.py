@@ -34,6 +34,10 @@ class PathsConfig(BaseModel):
     logs_dir: Path
 
 
+class DailyConfig(BaseModel):
+    max_catchup_days: int
+
+
 class EdgarConfig(BaseModel):
     max_requests_per_second: float
     daily_index_lookback_days: int
@@ -58,6 +62,7 @@ class UniverseConfig(BaseModel):
 class RegimeConfig(BaseModel):
     spy_sma_days: int
     breadth_sma_days: int
+    breadth_threshold_pct: float
 
 
 class ModuleAConfig(BaseModel):
@@ -172,6 +177,7 @@ class SecretsConfig(BaseModel):
 
 class Config(BaseModel):
     paths: PathsConfig
+    daily: DailyConfig
     edgar: EdgarConfig
     prices: PricesConfig
     universe: UniverseConfig

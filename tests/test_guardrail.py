@@ -187,7 +187,7 @@ def test_calls_injected_fetch_fn_when_ticker_missing_from_db(conn):
 
     result = guardrail.evaluate(ticker, AS_OF, DataAccess(conn), fetch_fn=fake_fetch)
     assert called["cik"] == cik
-    assert result.status == "pass"
+    assert result.status == "pass_partial"  # no share/debt data seeded -> unevaluated checks (D2)
 
 
 def test_backtest_never_fetches_when_fetch_fn_is_noop(conn):

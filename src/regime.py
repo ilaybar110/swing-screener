@@ -3,7 +3,7 @@
 Regime is derived daily from two independent conditions:
   - SPY trading above its own `regime.spy_sma_days`-day SMA.
   - Breadth: the percentage of the current universe trading above its own
-    `regime.breadth_sma_days`-day SMA, with an "ok" threshold of 50%.
+    `regime.breadth_sma_days`-day SMA, with an "ok" threshold of ``regime.breadth_threshold_pct`` (config.yaml, 50).
 
 Favorable = both conditions ok, Unfavorable = both fail, Caution = exactly one.
 """
@@ -20,8 +20,6 @@ from src.utils.calendar import trading_days
 from src.utils.logging import get_logger
 
 log = get_logger(__name__)
-
-_BREADTH_OK_THRESHOLD = 50.0
 
 
 def _lookback_start(as_of: date, sma_days: int) -> date:
@@ -61,7 +59,7 @@ def compute_regime(conn: sqlite3.Connection, as_of: date) -> dict[str, Any]:
         if close > sma:
             above += 1
     breadth_pct = 100.0 * above / counted if counted else 0.0
-    breadth_ok = breadth_pct >= _BREADTH_OK_THRESHOLD
+    breadth_ok = breadth_pct >= cfg.regime.breadth_threshold_pct
 
     if spy_ok and breadth_ok:
         regime_label = "Favorable"

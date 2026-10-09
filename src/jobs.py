@@ -28,6 +28,7 @@ log = get_logger(__name__)
 
 DAY_JOB = "day"            # one row per fully-processed trading day (prepare stage)
 FINALIZE_JOB = "finalize"  # one row per finalised report date
+CATCHUP_JOB = "catchup"    # message = missed days the daily run left for its next run (R2)
 SESSION_BUFFER = timedelta(minutes=20)  # data vendors need a few minutes after the close
 JOB_LOG_RETENTION_DAYS = 45
 
@@ -157,6 +158,18 @@ def last_completed_day(conn: sqlite3.Connection) -> Optional[date]:
         "SELECT MAX(trading_date) FROM job_log WHERE job = ? AND status = 'ok'", (DAY_JOB,)
     ).fetchone()
     return date.fromisoformat(row[0]) if row and row[0] else None
+
+
+def catchup_remaining(conn: sqlite3.Connection, day: date) -> int:
+    """Missed trading days the prepare run that completed ``day`` left unprocessed."""
+    row = conn.execute(
+        "SELECT message FROM job_log WHERE job = ? AND trading_date = ? AND status = 'ok'",
+        (CATCHUP_JOB, day.isoformat()),
+    ).fetchone()
+    try:
+        return int(row[0]) if row and row[0] else 0
+    except ValueError:
+        return 0
 
 
 def finalize_done(conn: sqlite3.Connection, day: date) -> bool:

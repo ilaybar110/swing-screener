@@ -1,7 +1,8 @@
 """Daily EDGAR processing: Form 4 / 8-K filings of universe companies for one day.
 
 ``process_day(conn, date_)`` reads the EDGAR daily *form* index, keeps Form 4/4-A and
-8-K/8-K-A filings whose CIK is in ``tickers``, and
+8-K/8-K-A filings whose CIK belongs to a company in the latest universe snapshot
+(``load_universe_cik_map``; not every listed company), and
 
 - 8-K: fetches the filing index page (one small request) for the acceptance time,
   items, primary document and Exhibit 99.1 URL -> ``filings``; Item 2.02 8-Ks also
@@ -268,6 +269,23 @@ def load_cik_map(conn: sqlite3.Connection) -> dict[str, list[str]]:
     return out
 
 
+def load_universe_cik_map(conn: sqlite3.Connection) -> dict[str, list[str]]:
+    """``load_cik_map`` restricted to companies in the latest ``universe_snapshots`` snapshot
+    (a CIK counts when any of its tickers is in the universe; all its tickers are kept so
+    every share class gets the events). Without any snapshot the daily pass cannot be
+    narrowed, so it falls back to every ticker (and says so)."""
+    in_universe = {
+        r[0] for r in conn.execute(
+            "SELECT ticker FROM universe_snapshots WHERE snapshot_date = "
+            "(SELECT MAX(snapshot_date) FROM universe_snapshots)")
+    }
+    full = load_cik_map(conn)
+    if not in_universe:
+        log.warning("no universe snapshot: EDGAR daily pass covers every listed ticker")
+        return full
+    return {cik: tks for cik, tks in full.items() if in_universe.intersection(tks)}
+
+
 def pick_ticker(candidates: list[str], symbol: str = "") -> str:
     """The issuer's own trading symbol if it is one of the CIK's tickers (also
     tolerating '-' / '.' share-class spelling), else the first ticker."""
@@ -403,7 +421,7 @@ def process_day(
     if index_date != date_:
         log.info("daily index for %s not published; using %s", date_, index_date)
 
-    cik_map = load_cik_map(conn)
+    cik_map = load_universe_cik_map(conn)
     entries = [e for e in parse_form_index(text, WANTED_FORMS) if e.cik in cik_map]
 
     done = {

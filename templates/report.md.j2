@@ -6,6 +6,10 @@
 > **No new recommendations today.** Unfavorable regime: candidates are still tracked, but the table is suppressed.
 
 {% endif %}
+{% if catchup_note %}
+> {{ catchup_note | capitalize | md }}.
+
+{% endif %}
 {% for note in data_quality %}
 > Data quality: {{ note | md }}
 
@@ -32,7 +36,7 @@ No new recommendations today.
 - **Target ({{ c.target_r }}R):** {{ c.target }} ({{ c.target_pct }})
 - **Time stop:** {{ c.time_stop }}
 - **Valid until:** {{ c.valid_until }}
-- **Guardrail:** {{ c.guardrail }}{% if c.guardrail_reasons %} - {{ c.guardrail_reasons | join("; ") | md }}{% endif %}
+- **Guardrail:** {{ c.guardrail_label }}{% if c.guardrail_reasons %} - {{ c.guardrail_reasons | join("; ") | md }}{% endif %}
 
 {% if c.ev_fcf %}
 - **EV/FCF:** {{ c.ev_fcf | md }}
@@ -82,10 +86,10 @@ Sources: {{ c.brief.sources | join(" ; ") | md }}
 
 New recommendations since the previous report ({{ since }}).
 
-| Date | Ticker | Modules | Entry | Stop | Target | Status | R |
-|---|---|---|---|---|---|---|---|
+| Date | Ticker | Modules | Entry | Stop | Target | Status | R | Note |
+|---|---|---|---|---|---|---|---|---|
 {% for r in catch_up %}
-| {{ r.date }} | {{ r.ticker | md }} | {{ r.modules | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.status | md }} | {{ r.current_r }} |
+| {{ r.date }} | {{ r.ticker | md }} | {{ r.modules | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.status | md }} | {{ r.current_r }} | {{ r.note | md }} |
 {% endfor %}
 
 {% endif %}
@@ -104,10 +108,10 @@ No changes since the previous report.
 ## Open recommendations ({{ open_recs | length }})
 
 {% if open_recs %}
-| Ticker | Signal | Status | Entry | Stop | Target | Current R | Valid until |
-|---|---|---|---|---|---|---|---|
+| Ticker | Signal | Status | Entry | Stop | Target | Current R | Valid until | Note |
+|---|---|---|---|---|---|---|---|---|
 {% for r in open_recs %}
-| {{ r.ticker | md }} | {{ r.date }} | {{ r.status | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.current_r }} | {{ r.valid_until }} |
+| {{ r.ticker | md }} | {{ r.date }} | {{ r.status | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.current_r }} | {{ r.valid_until }} | {{ r.note | md }} |
 {% endfor %}
 {% else %}
 None.

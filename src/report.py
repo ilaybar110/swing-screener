@@ -36,9 +36,9 @@ from src.utils.logging import get_logger
 log = get_logger(__name__)
 
 TEMPLATES_DIR = REPO_ROOT / "templates"
-BREADTH_OK_PCT = 50.0  # same threshold src/regime.py uses for "breadth OK"
 FOOTER = "Research tool, not financial advice. All candidates are tracked, including ones not shown."
 NOT_ENOUGH_DATA = "not enough data yet"
+GUARDRAIL_LABELS = {"pass_partial": "Pass (partial)"}
 _REPORT_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
 
 _EVENT_LABELS = {
@@ -157,7 +157,8 @@ def _since_date(conn: sqlite3.Connection, reports_dir: Path, as_of: date) -> dat
     return as_of - timedelta(days=1)
 
 
-def _regime(conn: sqlite3.Connection, as_of: date, recs_today: list[Recommendation]) -> dict[str, Any]:
+def _regime(conn: sqlite3.Connection, as_of: date, recs_today: list[Recommendation],
+            breadth_threshold_pct: float) -> dict[str, Any]:
     rows = _query(conn, "SELECT * FROM regime_log WHERE date <= ? ORDER BY date DESC LIMIT 1",
                   (as_of.isoformat(),))
     if not rows:
@@ -180,7 +181,7 @@ def _regime(conn: sqlite3.Connection, as_of: date, recs_today: list[Recommendati
         "label": row["regime"] or "Unknown", "known": True, "banner": banner,
         "spy_close": spy_close, "spy_sma200": sma, "breadth_pct": breadth,
         "spy_ok": (spy_close > sma) if spy_close is not None and sma is not None else None,
-        "breadth_ok": (breadth >= BREADTH_OK_PCT) if breadth is not None else None,
+        "breadth_ok": (breadth >= breadth_threshold_pct) if breadth is not None else None,
         "stale_date": stale,
     }
 
@@ -316,6 +317,7 @@ def _card(conn: sqlite3.Connection, rec: Recommendation, as_of: date, stats: Opt
         "time_stop": f"close of trading day {config.trade_plan.time_stop_trading_days} after entry",
         "valid_until": rec.valid_until.isoformat() if rec.valid_until else "n/a",
         "guardrail": status,
+        "guardrail_label": GUARDRAIL_LABELS.get(status, status),
         "guardrail_reasons": list(rec.guardrail_reasons or []),
         "ev_fcf": ev_fcf,
         "earnings": earnings,
@@ -326,8 +328,25 @@ def _card(conn: sqlite3.Connection, rec: Recommendation, as_of: date, stats: Opt
     }
 
 
+def catchup_note(remaining: int) -> str:
+    if remaining <= 0:
+        return ""
+    return f"catch-up in progress, {remaining} day{'s' if remaining != 1 else ''} remaining"
+
+
+def _repeat_note(rec: Recommendation) -> str:
+    """D3: later signals on a ticker that still had this live recommendation were folded
+    into it instead of creating a new one."""
+    repeats = (rec.details or {}).get("repeat_signals") or []
+    if not repeats:
+        return ""
+    return (f"still valid from {rec.signal_date.isoformat()} "
+            f"(repeat signal {', '.join(r['date'] for r in repeats)})")
+
+
 def _short_row(conn: sqlite3.Connection, rec: Recommendation) -> dict[str, Any]:
     return {
+        "note": _repeat_note(rec),
         "date": rec.signal_date.isoformat(),
         "ticker": rec.ticker,
         "modules": ", ".join(module_label(m) for m in rec.modules),
@@ -446,8 +465,9 @@ def _stats_section(stats: Optional[dict[str, Any]]) -> Optional[dict[str, Any]]:
 
 
 def build_context(conn: sqlite3.Connection, as_of: date, config: Optional[Config] = None,
-                  since: Optional[date] = None) -> dict[str, Any]:
-    """Everything the templates need, as plain dicts/strings."""
+                  since: Optional[date] = None, catchup_remaining: int = 0) -> dict[str, Any]:
+    """Everything the templates need, as plain dicts/strings. ``catchup_remaining`` is the
+    number of missed trading days the daily run left for its next run (R2)."""
     config = config or load_config()
     reports_dir = Path(config.paths.reports_dir)
     since = since or _since_date(conn, reports_dir, as_of)
@@ -465,7 +485,7 @@ def build_context(conn: sqlite3.Connection, as_of: date, config: Optional[Config
     today_rows = _query(conn, "SELECT * FROM recommendations WHERE source = 'live' AND in_report = 1 "
                               "AND signal_date = ? ORDER BY (rank IS NULL), rank, ticker", (as_of.isoformat(),))
     today = [_row_to_rec(r) for r in today_rows]
-    regime = _regime(conn, as_of, today)
+    regime = _regime(conn, as_of, today, config.regime.breadth_threshold_pct)
     suppressed = regime["label"] == "Unfavorable"
     cards = [] if suppressed else [_card(conn, r, as_of, stats, config) for r in today]
 
@@ -489,6 +509,7 @@ def build_context(conn: sqlite3.Connection, as_of: date, config: Optional[Config
         "suppressed": suppressed,
         "no_recs_today": not cards and not suppressed,
         "data_quality": _data_quality(conn, as_of),
+        "catchup_note": catchup_note(catchup_remaining),
         "cards": cards,
         "n_new": len(today) if not suppressed else 0,
         "catch_up": catch_up,
@@ -557,6 +578,8 @@ def summary_text(ctx: dict[str, Any], max_recs: int = 3, max_updates: int = 5) -
     lines = [f"Swing Screener {ctx['as_of']}", f"Regime: {reg['label']}"]
     if reg.get("banner"):
         lines[-1] += f" - {reg['banner']}"
+    if ctx.get("catchup_note"):
+        lines.append(ctx["catchup_note"][0].upper() + ctx["catchup_note"][1:] + ".")
     if ctx["suppressed"]:
         lines.append("No new recommendations (Unfavorable regime).")
     else:
@@ -577,14 +600,14 @@ def summary_text(ctx: dict[str, Any], max_recs: int = 3, max_updates: int = 5) -
 
 
 def build(conn: sqlite3.Connection, as_of: date, *, config: Optional[Config] = None,
-          since: Optional[date] = None) -> tuple[str, str]:
+          since: Optional[date] = None, catchup_remaining: int = 0) -> tuple[str, str]:
     """Build the report for ``as_of`` and return ``(html_path, md_path)``.
 
     Also copies both files to ``reports/latest.html`` / ``reports/latest.md``. ``since``
     overrides the previous-report date used for "updates since the last report" and the
     catch-up section."""
     config = config or load_config()
-    ctx = build_context(conn, as_of, config, since)
+    ctx = build_context(conn, as_of, config, since, catchup_remaining)
     reports_dir = Path(config.paths.reports_dir)
     reports_dir.mkdir(parents=True, exist_ok=True)
     html_path = reports_dir / f"{as_of.isoformat()}.html"
@@ -599,6 +622,6 @@ def build(conn: sqlite3.Connection, as_of: date, *, config: Optional[Config] = N
 
 
 def build_summary(conn: sqlite3.Connection, as_of: date, *, config: Optional[Config] = None,
-                  since: Optional[date] = None) -> str:
+                  since: Optional[date] = None, catchup_remaining: int = 0) -> str:
     """Telegram digest for ``as_of`` (convenience wrapper over build_context + summary_text)."""
-    return summary_text(build_context(conn, as_of, config, since))
+    return summary_text(build_context(conn, as_of, config, since, catchup_remaining))

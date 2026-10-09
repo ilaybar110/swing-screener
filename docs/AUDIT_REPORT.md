@@ -114,10 +114,31 @@ Scaling to ~2,000 universe tickers: prices ~4-5 min (+ retries), EDGAR 2-6 min p
 ## 6. Re-run instructions
 
 ```bash
-pytest -q                                              # 360 passed, 2 skipped
+pytest -q                                              # 394 passed, 2 skipped
 python run_weekly.py --limit 50 --base-dir /tmp/t      # real data into a temp dir
 python run_daily.py --stage prepare --limit 50 --base-dir /tmp/t
 python run_daily.py --stage finalize --base-dir /tmp/t
 ```
+
+## 7. Decisions applied (Bot 9)
+
+Final suite after the changes: `pytest` -> **394 passed, 2 skipped** (was 360 + 2). New tests: `tests/test_decisions.py` (D1-D3, R1, R3), `tests/e2e/test_catchup_limit.py` (R2). The fixture end-to-end tests (`tests/e2e/`) pass.
+
+| # | Decision | What changed | Regression tests |
+|---|---|---|---|
+| D1 | Breadth threshold 50 % in config | `regime.breadth_threshold_pct: 50` in `config.yaml`; read by `src/regime.py` and by the report's breadth flag (the duplicate constant in `src/report.py` is gone) | `test_breadth_threshold_is_in_config_and_still_50`, `test_regime_reads_breadth_threshold_from_config` (50 -> Favorable, 50.01 -> Caution), `test_report_breadth_ok_uses_config_threshold` |
+| D2 | `pass_partial` | `guardrail.evaluate` returns `pass_partial` when the evaluable checks pass but some could not be evaluated; reasons = `not evaluated: <check>`. Ranking only drops `fail`, so it is unchanged. Report: chip/line "Pass (partial)" naming the missing checks (HTML + MD) | `test_guardrail_pass_with_unevaluated_check_is_pass_partial`, `test_guardrail_missing_data_still_never_fails`, `test_ranking_treats_pass_partial_exactly_like_pass`, `test_report_shows_pass_partial_with_missing_checks`. Three older tests that seeded no share/debt data now expect `pass_partial` |
+| D3 | No new recommendation while PENDING/ACTIVE | new `src/repeats.py`, called from `rank()`: the repeat is stored in the live recommendation's `details["repeat_signals"]` (`[{date, modules}]`, idempotent per date); no new row, no baselines. "Live" = the earlier recommendation re-simulated on prices up to the new signal date (not the stored status, which is stale during catch-up and backtests). The backtest runner now stores recommendations day by day so the same rule applies. Report: a Note column ("still valid from <signal date> (repeat signal ...)") in the catch-up and open tables | `test_repeat_signal_while_pending_is_recorded_not_recommended`, `..._accumulate_and_reprocessing_a_day_is_idempotent`, `test_other_tickers_are_unaffected...`, `test_new_recommendation_allowed_once_previous_expired / _stopped`, `test_catch_up_uses_prices_not_the_stale_status_column`, `test_backtest_applies_the_same_repeat_rule`, `test_report_shows_still_valid_from_signal_date`. `test_backtest.py` / `test_dashboard.py` fake modules now signal two different tickers (the same ticker twice is a repeat by design) |
+| D4 | Overlap stays 0/70/100 | `docs/PLAN.md` s.9 says so (no code change) | existing ranking tests |
+| D5 | Nasdaq industry for the cap | `docs/PLAN.md` s.9 says so (no code change) | existing ranking tests |
+| R1 | EDGAR daily pass: universe CIKs only | `edgar_daily.load_universe_cik_map` (latest `universe_snapshots`; all share classes of a universe CIK kept; no snapshot -> falls back to all tickers with a warning). Backfill still uses all tickers | `test_edgar_daily_only_fetches_universe_ciks`, `test_universe_cik_map_keeps_every_share_class...` |
+| R2 | Catch-up cap | `daily.max_catchup_days: 5`; `prepare` processes the oldest N missed days, records the remainder in `job_log` (job `catchup`), `finalize` passes it to the report: "Catch-up in progress, N days remaining" (HTML, MD, Telegram digest); prepare's printed summary mentions it | `test_catch_up_is_limited_and_reported` (cap 2 of 3 days, note shown, next run finishes and the note disappears) |
+| R3 | News relevance | `news.is_relevant`: title must contain the ticker as a whole word (case-sensitive) or the cleaned company name / its first non-generic word; the count filtered is logged per ticker | `test_news_relevance` (12 cases incl. the MPC and MFG noise from the audit), `test_get_news_drops_irrelevant_items_and_logs_the_count` |
+
+**R1 request count.** On the committed sample index (`form.sample.idx`, 4 in-scope filings for 4 companies): 4 requests before (every ticker) -> 1 after (only the company in the universe snapshot). A real-day count (all ~7,000 listed companies vs ~2,000 universe) was **not measured**: it needs the SEC daily index and `SEC_EMAIL`, which was not available in this session. Expect roughly the ~3x reduction predicted in section 4.
+
+**Not run in this session:** the `--limit 50` real-data run with a temporary `--base-dir` (needs `SEC_EMAIL` for the EDGAR User-Agent; see the re-run instructions in section 6). Everything above is verified by the unit and fixture end-to-end tests only.
+
+Behaviour notes: the stored status of a brand-new recommendation is `PENDING` (upper case) while the tracker writes lower case; the repeat rule does not depend on that column. The backtest guardrail still tries the live companyfacts endpoint for fixture tickers (404, logged and treated as unknown); unchanged.
 
 VERDICT: READY — all local checks passed. Final confirmation: run docs/ROUTINE_SMOKE_TEST.md as a cloud routine.

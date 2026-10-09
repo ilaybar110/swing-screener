@@ -17,6 +17,7 @@ import pandas as pd
 from src import indicators as ind
 from src.config import load_config
 from src.contracts import Candidate, GuardrailResult, Recommendation
+from src.repeats import split_repeats
 from src.trade_plan import build
 from src.utils.logging import get_logger
 
@@ -115,6 +116,8 @@ def rank(
 ) -> list[Recommendation]:
     """rank(candidates, as_of, data, conn) -> list[Recommendation].
 
+    0. A ticker that still has a PENDING/ACTIVE recommendation gets no new one: the
+       repeat signal is recorded on the existing recommendation (``src.repeats``).
     1. Merge candidates per ticker (``trade_plan.build``).
     2. Run the fundamental guardrail; drop only ``fail`` results.
     3. Score: percentile of setup quality and of relative strength within the day's
@@ -135,6 +138,9 @@ def rank(
     by_ticker: dict[str, list[Candidate]] = defaultdict(list)
     for c in todays:
         by_ticker[c.ticker].append(c)
+    by_ticker = defaultdict(list, split_repeats(by_ticker, conn, as_of, config, source))
+    if not by_ticker:
+        return []
 
     a_cfg = config.modules.a_momentum_pullback
     rs_map = universe_rs_pct(data, as_of, sorted(by_ticker), a_cfg.rs_lookback_days, a_cfg.rs_skip_recent_days)

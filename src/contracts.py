@@ -45,7 +45,7 @@ class Candidate:
 
 @dataclass
 class GuardrailResult:
-    status: str  # "pass" | "fail" | "unknown"
+    status: str  # "pass" | "pass_partial" | "fail" | "unknown"
     reasons: list[str] = field(default_factory=list)
     metrics: dict[str, Any] = field(default_factory=dict)
     valuation_info: dict[str, Any] = field(default_factory=dict)

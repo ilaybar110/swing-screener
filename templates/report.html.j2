@@ -19,7 +19,7 @@ h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5r
 .head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
 .co{color:var(--mut);font-size:.9rem}
 .chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
-.chip.pass{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
+.chip.pass,.chip.pass_partial{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
 .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
 .lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
 dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
@@ -37,6 +37,9 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 <h1>{{ title }}</h1>
 <div class="banner {{ regime.label }}"><b>Market regime: {{ regime.label }}</b>{% if regime.banner %}<br>{{ regime.banner }}{% endif %}
 {% if suppressed %}<br><b>No new recommendations today.</b> Candidates are still tracked; the table is suppressed in an Unfavorable regime.{% endif %}</div>
+{% if catchup_note %}
+<div class="note">{{ catchup_note | capitalize }}.</div>
+{% endif %}
 {% for note in data_quality %}
 <div class="note">Data quality: {{ note }}</div>
 {% endfor %}
@@ -49,7 +52,7 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 {% endif %}
 {% for c in cards %}
 <article class="card">
-<div class="head"><h3>{% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker }} <span class="co">{{ c.company }}</span></h3><span class="chip {{ c.guardrail }}">guardrail: {{ c.guardrail }}</span></div>
+<div class="head"><h3>{% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker }} <span class="co">{{ c.company }}</span></h3><span class="chip {{ c.guardrail }}">guardrail: {{ c.guardrail_label }}</span></div>
 <div>{% for m in c.modules %}<span class="chip">{{ m }}</span>{% endfor %}{% if c.sector %}<span class="chip">{{ c.sector }}{% if c.industry %} / {{ c.industry }}{% endif %}</span>{% endif %}</div>
 <p>{{ c.rationale }}</p>
 <div class="levels">
@@ -80,8 +83,8 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 <h2>Catch-up: recommendations from missed days</h2>
 <p>New recommendations since the previous report ({{ since }}).</p>
 <div class="tbl"><table>
-<tr><th>Date</th><th>Ticker</th><th>Modules</th><th>Entry</th><th>Stop</th><th>Target</th><th>Status</th><th>R</th></tr>
-{% for r in catch_up %}<tr><td>{{ r.date }}</td><td><b>{{ r.ticker }}</b></td><td>{{ r.modules }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.status }}</td><td>{{ r.current_r }}</td></tr>
+<tr><th>Date</th><th>Ticker</th><th>Modules</th><th>Entry</th><th>Stop</th><th>Target</th><th>Status</th><th>R</th><th>Note</th></tr>
+{% for r in catch_up %}<tr><td>{{ r.date }}</td><td><b>{{ r.ticker }}</b></td><td>{{ r.modules }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.status }}</td><td>{{ r.current_r }}</td><td>{{ r.note }}</td></tr>
 {% endfor %}</table></div>
 {% endif %}
 
@@ -96,8 +99,8 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 <h2>Open recommendations ({{ open_recs | length }})</h2>
 {% if open_recs %}
 <div class="tbl"><table>
-<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th></tr>
-{% for r in open_recs %}<tr><td><b>{{ r.ticker }}</b></td><td>{{ r.date }}</td><td>{{ r.status }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.current_r }}</td><td>{{ r.valid_until }}</td></tr>
+<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th><th>Note</th></tr>
+{% for r in open_recs %}<tr><td><b>{{ r.ticker }}</b></td><td>{{ r.date }}</td><td>{{ r.status }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.current_r }}</td><td>{{ r.valid_until }}</td><td>{{ r.note }}</td></tr>
 {% endfor %}</table></div>
 {% else %}<p>None.</p>{% endif %}
 

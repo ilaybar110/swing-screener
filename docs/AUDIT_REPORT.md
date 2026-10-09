@@ -135,9 +135,16 @@ Final suite after the changes: `pytest` -> **394 passed, 2 skipped** (was 360 + 
 | R2 | Catch-up cap | `daily.max_catchup_days: 5`; `prepare` processes the oldest N missed days, records the remainder in `job_log` (job `catchup`), `finalize` passes it to the report: "Catch-up in progress, N days remaining" (HTML, MD, Telegram digest); prepare's printed summary mentions it | `test_catch_up_is_limited_and_reported` (cap 2 of 3 days, note shown, next run finishes and the note disappears) |
 | R3 | News relevance | `news.is_relevant`: title must contain the ticker as a whole word (case-sensitive) or the cleaned company name / its first non-generic word; the count filtered is logged per ticker | `test_news_relevance` (12 cases incl. the MPC and MFG noise from the audit), `test_get_news_drops_irrelevant_items_and_logs_the_count` |
 
-**R1 request count.** On the committed sample index (`form.sample.idx`, 4 in-scope filings for 4 companies): 4 requests before (every ticker) -> 1 after (only the company in the universe snapshot). A real-day count (all ~7,000 listed companies vs ~2,000 universe) was **not measured**: it needs the SEC daily index and `SEC_EMAIL`, which was not available in this session. Expect roughly the ~3x reduction predicted in section 4.
+**R1 request count (real day, 2026-10-08, measured).** The daily form index for that session lists 477 distinct Form 4 / 8-K accessions across all filers. Requests the daily pass makes (one per matching accession: Form 4 submission or 8-K index page):
 
-**Not run in this session:** the `--limit 50` real-data run with a temporary `--base-dir` (needs `SEC_EMAIL` for the EDGAR User-Agent; see the re-run instructions in section 6). Everything above is verified by the unit and fixture end-to-end tests only.
+| Scope | CIKs | Form 4 | 8-K | Total requests |
+|---|---|---|---|---|
+| Before R1: every listed ticker with a CIK | 5,897 | 270 | 124 | **394** |
+| After R1: latest universe snapshot (`--limit 50` trial: 49 tickers) | 47 | 43 | 0 | **43** |
+
+The "after" figure equals what `process_day` actually fetched in the real run (43 Form 4, 0 errors). The 9x reduction is specific to the 49-ticker trial universe; with the real ~2,000-ticker universe the saving is smaller (the earlier ~3x estimate in section 4 still stands, not re-measured).
+
+**Real-data run (`--limit 50`, temporary `--base-dir`, Windows, 2026-10-09).** `run_weekly.py --limit 50`: universe 49 tickers, fundamentals summary 49 rows, 4,386 upcoming-earnings rows, 0 non-critical errors. `run_daily.py --stage prepare --limit 50`: session 2026-10-08, 1 day processed, 0 recommendations, 0 errors. `--stage finalize`: report built (regime Favorable, SPY above its 200-day average, 65 % breadth vs the 50 % config threshold). Repo `state/` and `reports/` untouched. Because that day produced no recommendation, `pass_partial`, the repeat-signal note and the catch-up cap were **not** exercised on real data (fixture/unit tests only); the news filter was not exercised either (no brief inputs for a day without recommendations).
 
 Behaviour notes: the stored status of a brand-new recommendation is `PENDING` (upper case) while the tracker writes lower case; the repeat rule does not depend on that column. The backtest guardrail still tries the live companyfacts endpoint for fixture tickers (404, logged and treated as unknown); unchanged.
 

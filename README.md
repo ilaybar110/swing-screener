@@ -64,7 +64,7 @@ Requires Python 3.11+ (developed on 3.13).
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate        # Windows Git Bash;  Linux/macOS: source .venv/bin/activate
-pip install -r requirements-local.txt   # runtime + dashboard + pytest
+python -m pip install -r requirements-local.txt   # runtime + dashboard + pytest
 cp .env.example .env                  # then edit: SEC_EMAIL is required for any EDGAR access
 pytest                                # full test suite, no network needed (~3 min)
 ```
@@ -143,7 +143,25 @@ For both routines:
    (optional).
 3. **Network access: Full** (Yahoo Finance, Nasdaq, SEC EDGAR, Google News, Telegram).
 4. **Allow pushes to `main`** (the routine commits `state/` and `reports/` and pushes).
-5. Paste the prompt from the matching `docs/ROUTINE_*.md` file as-is.
+5. **Setup script** (runs once when the environment is created): if the repository is
+   already available at that point, use
+
+   ```bash
+   python -m pip install --quiet -r requirements.txt
+   ```
+
+   otherwise install the packages from `requirements.txt` by name, still through
+   `python -m pip` (never bare `pip`, which on the cloud image can target a different
+   interpreter than `python`):
+
+   ```bash
+   python -m pip install --quiet "pandas>=2.2" "numpy>=1.26" "yfinance>=0.2.40" "requests>=2.31"        "pydantic>=2.6" "PyYAML>=6.0" "pandas-market-calendars>=4.4" "python-dotenv>=1.0"        "lxml>=5.2" "feedparser>=6.0" "jinja2>=3.1"
+   ```
+
+   Each routine prompt also re-installs and then runs a mandatory import check
+   (`python -c "import pandas, numpy, yfinance, requests, lxml, feedparser; print('imports ok')"`);
+   if it fails, the routine stops without running any pipeline step.
+6. Paste the prompt from the matching `docs/ROUTINE_*.md` file as-is.
 
 Run the weekly routine once first (trigger it manually) so a universe snapshot exists; then
 enable the daily one. The routine agent only runs the scripts, writes the brief JSON files

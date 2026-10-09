@@ -29,8 +29,10 @@ HARD RULES (no exceptions):
 
 STEPS
 
-Step 1 - install requirements:
-    pip install -q -r requirements.txt
+Step 1 - install requirements and check the imports (always `python -m pip`, so the packages go to the same interpreter that runs the scripts):
+    python -m pip install --quiet -r requirements.txt
+    python -c "import pandas, numpy, yfinance, requests, lxml, feedparser; print('imports ok')"
+  MANDATORY: if this command fails (non-zero exit or no "imports ok" line), STOP IMMEDIATELY. Report the exact error output (last 40 lines) in your final message and do NOT run any pipeline step, do not commit, do not try to fix it.
 
 Step 2 - weekly job (universe refresh, fundamentals summary, upcoming earnings for the next 35 trading days):
     python run_weekly.py

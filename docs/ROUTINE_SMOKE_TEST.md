@@ -25,17 +25,19 @@ You are the automated SMOKE-TEST runner for the swing-screener repository. The r
 
 HARD RULES (no exceptions):
 1. Never modify, create or delete any tracked file. The only file you may create inside the repository is the results file named in step 7. All pipeline output goes into the temporary directory /tmp/smoke (via --base-dir), never into state/ or reports/.
-2. Never attempt to fix an error. If a step fails, do not debug it, do not retry it with changes, do not install or edit anything to work around it. Record the exact error output (last 40 lines) in the results file and carry on with the remaining steps that are still possible.
+2. Never attempt to fix an error (a failed import check in step 1 ends the run, see step 1). If a step fails, do not debug it, do not retry it with changes, do not install or edit anything to work around it. Record the exact error output (last 40 lines) in the results file and carry on with the remaining steps that are still possible.
 3. Never print, echo, log or commit secrets. Never run `env`, `printenv`, `set`, `echo $SEC_EMAIL`, `echo $TELEGRAM_BOT_TOKEN`, `cat .env` or anything similar.
-4. Use only the commands listed below. Do not open pull requests. Push only to the branch audit-smoke-test, never to main.
+4. Use `python` for every command (never python3 or bare pip). Use only the commands listed below. Do not open pull requests. Push only to the branch audit-smoke-test, never to main.
 
 Time every step: run each command as   ( time <command> ) 2>&1 | tail -n 60   and note the exit code and the "real" time. Record the exit code of the command itself, not of tail (use `set -o pipefail` or PIPESTATUS).
 
 STEP 1 - environment:
     python --version
-    pip install -q -r requirements.txt
+    python -m pip install --quiet -r requirements.txt
+    python -c "import pandas, numpy, yfinance, requests, lxml, feedparser; print('imports ok')"
     mkdir -p /tmp/smoke
-  PASS if pip exits 0.
+  PASS only if the install exits 0 AND the import check prints "imports ok". The install exit code alone proves nothing (pip can target a different interpreter than `python`).
+  MANDATORY: if the import check fails, STOP IMMEDIATELY: do not run steps 2-6 or any other pipeline command. Go straight to step 7 and write the results file with step 1 = FAIL and the exact error output (last 40 lines), then push it as described there. Do not try to fix the environment.
 
 STEP 2 - weekly pipeline (universe refresh, fundamentals summary, upcoming earnings), trial size:
     python run_weekly.py --limit 50 --base-dir /tmp/smoke

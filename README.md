@@ -155,7 +155,9 @@ For both routines:
    interpreter than `python`):
 
    ```bash
-   python -m pip install --quiet "pandas>=2.2" "numpy>=1.26" "yfinance>=0.2.40" "requests>=2.31"        "pydantic>=2.6" "PyYAML>=6.0" "pandas-market-calendars>=4.4" "python-dotenv>=1.0"        "lxml>=5.2" "feedparser>=6.0" "jinja2>=3.1"
+   python -m pip install --quiet "pandas>=2.2" "numpy>=1.26" "yfinance>=0.2.40" "requests>=2.31" \
+       "pydantic>=2.6" "PyYAML>=6.0" "pandas-market-calendars>=4.4" "python-dotenv>=1.0" \
+       "lxml>=5.2" "feedparser>=6.0" "jinja2>=3.1"
    ```
 
    Each routine prompt also re-installs and then runs a mandatory import check

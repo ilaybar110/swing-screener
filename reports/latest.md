@@ -1,173 +1,214 @@
-# Swing Screener - 2026-10-09
+# Swing Screener - 2026-10-12
 
-**Market regime: Caution** - SPY $778.57 is above its 200-day average ($722.93); 31% of the universe is above its 50-day average.
+**Market regime: Caution** - SPY $778.10 is above its 200-day average ($723.38); 32% of the universe is above its 50-day average.
 
 ## New recommendations (5)
 
-### #1 CORT - Corcept Therapeutics Incorporated Common Stock
+### #1 NHC - National HealthCare Corporation Common Stock
 
-momentum pullback | Health Care / Biotechnology: Pharmaceutical Preparations
+momentum pullback | Health Care / Hospital/Nursing Management
 
-Relative-strength leader (RS percentile 99) pulled back 1.4 ATR to the 20-day SMA on 36% of average volume, then closed above the prior day's high.
+Relative-strength leader (RS percentile 83) pulled back 1.9 ATR to the 20-day SMA on 76% of average volume, then closed above the prior day's high.
 
-- **Entry (buy-stop):** $122.34
-- **Stop:** $114.57 (-6.3%)
-- **Target (2.0R):** $137.88 (+12.7%)
+- **Entry (buy-stop):** $230.96
+- **Stop:** $219.79 (-4.8%)
+- **Target (2.0R):** $253.31 (+9.7%)
 - **Time stop:** close of trading day 20 after entry
-- **Valid until:** 2026-10-16
+- **Valid until:** 2026-10-19
 - **Guardrail:** pass
-- **Earnings:** 2026-11-03 - ⚠ Earnings fall inside the ~25-trading-day holding window
+- **EV/FCF:** 66th percentile vs sector (EV/FCF 23.5)
+- **Earnings:** 2026-11-06 - ⚠ Earnings fall inside the ~25-trading-day holding window
 - **momentum pullback record:** not enough data yet (0/30 closed live results)
 
-### #2 VEEV - Veeva Systems Inc. Class A Common Stock
+**Summary.** Few relevant items; many NHC headlines refer to other entities. Headlines state National HealthCare declared a $0.67 dividend and that Q2 revenue rose. No filings in the input.
 
-momentum pullback | Technology / Computer Software: Prepackaged Software
+**Recent positives**
 
-Relative-strength leader (RS percentile 94) pulled back 2.0 ATR to the 20-day SMA on 74% of average volume, then closed above the prior day's high.
+- Declared USD 0.67 dividend
+- Q2 revenue rose
 
-- **Entry (buy-stop):** $297.45
-- **Stop:** $271.93 (-8.6%)
-- **Target (2.0R):** $348.50 (+17.2%)
+Sources: https://news.google.com/rss/articles/CBMiyAFBVV95cUxNWWQxTGZmZU93VU9GM0VZWDlkNTE4eGUxVnlkT3YwellDR3NxQWNUR25lcGhlTHFFaHJCSnB2bERneVVVOExqM1hGOU9MTGFXT0l0OTVWOWl2ZF95RlNySF9Td05SanFxNWNxdTkxU3ctX05nTDJlRHY0bndtNC1BNHVieWhnR0N5Z2o5TGZCTDhMenJvLWpiV0xodEZrdnpGZlJ0Mk5Oekhsb3N6RHZ1SFFtZklaRVBHXzBNbGIwVG12WklzekZFSg?oc=5 ; https://news.google.com/rss/articles/CBMivgFBVV95cUxQUUUwTlZTcGR6LWJxY1JacHptVUMwMDFrWEJCbmlmOS1qNzlBVHk5Nl9VV0NMbW9KTE8zVC13aUJibzIzQkdKQmluUWVtU2czS3NkNFhaRW5TcHVJbEFPaFZsYU9Pc09CYjR0dlNWLUpJUjFLYW5iOElJdGFNM19DWlU1enBGRjNYemZDRWR1cWlMYzZCNGpMZzB6SmlaLVdrOEZqS0xLSld2NE4wOTJrd1kyc01jZWgwX1dSQTBn?oc=5
+
+### #2 VSXY - Victorias Secret & Co. Common Stock 
+
+momentum pullback | Consumer Discretionary / Clothing/Shoe/Accessory Stores
+
+Relative-strength leader (RS percentile 91) pulled back 2.5 ATR to the 20-day SMA on 99% of average volume, then closed above the prior day's high.
+
+- **Entry (buy-stop):** $89.35
+- **Stop:** $81.09 (-9.2%)
+- **Target (2.0R):** $105.87 (+18.5%)
 - **Time stop:** close of trading day 20 after entry
-- **Valid until:** 2026-10-16
-- **Guardrail:** Pass (partial) - not evaluated: total debt unavailable
-- **Earnings:** 2026-11-19
+- **Valid until:** 2026-10-19
+- **Guardrail:** pass
+- **EV/FCF:** 56th percentile vs sector (EV/FCF 23.6)
 - **momentum pullback record:** not enough data yet (0/30 closed live results)
 
-**Summary.** No 8-K filings in the input. Veeva announced more than 175 emerging biotechs standardized on Veeva Basics (2026-10-07) and that Veeva DQS has cleaned data for over 1 million subjects across more than 1,000 studies (2026-10-06). Baird maintained Buy with a $300 target (2026-10-09). Several officers sold or had shares withheld for taxes in early October.
+**Summary.** 8-K filed 2026-10-09: Chief Legal and Compliance Officer Melinda McAfee will leave effective March 31, 2027 under a Transition and Separation Agreement dated Oct 7, 2026; a successor search has begun. UBS downgraded the stock after a recent surge. Late-September headlines mention an earnings beat.
 
 ⚑ **Red flags**
 
-- EVP Daniel Rizzo sold 4,841 shares (MarketBeat, 2026-10-05)
+- Chief Legal and Compliance Officer departing (8-K Item 5.02, 0001856437-26-000023)
+- UBS downgrade reported by Stocktwits
 
 **Recent positives**
 
-- More than 175 emerging biotechs standardize on Veeva Basics (2026-10-07)
-- Veeva DQS cleaned data for over 1 million subjects across 1,000+ studies (2026-10-06)
-- Baird maintained Buy, target $300 (2026-10-09)
-
-Sources: https://news.google.com/rss/articles/CBMi6AFBVV95cUxOc1hqNnlVelNraUdkVklVOEVQdDlhWHVXS0pZWnQyOGZsak92T2c2dko4X21tSnM5TkVNVVhGWGRvMGVCM0JkWVBuTmpKQzAycmFyUnQwSTNnN1FQeS1CWGNfUHBpaHdCUEZTdXBtUmN3eFVOTG93SkFPMWV2Y1VuSEJGTGFwUzFkWDFPQ2VLdVV3bHpMeXpKWGE0QVVma256dHZuOTA5QmFBRjhBSkFkQXZfNDJWVGxyNjdwV2VLRlZIdjRfYWVHc3FFVlhjMUlUd240OWthbWFJY0VydmJwTW1lVmxWN3Bv?oc=5 ; https://news.google.com/rss/articles/CBMi6AFBVV95cUxOZzNCNmR1ZTFOTkMxNThSMG9fb2hMZnM2cjg2dmhwUVNZU2J2WGVVNWlQOElNcmhhSmRfX0RvSERjTXU2Y29uYklyejNKLUJTejhaaDBrNkFxTFpDRy1XQzlqTnJHSGRtaGs2akRYQUp1N3JRT3Y1dkFpRFRlVFI0RXR5QTJIcUdWOFI1Qy1vMTFxWTBQdG5NTFd5LWlBMXMwUzFNTDlHVWlnTzJ1TFhjUTJtd0RkMXRBdnNwUmJYbTBsa3dEWUhFR3l2SUdiWUlyYmNiMHZCMzZnVE55UklFOURkTUtDUzQ5?oc=5 ; https://news.google.com/rss/articles/CBMisgFBVV95cUxQTUczdXJTODZPaTNpbHpnenlSV3E5SUVpZ3RqaG5KMzVCNU9VSWl6SDM5VUwwNkt2NjlKLVJWYmw5YWMtaXg1TzUxN09mZkJ4Sk5aVGxUdzNRX0VMQkZvNFhsOGVIX3hfcjFiRVlELUNUcmNMdUpSR1hhaW9fVXBlclYtMVVsWW5QUldzMHRBM2tjN3dJbGlTVF9PV2dGU1loU0UxbXVnOGRJdExTdmhmZHFR?oc=5 ; https://news.google.com/rss/articles/CBMi0wFBVV95cUxNT0JpMkFYN2NaZlNreFo1cmJXSG1saU5DbGZheUlwMUFjal8zT1JiaTNJWXdzV3NBelAxdjZWVW5hdDVGT2lMQVpER0RJVTZ2bVo3cTVIQ1phN3piVFdrUldRbmpSTUUtbFN2Y21Jcnd5UkpMMTRIcnJYaVlRNDZrTmRHM3pfVHdveGNHcW9MSkFZeDI2OHF1S1FsTmJwRm5wRmtzNzg0eHJ1dnZWN29WdFNhRjhKc2wwZUZLcUdzMURHRVA4YUNyZEZWZlg3Q3k1MWtr?oc=5
-
-### #3 ATRC - AtriCure Inc. Common Stock
-
-momentum pullback | Health Care / Medical/Dental Instruments
-
-Relative-strength leader (RS percentile 95) pulled back 3.7 ATR to the 20-day SMA on 75% of average volume, then closed above the prior day's high.
-
-- **Entry (buy-stop):** $55.89
-- **Stop:** $51.36 (-8.1%)
-- **Target (2.0R):** $64.95 (+16.2%)
-- **Time stop:** close of trading day 20 after entry
-- **Valid until:** 2026-10-16
-- **Guardrail:** pass
-- **EV/FCF:** 90th percentile vs sector (EV/FCF 53.5)
-- **Earnings:** 2026-11-04 - ⚠ Earnings fall inside the ~25-trading-day holding window
-- **momentum pullback record:** not enough data yet (0/30 closed live results)
-
-**Summary.** No 8-K filings in the input. Headlines report a Freedom Capital Markets downgrade to Hold with a $57 price target (2026-10-02), a 4.8% share decline with analysts resetting targets (2026-10-07), and a sale of $271,140 in stock by the CTO (reported 2026-09-25).
-
-⚑ **Red flags**
-
-- CTO Salvatore Privitera sold $271,140 in stock (Investing.com, 2026-09-25)
-- Freedom Capital Markets downgraded to Hold (2026-10-02)
-
-**Recent positives**
-
-- Freedom Capital Markets raised its price target to $57 (2026-10-02)
-
-Sources: https://news.google.com/rss/articles/CBMi2gFBVV95cUxOR2RoUmZsd2RJWnZILXdBT1Q1d05fZWtLV1lUOUNjWWt2NUdQeGZHVWFNWWFuMDQ2LTRCTUI0X21weTV4MGxPeG9YMUFtdmlZYkh4ZzZ6OTVtM1pwdWlwbmVlNERxS0t0dVZZVmhqRC1XSTdiX0xaWVNfcUIwemhkRVBhNEo4am1GWVp6OVVNUGVlY3BmbmFjTkhDWmc2YW94LXRJRDJPWU9RakI2V0NnTnp2WF9FODk1eDZ1U3A1d0lNN1hESnJQbV8yRlFiX3pOdU1RTW1mWFhsZw?oc=5 ; https://news.google.com/rss/articles/CBMitwFBVV95cUxOekFiVmVOWGVSalRQWGlnZUZ6N24zQWxpMGV1T3REZDRMU2UwN2hZT2V3MzBLc3A1dy0zVzlKcGVoWjZIT1paWEpWQWoxaDl2ZndzeGJQTmQ5VVZXejY4QnFzZUJfN1V5MzVaOVNKQ3N3V2VoeFBXNnRUVWVld182dVF6dlRadlhUYnJpbFhHUzZsTWROZXdGR3A0OEt4M2hwcExteTBKbHNxMzJMYXRvZVI4WVVHbWM?oc=5 ; https://news.google.com/rss/articles/CBMitgFBVV95cUxNdUoxQVdTSEowZDlsWThMbXljUi1PRFlXX1JHVVIzZXVxUmdOR1lSR1gyZTRjUmxLZ1hJSGF3UHlSV05LV0lZc180TFQ5RGZyOEgyc1k3N1pORGthVEYxRTVjVFJ0eHJsX1NkeDZubTZIVTF1cFFKRFZVejdVRzAzUVNreEg3WmVvWG1GZmJGbDU2Xy03bDNCT214YUxlbnpGTkRSS0EwYmdHcFZOMjJIUWx0Y1hMZw?oc=5
-
-### #4 CAKE - Cheesecake Factory Incorporated (The) Common Stock
-
-momentum pullback | Consumer Discretionary / Restaurants
-
-Relative-strength leader (RS percentile 94) pulled back 1.6 ATR to the 20-day SMA on 97% of average volume, then closed above the prior day's high.
-
-- **Entry (buy-stop):** $109.20
-- **Stop:** $105.22 (-3.6%)
-- **Target (2.0R):** $117.17 (+7.3%)
-- **Time stop:** close of trading day 20 after entry
-- **Valid until:** 2026-10-16
-- **Guardrail:** pass
-- **EV/FCF:** 82th percentile vs sector (EV/FCF 36.7)
-- **Earnings:** 2026-10-27 - ⚠ Earnings fall inside the ~25-trading-day holding window
-- **momentum pullback record:** not enough data yet (0/30 closed live results)
-
-**Summary.** No 8-K filings in the input. Cheesecake Factory will webcast its third quarter fiscal 2026 earnings call on 2026-10-27 (results after market close). Oppenheimer maintained Outperform and raised its price target to $122 from $101 (2026-10-06).
-
-**Recent positives**
-
-- Oppenheimer raised price target to $122 from $101 and maintained Outperform (2026-10-06)
-- New Wichita restaurant opened 2026-09-29
+- Earnings beat reported in late September headlines
 
 **Upcoming catalysts**
 
-- Third quarter fiscal 2026 results and earnings webcast (2 p.m. Pacific) (2026-10-27)
+- Chief Legal Officer successor search; McAfee departure effective March 31, 2027 (2027-03-31)
 
-Sources: https://news.google.com/rss/articles/CBMi8gFBVV95cUxQVXZidFo5akJFdkJSOWgzb0JWLVRxRnZzOEtuR2RoSHpBcnhCV2Zsem9rbWdrUGZJcEo5dEktTkJRSW16WFpIMEtVcVFyS095cU9qd1g3QXlRWG1tck9NWkk2QzB1cDNxa01McWo2TjQ2eW5IZGowdkpsVWNRVmNnODhDU3ZObVBnd3hLMlpSazZpRElVdEl5ZWtIa2JUd0xldTczeTVldjlYVzRaSFM4aHpVelVRTDVOLWktUG9RVkZ3R0h2My1GQnJqc1lQXzJ2VWVoZTJsSXVCYVRFdEp2QWRTMXZSd3NDQzUwZ0NDR2lpdw?oc=5 ; https://news.google.com/rss/articles/CBMi1AFBVV95cUxPT3lUNnFRQnRsQWV2dnNfNEN1Q2hsbUgwZy11UHp6RlFYVHM4UHZvaEFzdHRhNTBOdnlsQXFia3dOTWVEYk04S09WVUw3OXp1Tjd1VnE3WFo1YkJsbk9UcXdOZUFMWmtIOWptM3pBNUdCNHJGNEFfeGdFcVJXNWdjeFlCcGNSYTlTNnE2YmdWa3l0SFRkbEM1cXFfU2p5OE1wVC10MWhTeWVoUDZXeEhnUHBjZUxfS0lhUEVqUnkwOEdra0RCMGwzMllaSHl5RzBLWDFZMQ?oc=5
+Sources: 0001856437-26-000023 ; https://news.google.com/rss/articles/CBMiwAFBVV95cUxPaVFkYWpmWTFIeVp3a01Ed0RabUdRNkFYSnRoQ3NWQzhUdFJWLTdONGk3Y0dmdWRzV1J3U2k5YkozUnNmSXdTejJBS0pVeWdJbTVmWFdWaGpTYzJDeWRmaUtEMzIyci0wdXhwVndkTXBVQnpQb2tOMnRaMFQ5NTlXX0p3NnZFQ3lEMDVMTTBPazlRTGI2TGNkUWg4WXNPSEdfWkZGTDNuVGRXQVUtT2hrM1o3TXVPSG11dzlYbnp6czY?oc=5 ; https://news.google.com/rss/articles/CBMie0FVX3lxTE1OSDZtWFZCdThFb0d1UXg4dTUzWUtzclFHTHBSRTIwWGhvamNiNWtkckF0ZjVwNlFObmVkMHJxYVJIMXFUcGFGcE14bUQwNUNYaGlXU0VLa3JvWVhyWkFkNFhKdTJtT09RbWstRXFXbG1WOWVKbkdhWjltaw?oc=5
 
-### #5 IOT - Samsara Inc. Class A Common Stock
+### #3 MET - MetLife Inc. Common Stock
 
-momentum pullback | Technology / EDP Services
+momentum pullback | Financials / Life Insurance
 
-Relative-strength leader (RS percentile 89) pulled back 2.4 ATR to the 20-day SMA on 82% of average volume, then closed above the prior day's high.
+Relative-strength leader (RS percentile 82) pulled back 1.8 ATR to the 20-day SMA on 86% of average volume, then closed above the prior day's high.
 
-- **Entry (buy-stop):** $42.29
-- **Stop:** $39.94 (-5.6%)
-- **Target (2.0R):** $47.00 (+11.1%)
+- **Entry (buy-stop):** $100.18
+- **Stop:** $95.21 (-5.0%)
+- **Target (2.0R):** $110.11 (+9.9%)
 - **Time stop:** close of trading day 20 after entry
-- **Valid until:** 2026-10-16
-- **Guardrail:** Pass (partial) - not evaluated: total debt unavailable
+- **Valid until:** 2026-10-19
+- **Guardrail:** Pass (partial) - not evaluated: TTM operating income / free cash flow unavailable
+- **Earnings:** 2026-11-04 - ⚠ Earnings fall inside the ~25-trading-day holding window
 - **momentum pullback record:** not enough data yet (0/30 closed live results)
 
-**Summary.** No 8-K filings in the input. Jefferies initiated coverage with a Buy rating and $50 price target (2026-10-05). Headlines cite an Asplundh partnership and Cadent selecting Samsara for telematics across a 2,800-vehicle fleet. Executives including the CEO, CTO and CFO sold shares under trading plans in late September and early October.
-
-⚑ **Red flags**
-
-- CEO Sanjit Biswas sold about $10M in shares (Investing.com, 2026-10-02)
-- CTO John Bicket sold shares worth over $10M (Investing.com, 2026-10-01)
-- CFO Dominic Phillips sold $1.17M in stock (Investing.com, 2026-10-05)
+**Summary.** MetLife declared a Q4 common dividend of $0.5925 per share payable Dec 8, 2026, and will announce Q3 2026 results. Price targets were raised to $110 (UBS, MarketBeat). Bloomberg-sourced reports say MetLife and CNP are interested in Prudential's Brazil and Mexico units.
 
 **Recent positives**
 
-- Jefferies initiated at Buy with $50 target (2026-10-05)
-- Cadent selected Samsara for telematics and driver safety (2026-10-07)
-- Asplundh partnership headline (Yahoo Finance, 2026-10-05)
+- Declared Q4 2026 common dividend of $0.5925 per share
+- UBS raised price target to $110 from $105
+- Reported interest in Prudential's Brazil and Mexico units
 
-Sources: https://news.google.com/rss/articles/CBMirAFBVV95cUxOand0M1hzeUxGTHJCbmdHUXVDaUY0ZEpqSnFVM3pIanBOM0oyNHVhSzNFNlJjYjVsb3AybWRVb01lTXpMRGhnN0JaQWM2Q2dYN1NxcXFTTmxRZkE5YWpuVDVvX0xOTGZwUU0tWG1fRk9UbmF4RWhheE1WN000UmhjMEt1eG42ek1tUXpzSHI3N2gyLTNvOWEybVhwNUxmOVM2amZZTWp5YmVYUnM2?oc=5 ; https://news.google.com/rss/articles/CBMiwwFBVV95cUxNQjIzTFZqejh1RG5uT2VEaFRrLTlYR1VJVGRXZGhLUnQyNm03ak1laFZjdk5wR0owWEl0U29fYjhUSWNuZkZXVnRaQmRzYzBQOTdyallKc1dDSVY4TTNKLXl3cFdWejJ3cTdJb2dIZWhLOXZ1Sy1mYzh1UTZlV05VdklqVlYtY3FQYnZjYVR5b055b1ZhMi1BVUVDNmZxTlIwci01eFpNa2JBdXhKbFZjbGtWSnVXanBpdllCWmdITTVtYUU?oc=5 ; https://news.google.com/rss/articles/CBMirwFBVV95cUxQNHZaSGFXdk94b1VNNGd1TDA5N1g3T3lnZGEtTWNXQS1vajNvMFkxdjhCZGlVTnJ2NjJQd3dnVHBaLWF4UE1KS3cyOVJnM1dsVUduUmFhYjUyRDJZTlhSV3FIeDBjMElQMkUzMlpxSGt1WTQ0d1FhaWc3LVNoWDVrS2lwazc5Q3Bad1FJMUlOOGd5SjliVnRsdTFnY25KOUdRV3dVUFpmMDIySzY2blBr?oc=5 ; https://news.google.com/rss/articles/CBMitAFBVV95cUxQVUREQUpWMUJncmhHaWFMdGp3RmdidmpTOUk0ZFJqQkhTcVB5cFZQamZxSGE1ZVljT2FwanB6TjRhNjRmWlltcnlhcEhzSS1YamdQYk5yWGQwLUxWN2hMRU5EVGt2MVZGX19mek1MYnl3bFU3dWxLR1Jpb3dhVHBsQ2lxbjNnS1huVF9WOWQzRkZsT1gyTnJibG5ZV2Y2ZU1YazVLM2V6LURzeUhpdEdLVlpnRWs?oc=5 ; https://news.google.com/rss/articles/CBMiwAFBVV95cUxPZWRRN1daMS14ZHlqai1iWlU0b2Q3UWFRaDl2OTBxQ1ZkMGxxSm5Bc3Q2TjFrQjlURVl1VlRGTGlLLW93cERad2RWV3AyR200YUxaSW54ZzJvTm9MLXZTcGk2dGxYODVYWTdpZzZBaU10VGpwaEdtdmdBcEhFMjF2ZkhHaVZ0a0lTSGVOS1RkOXJIbXdld1JqVGxjRnptcFdWY2lDSjBSY2h6dUcxbXlYemxzWFF2aVRaRHQwNnA5aDY?oc=5 ; https://news.google.com/rss/articles/CBMiyAFBVV95cUxPUFBnMW9Idy12ZHN6Vld3S0tCYk5HMHRTcTAwbFRKc0YxWF9TdDF1d2otRnRESGV4N3Jub0J3eEtJc1k3bmdQVEtZX3Mzd2lzWjl4NEgza3FBTWdYZWFWTUVTTGlPVnNqNmtZOWRpbG4yRk9IUUlSMl9pQnhINWQ4Mm9zS1hlYmw3YU1Sa1N2MG1KUlNra0hMWFI5YXlaRWJRbk83YzB1ZHBROE5kbjRLU2g4UktaeXc0SG9wVXU2b01MS2JJdTJybQ?oc=5
+**Upcoming catalysts**
 
-## Tracking updates since 2026-10-08
+- Q3 2026 results announcement (exact date not stated in input)
+- Q4 dividend payable (2026-12-08)
+
+Sources: https://news.google.com/rss/articles/CBMi1wFBVV95cUxPU1hueXFDVDFBbXdtdnk5eDdjcFJaVHdvdkYyLXZDd2xZZWVGVE1QZEViQ0I2cGNIN0xDZEgtR3A4Rm5BcHo5Wms5Z1hYWjBWS2hhTTB6bnNtWWI1Wnprd2NXSlFOcjJ4SHJtbnZYRVdQVUJmbllTZGFXNjBzZkVPSGM2b3A4YUdtNlVnRmRkU19zQWpUQi0tSzNmaERtdlRmaVRfU24xck1ma1lHWG0tMmliMWJ6RGZxTEEtYllzV3dEWlVjaUwySU5IWk9VUHFod2ViclhjTQ?oc=5 ; https://news.google.com/rss/articles/CBMipwFBVV95cUxQbmxUbXlyYUF6N1lkRkphZzF1RUZKSGNJMXNjYjNZZVY3bG1wdGFVczVHdDhmZGxyaXJTQlBEOE8zaGdQaXdHWHh6bFJNYkMwZHoxb1pPUlRyempoQXRxcFROVTBSazdyT2l5TnBxdHpiY2RTYXJUYktJQ2lMWXZUSUJ1U1lQLXZMNWlhajUzcm5fQXRSWGxFcXdnbkNFQllSbEl1LTNDaw?oc=5 ; https://news.google.com/rss/articles/CBMingFBVV95cUxOX1U0RTYweExaVnZFQ2NZQXhFNDZhNkQ3MXlnRUJpTjFNMGlZYWVtX21qY0JIQzVZdkRoakxUekhIUmk1MUJ0czBjYjBYcUtib09WSkM4UlRteHRIV1VuaFFpRlNDWlZGWU83cGtiSmp0ekUzU1BtSEUzbTNBb1ZXbVdqV2Rtc1ZucEo0VTktQnJNQzhDbVNPTkFTcmVsdw?oc=5 ; https://news.google.com/rss/articles/CBMiqwFBVV95cUxOSC1GUlR5aEZGSGc3ZXQyMGFBV194dWlObFNMR2xVZEJXNEFaRjg2ZHlrZjVpRFZJbmozZWt4WVMtM2FBeHpmLWI3Y1dJcktqZnhCdGxSYVIybEJfZEhVYklMUkN5dkp4OGdoeUd4OUFzaUQzdGg4WFFSeFNIcWpWWDJrUHNEUWdCb0VxbXlxeXZWQ3U0LW5iQzVoeW1pc2cxajh2ajVSeEZaQVk?oc=5 ; https://news.google.com/rss/articles/CBMi3wFBVV95cUxOVUFNaU5BRG9vQ0dVay0tdWpXQUNzYmxCcHoyajhscGZPZVVZMzRBcHVmMVk3amtkUVk3cUVuN1JGSWRLdFZEOER3MUxQSUdTMm8xQVBjY1RDUElxU0FBSlMtT3hCNVItY3JiSjRXaG1QRWpJNjFubmRTeG93TzNhbFcxS2V1X25BSE9FQXR1cTdseFdEeWRDMERQaFMtMmlTYVlWYnFuRHpqQmFTMWoxS0VQQmRjX2trZDctR2dUXzlPalRQUW04WTltMVlJenlOUjBiNVFZN19DMnhRTHRv?oc=5
+
+### #4 AAPL - Apple Inc. Common Stock
+
+momentum pullback | Technology / Computer Manufacturing
+
+Relative-strength leader (RS percentile 81) pulled back 3.0 ATR to the 20-day SMA on 92% of average volume, then closed above the prior day's high.
+
+- **Entry (buy-stop):** $342.63
+- **Stop:** $325.17 (-5.1%)
+- **Target (2.0R):** $377.55 (+10.2%)
+- **Time stop:** close of trading day 20 after entry
+- **Valid until:** 2026-10-19
+- **Guardrail:** pass
+- **EV/FCF:** 74th percentile vs sector (EV/FCF 50.7)
+- **Earnings:** 2026-11-02 - ⚠ Earnings fall inside the ~25-trading-day holding window
+- **momentum pullback record:** not enough data yet (0/30 closed live results)
+
+**Summary.** Headlines report JPMorgan raised its price target and BofA reiterated Buy; Apple holds a 'Welcome Home' product launch on Oct 13 and Q3 earnings are referenced for Oct 29. Reports from Nikkei/Reuters say Apple cut iPhone 18 Pro component orders on soft demand; another report says iPhone Duo orders rose 30%.
+
+⚑ **Red flags**
+
+- Reuters/Nikkei Asia report that Apple cut iPhone 18 Pro orders due to soft demand
+- BofA warns SpaceX Starlink could pose risks to Apple
+
+**Recent positives**
+
+- JPMorgan set a $360 price target
+- BofA reiterated Buy
+- Report that Apple increased iPhone Duo orders by 30%
+
+**Upcoming catalysts**
+
+- 'Welcome Home' product launch event (2026-10-13)
+- Earnings (referenced as Oct. 29 earnings) (2026-10-29)
+
+Sources: https://news.google.com/rss/articles/CBMiqwFBVV95cUxQV0hhdmsxU3JvcVIzcDI1NjNEaVpucXhCckJIWUpaOXFQMWpMZWxXdlc3Q0ZhYW5WUklPSG9EclY1cFNJU3ZqMHlLdUJmM3E0eFdvN1VucTFVTnNQazJkVjFSU1ZkM0cteG5NenZPcjFYc19yc25SMEQ4VTY2Y2hjTVVtQ3ZzSTNZdDc1clNudFAweUNxMEdxR2M3aDVUVGNTcUp2dThSX0lvZlk?oc=5 ; https://news.google.com/rss/articles/CBMixwFBVV95cUxOcWxvbWdzenJKeF9PdGppTmNVeTQySGx4dzNaREdmbktzZzVUc3UtZVdXRUVxT1d6eDA0MGE5UGYxRi1rbXdEYW96ZVRRWXUtS3BialZSa0l0dWVKQzhNVVVfRUlfWk4zM2g1anhLUmpmaUg5VWR3eHcybnJsVE8yVFJWZTl4ZnpQa2xWUm1wN2k4X2llWWVoTHZoRjBnVmkwYjBzdE5ON0VSalY4ZVVrUmVGTkRsUVNHWERuZFV4Z3ZXVlgxekFr?oc=5 ; https://news.google.com/rss/articles/CBMiuwFBVV95cUxQaWtvN3EtbTBJUy1ETkZBbG53Ym1JVHZiNXQ5WEdORTlCZnc5ZGVFcTBIVkZJcnhEMzZfRUU2Q21vblRjQmFPU1JCX2FNa1JYVC1ydi1kOENHdmh6Qng0dFZvZHZqd09tODRfSkg0RUpsZEJLYkJQNlFqR20waWthY0RlUTh5MUxsaFJldVNOSnE1T2ZhSGc4ZTFxS0c2Vm9DM01FU0R4c3BqZkVxclNEREVaM3RzMUkxcGI0?oc=5 ; https://news.google.com/rss/articles/CBMiwgFBVV95cUxNajZlNXY0MkNuMlhWckdMMjNNSkVCbVU3a0ZfdnBDdGlpSElWS3J6bklwenBDekZEeGFMME0xUjdfdDhuS3J1YkN3bDN6SGZwNlZYal9sNlNQUzZ0NzFfWExIU09sSkotU2Z3dWtyX1duNzhTaU14YlVrai1WZ3pIMTBUc0FDV3p4VnNDaUo5MGhRdm9fbDBjU1d6YW1QNXc0TzA2ZG5MdVVwRkVnbmNuV1VqVjdNLVp5TEdpM1kzOExoQQ?oc=5 ; https://news.google.com/rss/articles/CBMilAFBVV95cUxPb1p3MEMyekNFNjZ2QnlDNnhrZ2xfSWhoY3E4RTZKZnFrSE1Pcnp3S3RicjdVRkQ1TnBlNUpVVmxXb0VURlB1YkRPcndEOWdyTmk4ZXhMQWZYanRCdUFIcDNuaC1sT09YbG42MUdwb3lpV3VWR3dNSTR4RG1CNzVHYWg3SmlXZGVsLXdJRkRIOHVRRGIt?oc=5 ; https://news.google.com/rss/articles/CBMirgFBVV95cUxQaW43ZjhEYjBERDhOT3d0RDJlNDI4UUpodHhJSkF0dlo3S3ptVU16Q3Ixb3dfbjJjUVltTVRjRlBjd1Q3Ry1XVnRwdzFScE90TTBpSXdvMmN3SmlXbGt6azY5WVpGbHdBM2hGUUhFWU8yaHlWZkJlclVEUWswUndFRkxMSkhmdTlNRXBSV2x3TFdiYVVtMk9tZXBUcU5icTFLTXVLd0NIdGthU0ZBeXc?oc=5 ; https://news.google.com/rss/articles/CBMic0FVX3lxTE9tQjZ6M2NmdVJPTUYwOUgzdjA5X2UzemhYS1JWVEQzT2gyenEzdTZQQkl3ZUNMb1pUM2hlckV1amVfNTdzMmtXd2FyZ01EcFJwYURMMVZfYmYxTTJkT2c1QUhPQlpTeG40VjZRZ0dhU0ZxMk0?oc=5
+
+### #5 ALRM - Alarm.com Holdings Inc. Common Stock
+
+momentum pullback | Technology / Computer Software: Prepackaged Software
+
+Relative-strength leader (RS percentile 80) pulled back 3.9 ATR to the 20-day SMA on 100% of average volume, then closed above the prior day's high.
+
+- **Entry (buy-stop):** $56.47
+- **Stop:** $52.00 (-7.9%)
+- **Target (2.0R):** $65.42 (+15.8%)
+- **Time stop:** close of trading day 20 after entry
+- **Valid until:** 2026-10-19
+- **Guardrail:** pass
+- **Earnings:** 2026-11-05 - ⚠ Earnings fall inside the ~25-trading-day holding window
+- **momentum pullback record:** not enough data yet (0/30 closed live results)
+
+**Summary.** Alarm.com launched a battery-powered video doorbell with AI features in early October. Zacks Research downgraded the stock to Hold. A Q3 2026 earnings date page exists but the input gives no exact date. Most other headlines are unrelated promo-code items.
+
+**Recent positives**
+
+- Launched battery-powered video doorbell (781B)
+
+**Upcoming catalysts**
+
+- Q3 2026 earnings (exact date not stated in input)
+
+Sources: https://news.google.com/rss/articles/CBMipwFBVV95cUxOSUVua3V1eV9zXzFYU24tUm1Uemw4YjhxbFVuRkdwa3NOT3oxbXBtMnF6azhHODVJc3pQNTlkSnIyTmxtTTlXQllpd0JVVjZ5b3RsUmR1QUR4ZXNJNF9jUGp3WFJXOS1QY3F1cWJSbXlNQy10WkV1bnE2OXpxSVNfQkloQVhfTk9YOV9FZzlhbEpoa19lYmRHTXp3anVmWXgtUG5CZHd3Zw?oc=5 ; https://news.google.com/rss/articles/CBMitwFBVV95cUxNdmFsWkpWRWZNOXIzcnQtN3JvMDgtcEVHNHJodHUyVmluV0JTZ09Ic3NyWlE1VjZBaXBMcW5zSDJUWkV4ZExRRER4Z20yMElLd2RHbXZwTVZadl82RE1tRFZMNzVGd2MxczFmUXRMdzNyVDZydGJvMnlSRXlnUk5odHFTYndPZ3ZuYmRlX3hjQ25sN3U1RUtKVWJxMk1ZbnU4dm9kTkE1UmVtTHVraFlONERXSFdBOVE?oc=5 ; https://news.google.com/rss/articles/CBMiigFBVV95cUxOeExLbDBDMUQtbUZwZXp5MGIyQzNId3hBQ2VEcVk2eTdzVi1DUzZIakROVTV1aVpTaGRTVUxxSDBBejlRSmxpblZMeWUtaDUwVlFIQjlFU0w5UzVJa1NZMVVPZVczV3JCek9WQUJFb3FEVG1yY25XX2FGd0xEOHdrT0NTc25BaElJQ3c?oc=5
+
+## Tracking updates since 2026-10-09
 
 | Date | Ticker | Event | R | Return | Note |
 |---|---|---|---|---|---|
-| 2026-10-09 | CRM | Triggered (entry filled) | -0.09R | - | filled at $229.60 |
-| 2026-10-09 | DOCU | Triggered (entry filled) | -0.14R | - | filled at $72.07 |
-| 2026-10-09 | FIVN | Triggered (entry filled) | +0.38R | - | filled at $35.29 |
-| 2026-10-09 | MANH | Triggered (entry filled) | -0.34R | - | filled at $208.44 |
-| 2026-10-09 | PAYC | Triggered (entry filled) | +0.08R | - | filled at $230.54 |
+| 2026-10-12 | AMT | Triggered (entry filled) | -0.02R | - | filled at $182.52 |
+| 2026-10-12 | ATRC | Triggered (entry filled) | +0.21R | - | filled at $56.29 |
+| 2026-10-12 | CAKE | Triggered (entry filled) | -0.08R | - | filled at $109.20 |
+| 2026-10-12 | HRMY | Expired (never triggered) | - | - | setup broke before entry |
+| 2026-10-12 | IOT | Triggered (entry filled) | -0.30R | - | filled at $42.29 |
+| 2026-10-12 | KNSA | Triggered (entry filled) | -0.18R | - | filled at $80.50 |
+| 2026-10-12 | LFST | Triggered (entry filled) | +0.01R | - | filled at $12.46 |
+| 2026-10-12 | MATX | Triggered (entry filled) | -0.06R | - | filled at $228.10 |
+| 2026-10-12 | NSIT | Triggered (entry filled) | +0.13R | - | filled at $164.28 |
+| 2026-10-12 | SAIL | Triggered (entry filled) | -0.86R | - | filled at $20.89 |
+| 2026-10-12 | SBLK | Triggered (entry filled) | -0.43R | - | filled at $30.52 |
+| 2026-10-12 | SKWD | Triggered (entry filled) | -0.07R | - | filled at $60.02 |
+| 2026-10-12 | SNOW | Triggered (entry filled) | -0.34R | - | filled at $369.04 |
+| 2026-10-12 | VEEV | Triggered (entry filled) | -0.07R | - | filled at $297.45 |
 
-## Open recommendations (8)
+## Open recommendations (22)
 
 | Ticker | Signal | Status | Entry | Stop | Target | Current R | Valid until | Note |
 |---|---|---|---|---|---|---|---|---|
-| CRM | 2026-10-08 | open | $227.95 | $220.39 | $243.06 | -0.09R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09) |
-| DOCU | 2026-10-08 | open | $71.52 | $63.67 | $87.20 | -0.14R | 2026-10-15 |  |
-| FIVN | 2026-10-08 | open | $35.29 | $32.44 | $40.99 | +0.38R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09) |
-| MANH | 2026-10-08 | open | $207.14 | $196.23 | $228.95 | -0.34R | 2026-10-15 |  |
-| PAYC | 2026-10-08 | open | $230.46 | $211.72 | $267.94 | +0.08R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09) |
-| MATX | 2026-10-08 | pending | $228.10 | $217.33 | $249.63 | - | 2026-10-15 |  |
-| SBLK | 2026-10-08 | pending | $30.52 | $28.85 | $33.86 | - | 2026-10-15 |  |
-| SKWD | 2026-10-08 | pending | $60.02 | $57.11 | $65.84 | - | 2026-10-15 |  |
+| CRM | 2026-10-08 | open | $227.95 | $220.39 | $243.06 | +0.54R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09, 2026-10-12) |
+| DOCU | 2026-10-08 | open | $71.52 | $63.67 | $87.20 | -0.15R | 2026-10-15 |  |
+| FIVN | 2026-10-08 | open | $35.29 | $32.44 | $40.99 | +0.12R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09) |
+| MANH | 2026-10-08 | open | $207.14 | $196.23 | $228.95 | +0.85R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-12) |
+| MATX | 2026-10-08 | open | $228.10 | $217.33 | $249.63 | -0.06R | 2026-10-15 |  |
+| PAYC | 2026-10-08 | open | $230.46 | $211.72 | $267.94 | +0.23R | 2026-10-15 | still valid from 2026-10-08 (repeat signal 2026-10-09) |
+| SBLK | 2026-10-08 | open | $30.52 | $28.85 | $33.86 | -0.43R | 2026-10-15 |  |
+| SKWD | 2026-10-08 | open | $60.02 | $57.11 | $65.84 | -0.07R | 2026-10-15 |  |
+| AMT | 2026-10-09 | open | $182.52 | $173.32 | $200.92 | -0.02R | 2026-10-16 |  |
+| ATRC | 2026-10-09 | open | $55.89 | $51.36 | $64.95 | +0.21R | 2026-10-16 | still valid from 2026-10-09 (repeat signal 2026-10-12) |
+| CAKE | 2026-10-09 | open | $109.20 | $105.22 | $117.17 | -0.08R | 2026-10-16 |  |
+| IOT | 2026-10-09 | open | $42.29 | $39.94 | $47.00 | -0.30R | 2026-10-16 |  |
+| KNSA | 2026-10-09 | open | $80.50 | $72.88 | $95.75 | -0.18R | 2026-10-16 |  |
+| LFST | 2026-10-09 | open | $12.46 | $11.43 | $14.52 | +0.01R | 2026-10-16 | still valid from 2026-10-09 (repeat signal 2026-10-12) |
+| NSIT | 2026-10-09 | open | $164.28 | $151.34 | $190.15 | +0.13R | 2026-10-16 | still valid from 2026-10-09 (repeat signal 2026-10-12) |
+| SAIL | 2026-10-09 | open | $20.84 | $19.29 | $23.94 | -0.86R | 2026-10-16 |  |
+| SNOW | 2026-10-09 | open | $369.04 | $342.20 | $422.72 | -0.34R | 2026-10-16 |  |
+| VEEV | 2026-10-09 | open | $297.45 | $271.93 | $348.50 | -0.07R | 2026-10-16 |  |
+| AYA | 2026-10-09 | pending | $27.78 | $25.42 | $32.49 | - | 2026-10-16 |  |
+| BEKE | 2026-10-09 | pending | $17.94 | $17.07 | $19.68 | - | 2026-10-16 |  |
+| CORT | 2026-10-09 | pending | $122.34 | $114.57 | $137.88 | - | 2026-10-16 |  |
+| TX | 2026-10-09 | pending | $58.69 | $54.98 | $66.10 | - | 2026-10-16 |  |
 
 ## Statistics (live)
 
-23 recommendations tracked: 5 open, 18 pending, 0 closed, 0 expired unfilled. Closed-trade averages vs SPY n/a, vs sector ETF n/a.
+28 recommendations tracked: 18 open, 9 pending, 0 closed, 1 expired unfilled. Closed-trade averages vs SPY n/a, vs sector ETF n/a.
 
 ### By module vs baseline
 
 | Module | Closed | Win | Avg R | Expect. | PF | vs SPY | Baseline R | Edge (R) | Note |
 |---|---|---|---|---|---|---|---|---|---|
-| All modules | 0 | n/a | n/a | n/a | n/a | n/a | -1.03R | n/a |  |
+| All modules | 0 | n/a | n/a | n/a | n/a | n/a | -1.02R | n/a |  |
 | base breakout | 0 | n/a | n/a | n/a | n/a | n/a | n/a | n/a | not enough data yet (0/30 closed) |
 | momentum pullback | 0 | n/a | n/a | n/a | n/a | n/a | n/a | n/a | not enough data yet (0/30 closed) |
 

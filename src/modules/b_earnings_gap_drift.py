@@ -50,23 +50,28 @@ class EarningsGapDrift(PanelModule):
         self.range_mult = param(c, "tight_range_atr_multiple", TIGHT_RANGE_ATR_MULT)
         self.stop_atr = param(c, "stop_atr_buffer", STOP_ATR_BUFFER)
 
+    @staticmethod
+    def _event_sessions(ev: pd.Series, cal: pd.DatetimeIndex) -> set[int]:
+        """Reaction-session positions (indices into ``cal``) one event can map to."""
+        pos = int(cal.searchsorted(pd.Timestamp(ev["event_date"])))
+        timing = _text(ev.get("timing")).lower()  # NULL arrives as NaN (a float) from pandas
+        source = _text(ev.get("source")).lower()
+        on_day = pos < len(cal) and cal[pos] == pd.Timestamp(ev["event_date"])
+        if source.startswith(("8k", "8-k")):
+            # derived from the 8-K acceptance time: event_date is already the reaction session
+            return {pos}
+        if timing in ("after_close", "amc") and on_day:
+            return {pos + 1}
+        if timing in ("before_open", "during", "bmo") or not on_day:
+            return {pos}
+        # unknown timing on a trading day: either session may be the reaction
+        return {pos, pos + 1}
+
     def _gap_sessions(self, events: pd.DataFrame, cal: pd.DatetimeIndex) -> list[int]:
         """Candidate reaction-session positions (indices into ``cal``)."""
         found: set[int] = set()
         for _, ev in events.iterrows():
-            pos = int(cal.searchsorted(pd.Timestamp(ev["event_date"])))
-            timing = _text(ev.get("timing")).lower()  # NULL arrives as NaN (a float) from pandas
-            source = _text(ev.get("source")).lower()
-            on_day = pos < len(cal) and cal[pos] == pd.Timestamp(ev["event_date"])
-            if source.startswith(("8k", "8-k")):
-                # derived from the 8-K acceptance time: event_date is already the reaction session
-                found.add(pos)
-            elif timing in ("after_close", "amc") and on_day:
-                found.add(pos + 1)
-            elif timing in ("before_open", "during", "bmo") or not on_day:
-                found.add(pos)
-            else:  # unknown timing on a trading day: either session may be the reaction
-                found.update((pos, pos + 1))
+            found.update(self._event_sessions(ev, cal))
         return sorted(p for p in found if 1 <= p < len(cal))
 
     def scan_ticker(self, ticker: str, df: pd.DataFrame, ctx: ScanContext) -> list[Candidate]:
@@ -114,12 +119,12 @@ class EarningsGapDrift(PanelModule):
                 cons_high = h[cons].max()
                 if c[t] > cons_high:
                     out.extend(
-                        self._emit(ticker, df, g, t, gap, vol_ratio, rng, atr_pre, atr, ctx)
+                        self._emit(ticker, df, g, t, gap, vol_ratio, rng, atr_pre, atr, ctx, events)
                     )
                     break
         return out
 
-    def _emit(self, ticker, df, g, t, gap, vol_ratio, rng, atr_pre, atr, ctx) -> list[Candidate]:
+    def _emit(self, ticker, df, g, t, gap, vol_ratio, rng, atr_pre, atr, ctx, events=None) -> list[Candidate]:
         if df.index[t] not in ctx.eval_dates:
             return []
         entry = float(df["high"].iloc[t])
@@ -134,6 +139,14 @@ class EarningsGapDrift(PanelModule):
             + 0.3 * tight
         )
         sessions = t - g - 1
+        # chart annotations (details only; nothing below feeds entry/stop/score)
+        cons = slice(g + 1, t)
+        ev_row = None
+        if events is not None:
+            for _, ev in events.iterrows():
+                if g in self._event_sessions(ev, df.index):
+                    ev_row = ev
+                    break
         return [
             Candidate(
                 ticker=ticker,
@@ -156,6 +169,27 @@ class EarningsGapDrift(PanelModule):
                     "pre_gap_atr14": f(atr_pre),
                     "gap_day_low": f(df["low"].iloc[g]),
                     "atr14": f(atr_t),
+                    "event_date": ev_row["event_date"] if ev_row is not None and isinstance(ev_row["event_date"], str) else None,
+                    "event_timing": _text(ev_row.get("timing")) or None if ev_row is not None else None,
+                    "event_source": _text(ev_row.get("source")) or None if ev_row is not None else None,
+                    "prior_close": f(df["close"].iloc[g - 1]),
+                    "gap_day_open": f(df["open"].iloc[g]),
+                    "gap_day_high": f(df["high"].iloc[g]),
+                    "gap_day_close": f(df["close"].iloc[g]),
+                    "gap_day_volume": f(df["volume"].iloc[g], 0),
+                    "avg_volume_50": f(df["volume"].iloc[g] / vol_ratio, 0),
+                    "consolidation_start": df.index[g + 1].date().isoformat(),
+                    "consolidation_end": df.index[t - 1].date().isoformat(),
+                    "consolidation_high": f(df["high"].iloc[cons].max()),
+                    "consolidation_low": f(df["low"].iloc[cons].min()),
+                    "min_close_in_consolidation": f(df["close"].iloc[cons].min()),
+                    "trigger_date": df.index[t].date().isoformat(),
+                    "trigger_close": f(df["close"].iloc[t]),
+                    "min_gap_pct": f(self.min_gap),
+                    "min_volume_multiple": f(self.min_vol_mult),
+                    "tight_range_atr_multiple": f(self.range_mult),
+                    "hold_days_min": int(self.hold_min),
+                    "hold_days_max": int(self.hold_max),
                 },
             )
         ]

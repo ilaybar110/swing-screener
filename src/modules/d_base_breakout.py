@@ -75,6 +75,7 @@ class BaseBreakout(PanelModule):
             if not self.stop_ok(entry, stop):
                 continue
             L, ratio, vr = int(best_len[i]), float(best_ratio[i]), float(vol_ratio.iloc[i])
+            avgv_prev = float(v.iloc[i] / vol_ratio.iloc[i])  # 50-day average ending the day before
             score = 100.0 * (
                 0.4 * ind.clip01((self.contraction - ratio) / 0.4)
                 + 0.3 * ind.clip01((L - self.min_len) / (self.max_len - self.min_len))
@@ -101,6 +102,23 @@ class BaseBreakout(PanelModule):
                         "volume_ratio": f(vr, 2),
                         "atr14": f(atr_i),
                         "high_52w": f(hi52.iloc[i]),
+                        "base_start": df.index[i - L].date().isoformat(),
+                        "base_end": df.index[i - 1].date().isoformat(),
+                        "base_mid": f(mid),
+                        "atr_start": f(atr.iloc[i - L - 1]),
+                        "atr_start_date": df.index[i - L - 1].date().isoformat(),
+                        "atr_end": f(atr.iloc[i - 1]),
+                        "contraction_threshold": f(self.contraction),
+                        "trigger_date": df.index[i].date().isoformat(),
+                        "trigger_close": f(c.iloc[i]),
+                        "breakout_volume": f(v.iloc[i], 0),
+                        "avg_volume_50": f(avgv_prev, 0),
+                        "min_volume_multiple": f(self.min_vol_mult),
+                        "close_vs_52w_high": f(c.iloc[i] / hi52.iloc[i]),
+                        "atr_stop": f(entry - self.atr_mult * atr_i),
+                        "atr_stop_multiple": f(self.atr_mult),
+                        "min_base_sessions": int(self.min_len),
+                        "max_base_sessions": int(self.max_len),
                     },
                 )
             )

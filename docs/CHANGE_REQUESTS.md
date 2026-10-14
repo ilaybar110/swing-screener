@@ -71,3 +71,9 @@ Status: applied
 File: tests/fixtures/generate_fixtures.py (observation, not changed)
 Note: SPLIT1's price series is stored *unadjusted* (the generator comment says "yfinance-style adjusted", but pre-split prices are 2x), and its split-day bar keeps the pre-split open/high. Live yfinance history is split-adjusted, so the e2e price stub (`tests/e2e/conftest.py::_as_yahoo_adjusted`) serves SPLIT1 adjusted and repairs that bar. Bot 5's tracker handles both raw and adjusted history.
 Status: declined by Bot 8 audit (2026-10-01): cosmetic and already handled (tracker supports both raw and adjusted history, e2e stub serves adjusted); regenerating the fixtures would churn every committed fixture file for no behavioural gain.
+
+## 2026-10-13 — Bot 10 (APPLIED by Bot 10 at the owner's request)
+Files: src/modules/a_momentum_pullback.py, b_earnings_gap_drift.py, c_insider_cluster.py, d_base_breakout.py
+Change: each candidate's `details` now also carries every level/date/value needed to draw the technical reason for the signal on the dashboard chart (swing high/pullback dates, gap-day OHLC and consolidation box, insider trades with names/prices/filing dates, base box and ATR values, thresholds). Only new keys were added; entry, stop, setup_score, rationale and the flagged tickers/dates are untouched. Module B's reaction-session mapping was split out of `_gap_sessions` into `_event_sessions` (same logic) so the event row that produced a gap can be reported.
+Guard: tests/test_module_details_regression.py replays every module on the fixtures and compares with tests/fixtures/golden_candidates.json (generated from the pre-change modules): all non-details fields and every pre-existing details value must be identical.
+Status: applied

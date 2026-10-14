@@ -19,6 +19,7 @@ import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
 from dashboard import data as dd  # noqa: E402
+from dashboard import rec_view  # noqa: E402
 from src.stats import NOT_ENOUGH_DATA, summary  # noqa: E402
 
 st.set_page_config(page_title="Swing Screener", layout="wide")
@@ -318,35 +319,6 @@ def view_all(d: dict) -> None:
     st.download_button("Download CSV", out[cols].to_csv(index=False), "recommendations.csv", "text/csv")
 
 
-def price_chart(row: pd.Series) -> None:
-    signal = date.fromisoformat(str(row["signal_date"])[:10])
-    start, end = dd.chart_window(row)
-    prices = cached_prices(row["ticker"], start, end)
-    factor = cached_split_factor(row["ticker"], signal)
-    levels = pd.DataFrame({
-        "level": ["entry", "stop", "target"],
-        "price": [row["entry"] / factor, row["stop"] / factor, row["target"] / factor],
-    })
-    base = alt.Chart(prices).encode(x=alt.X("date:T", title=None))
-    wick = base.mark_rule().encode(y=alt.Y("low:Q", scale=alt.Scale(zero=False), title="price"), y2="high:Q")
-    body = base.mark_bar(size=5).encode(
-        y="open:Q", y2="close:Q",
-        color=alt.condition("datum.close >= datum.open", alt.value("#2a9d8f"), alt.value("#e76f51")))
-    rules = alt.Chart(levels).mark_rule(strokeDash=[6, 4], size=2).encode(
-        y="price:Q", color=alt.Color("level:N", scale=alt.Scale(
-            domain=["entry", "stop", "target"], range=["#457b9d", "#c1121f", "#2b9348"])),
-        tooltip=["level", "price"])
-    marks = [pd.DataFrame({"date": [pd.Timestamp(signal)], "what": ["signal"]})]
-    for key, lab in (("entry_date", "entry"), ("exit_date", "exit")):
-        if isinstance(row.get(key), str) and row[key]:
-            marks.append(pd.DataFrame({"date": [pd.Timestamp(row[key])], "what": [lab]}))
-    vlines = alt.Chart(pd.concat(marks)).mark_rule(color="gray", opacity=0.5).encode(
-        x="date:T", tooltip=["what", "date:T"])
-    st.altair_chart((wick + body + rules + vlines).properties(height=420), width="stretch")
-    if factor != 1.0:
-        st.caption(f"Levels restated for a {factor:g}:1 split after the signal date.")
-
-
 def view_detail(d: dict) -> None:
     recs = d["recs"]
     if recs.empty:
@@ -369,12 +341,8 @@ def view_detail(d: dict) -> None:
     cols[2].metric("Target", f"{row['target']:.2f} ({(row['target'] / row['entry'] - 1):+.1%})")
     cols[3].metric("Valid until", row["valid_until"] or "-")
 
-    # fetched from Yahoo only when asked for
-    if st.toggle("Show price chart (fetched from Yahoo Finance)", value=False, key=f"chart_{row['id']}"):
-        try:
-            price_chart(row)
-        except Exception as exc:  # noqa: BLE001 - network/ticker problems must not break the page
-            st.error(f"Could not load prices for {row['ticker']}: {exc}")
+    if st.toggle("Show chart (prices fetched from Yahoo Finance)", value=True, key=f"chart_{row['id']}"):
+        rec_view.render(row, _state_stamp(), row["source"] == dd.LIVE)
 
     if pd.notna(row["final_status"]) and pd.notna(row["entry_date"]):
         st.subheader("Outcome")

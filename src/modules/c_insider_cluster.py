@@ -130,12 +130,29 @@ class InsiderCluster(PanelModule):
         atr_t = float(atr.iloc[t])
         if pd.isna(atr_t):
             return None
+        sma_t = float(ind.sma(df["close"], self.sma_days).iloc[t])
         entry = float(df["high"].iloc[t])
         swing_low = float(df["low"].iloc[max(0, t - self.stop_lookback + 1): t + 1].min())
         stop = max(swing_low, entry - self.atr_mult * atr_t)
         if not self.stop_ok(entry, stop):
             return None
         w = cl["window"]
+        # chart annotations (details only; nothing below feeds entry/stop/score)
+        lows = df["low"].iloc[max(0, t - self.stop_lookback + 1): t + 1]
+        trades = [
+            {
+                "insider": str(r["insider_name"]) if isinstance(r.get("insider_name"), str) else str(r["insider"]),
+                "title": r["officer_title"] if isinstance(r.get("officer_title"), str) else None,
+                "is_director": bool(r.get("is_director") == 1),
+                "is_officer": bool(r.get("is_officer") == 1),
+                "trade_date": pd.Timestamp(r["trans_date"]).date().isoformat(),
+                "filed_date": pd.Timestamp(r["filed_date"]).date().isoformat(),
+                "shares": f(r["shares"], 2),
+                "price": f(r["price"], 4),
+                "value": f(r["value"], 2),
+            }
+            for _, r in w.sort_values(["trans_date", "filed_date"]).iterrows()
+        ]
         insiders = w.drop_duplicates("insider")
         senior = max(_seniority(r) for _, r in w.iterrows())
         score = 100.0 * (
@@ -163,5 +180,22 @@ class InsiderCluster(PanelModule):
                 "seniority": f(senior, 2),
                 "sessions_since_completion": int(t - comp),
                 "atr14": f(atr_t),
+                "trades": trades,
+                "cluster_window_days": int(self.window_days),
+                "min_distinct_insiders": int(self.min_insiders),
+                "min_cluster_total_value": f(self.min_total, 0),
+                "min_txn_value": f(self.min_txn, 0),
+                "completion_date": df.index[comp].date().isoformat(),
+                "trigger_date": df.index[t].date().isoformat(),
+                "trigger_close": f(df["close"].iloc[t]),
+                "sma_days": int(self.sma_days),
+                "sma_at_trigger": f(sma_t),
+                "swing_low": f(swing_low),
+                "swing_low_date": lows.idxmin().date().isoformat(),
+                "swing_low_window_start": lows.index[0].date().isoformat(),
+                "atr_stop": f(entry - self.atr_mult * atr_t),
+                "stop_basis": "swing_low" if swing_low >= entry - self.atr_mult * atr_t else "atr_cap",
+                "atr_stop_multiple": f(self.atr_mult),
+                "completion_window_sessions": int(self.completion_sessions),
             },
         )

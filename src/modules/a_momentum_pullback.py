@@ -96,6 +96,7 @@ class MomentumPullback(PanelModule):
         ok_struct[SWING_LOOKBACK:] = (~bad) & (since >= MIN_PULLBACK_SESSIONS)
         pull_vol_a, pull_low_a, swing_a = pad(pull_vol), pad(pull_low), pad(swing_high)
         dry = pull_vol_a < avgv_prev.to_numpy()
+        rs_line = ind.rs_raw(c, ctx.spy["close"], self.rs_lookback, self.rs_skip) if len(ctx.spy) else None
 
         sig = (
             cond & touched & ~broke & trigger
@@ -115,6 +116,9 @@ class MomentumPullback(PanelModule):
             dry_score = ind.clip01((1.0 - vol_ratio) / 0.5)
             depth_score = ind.clip01(1.0 - (depth_atr - 1.0) / 5.0)
             score = 100.0 * (0.4 * rs / 100.0 + 0.3 * dry_score + 0.3 * depth_score)
+            # chart annotations (details only; nothing below feeds entry/stop/score)
+            s_idx = i - SWING_LOOKBACK + int(k[i - SWING_LOOKBACK])  # swing-high session
+            low_idx = s_idx + 1 + int(np.argmin(lv[s_idx + 1: i]))  # first pullback-low session
             near = "20-day" if lo.iloc[max(0, i - w + 1): i + 1].min() <= (1 + self.touch_pct) * sma_f.iloc[i] else "50-day"
             out.append(
                 Candidate(
@@ -139,6 +143,24 @@ class MomentumPullback(PanelModule):
                         "sma20": f(sma_f.iloc[i]),
                         "sma50": f(sma_s.iloc[i]),
                         "high_52w": f(hi52.iloc[i]),
+                        "swing_high_date": df.index[s_idx].date().isoformat(),
+                        "pullback_low_date": df.index[low_idx].date().isoformat(),
+                        "pullback_start": df.index[s_idx + 1].date().isoformat(),
+                        "pullback_end": df.index[i - 1].date().isoformat(),
+                        "pullback_sessions": int(i - 1 - s_idx),
+                        "pullback_avg_volume": f(pull_vol_a[i], 0),
+                        "avg_volume_20": f(avgv_prev.iloc[i], 0),
+                        "trigger_date": df.index[i].date().isoformat(),
+                        "trigger_close": f(c.iloc[i]),
+                        "prior_day_high": f(h.iloc[i - 1]),
+                        "close_vs_52w_high": f(c.iloc[i] / hi52.iloc[i]),
+                        "sma50_slope_ref": f(sma_s.iloc[i - self.slope_sessions]),
+                        "touched_sma": near,
+                        "touch_window_low": f(lo.iloc[max(0, i - w + 1): i + 1].min()),
+                        "min_close_vs_sma50": f((c.iloc[max(0, i - w + 1): i + 1] / sma_s.iloc[max(0, i - w + 1): i + 1]).min()),
+                        "rs_raw": f(rs_line.iloc[i]) if rs_line is not None else None,
+                        "rs_lookback": int(self.rs_lookback),
+                        "rs_skip": int(self.rs_skip),
                     },
                 )
             )

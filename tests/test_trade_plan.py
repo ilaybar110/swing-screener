@@ -9,7 +9,8 @@ import pytest
 from src.config import load_config
 from src.contracts import Candidate
 from src.data_access import DataAccess
-from src.trade_plan import build, plan_levels
+from src.db import ensure_earnings_columns
+from src.trade_plan import apply_earnings_policy, build, earnings_blackout_end, earnings_block, plan_levels
 from src.utils.calendar import add_trading_days
 
 CFG = load_config()
@@ -84,3 +85,63 @@ def test_earnings_flag_point_in_time_and_window(writable_fixture_conn):
     assert rec.earnings_date == date(2024, 12, 5) and rec.earnings_in_window is True
     rec = build([_cand("MOMA1", d=sig)], data, CFG)
     assert rec.earnings_date == date(2025, 2, 20) and rec.earnings_in_window is False
+
+
+# --- earnings policy: skip candidates with a known report inside the blackout -------------
+
+
+def _cfg(policy="skip", min_sessions=10):
+    cfg = CFG.model_copy(deep=True)
+    cfg.earnings.policy = policy
+    cfg.earnings.min_sessions_before = min_sessions
+    return cfg
+
+
+def _cal(conn, ticker, day, known=None, timing="AMC"):
+    ensure_earnings_columns(conn)
+    conn.execute(
+        "INSERT INTO earnings_dates (ticker, event_date, timing, source, known_date) "
+        "VALUES (?, ?, ?, 'nasdaq_calendar', ?)", (ticker, day, timing, known))
+    conn.commit()
+
+
+def test_config_defaults_to_skip_with_ten_sessions():
+    assert CFG.earnings.policy == "skip" and CFG.earnings.min_sessions_before == 10
+
+
+def test_blackout_end_is_entry_window_plus_min_sessions():
+    sig = date(2024, 11, 20)
+    assert earnings_blackout_end(sig, _cfg()) == add_trading_days(sig, 5 + 10)
+
+
+def test_skip_policy_blocks_known_earnings_inside_the_blackout(writable_fixture_conn):
+    conn = writable_fixture_conn
+    sig = date(2024, 11, 20)
+    end = add_trading_days(sig, 15)
+    _cal(conn, "MOMA1", end.isoformat())                         # last blackout session: blocked
+    _cal(conn, "MOMD1", add_trading_days(sig, 16).isoformat())   # one session later: allowed
+    data = DataAccess(conn)
+    assert earnings_block(data, "MOMA1", sig, _cfg()) == end
+    assert earnings_block(data, "MOMD1", sig, _cfg()) is None
+    assert earnings_block(data, "MOMA1", sig, _cfg(policy="flag")) is None
+    by = {"MOMA1": [_cand("MOMA1", d=sig)], "MOMD1": [_cand("MOMD1", d=sig)]}
+    assert list(apply_earnings_policy(by, sig, data, _cfg())) == ["MOMD1"]
+    assert list(apply_earnings_policy(by, sig, data, _cfg(policy="flag"))) == ["MOMA1", "MOMD1"]
+
+
+def test_skip_policy_is_point_in_time(writable_fixture_conn):
+    conn = writable_fixture_conn
+    sig = date(2024, 11, 20)
+    day = add_trading_days(sig, 5).isoformat()
+    _cal(conn, "MOMA1", day, known="2024-11-21")  # first listed the day after the signal
+    data = DataAccess(conn)
+    assert earnings_block(data, "MOMA1", sig, _cfg()) is None
+    assert earnings_block(data, "MOMA1", date(2024, 11, 21), _cfg()) is not None
+    # an 8-K accepted after the signal day is unknowable too (fixture MOMB1 row, 2024-12-03)
+    assert earnings_block(data, "MOMB1", date(2024, 11, 26), _cfg()) is None
+
+
+def test_skip_policy_ignores_the_event_module_b_trades(writable_fixture_conn):
+    # module B signals after its own report: that event's reaction is behind the signal
+    data = DataAccess(writable_fixture_conn)
+    assert earnings_block(data, "MOMB1", date(2024, 12, 10), _cfg()) is None

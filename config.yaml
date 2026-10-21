@@ -63,7 +63,16 @@ modules:
     hold_days_min: 2
     hold_days_max: 5
     tight_range_atr_multiple: 1.5
-    stop_atr_buffer: 0.1
+    stop_atr_buffer: 0.1             # stop = max(gap-day low, consolidation/pullback low) - 0.1 ATR
+    gap_close_min_range_position: 0.5  # gap-day close must sit in the upper half of its high-low range
+    prefer_8k_window_days: 3         # a calendar row within 3 days of an 8-K 2.02 event defers to the 8-K
+    pullback_trigger_enabled: true   # second trigger: first pullback to the SMA after the gap, then reclaim
+    pullback_window_sessions: 30     # the reclaim must come within 30 sessions of the gap
+    pullback_sma_days: [10, 20]      # a low touching the higher of these SMAs counts as the pullback
+    pullback_touch_pct: 0.02         # a low within 2% above the SMA counts as a touch (as in module A)
+    surprise_max_points: 10.0        # earnings surprise adds -10..+10 setup points; no data -> 0
+    surprise_eps_saturation: 0.20    # EPS surprise of +-20% vs the Nasdaq forecast saturates
+    surprise_sue_saturation: 2.0     # revenue SUE (seasonal random walk) of +-2 saturates
   c_insider_cluster:
     enabled: true
     min_distinct_insiders: 2
@@ -107,6 +116,10 @@ trade_plan:
   time_stop_trading_days: 20
   entry_validity_trading_days: 5
   exit_sma_days: 20
+
+earnings:
+  policy: "skip"                   # "skip": drop a candidate whose next known earnings falls inside the window; "flag": only flag it
+  min_sessions_before: 10          # window = entry validity + 10 sessions after the signal (point-in-time known dates only)
 
 tracking:
   round_trip_cost_pct: 0.001

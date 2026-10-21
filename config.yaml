@@ -127,6 +127,14 @@ baseline:
   samples_per_recommendation: 3
   random_seed: 20240101
 
+measurement:
+  forward_horizons: [5, 10, 20, 40, 60]   # trading days from the signal's next open (state/forward_returns)
+  bootstrap_iterations: 2000              # cluster bootstrap (resampling signal weeks) for 95% CIs
+  bootstrap_seed: 20240101
+  ci_level: 0.95
+  min_n_for_evidence: 30                  # below this the evidence label is "insufficient"
+  min_weeks_for_evidence: 4               # distinct signal weeks needed as well
+
 report:
   top_n_favorable: 10
   top_n_caution: 5

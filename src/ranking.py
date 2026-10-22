@@ -38,7 +38,7 @@ from src import indicators as ind
 from src.config import load_config
 from src.contracts import Candidate, GuardrailResult, Recommendation
 from src.repeats import split_repeats
-from src.trade_plan import build
+from src.trade_plan import apply_earnings_policy, build
 from src.utils.logging import get_logger
 
 log = get_logger(__name__)
@@ -223,6 +223,7 @@ def rank(
     for c in todays:
         by_ticker[c.ticker].append(c)
     by_ticker = defaultdict(list, split_repeats(by_ticker, conn, as_of, config, source))
+    by_ticker = defaultdict(list, apply_earnings_policy(by_ticker, as_of, data, config))
     if not by_ticker:
         return []
 

@@ -25,6 +25,7 @@ from typing import Any, Iterable, Optional
 
 # Fixed-horizon forward returns: src/forward_returns.py owns the table DDL (it is not
 # part of src/db.py's schema), so import/export create it on demand.
+from src.db import ensure_earnings_columns
 from src.forward_returns import FIELDS as _FORWARD_RETURNS_FIELDS
 from src.forward_returns import ensure_table as _ensure_forward_returns
 from src.forward_returns import table_exists as _forward_returns_exists
@@ -73,7 +74,11 @@ _INSIDER_TRADES_FIELDS = [
     "filed_date",
 ]
 
-_EARNINGS_DATES_FIELDS = ["ticker", "event_date", "timing", "source", "acceptance_datetime"]
+_EARNINGS_DATES_FIELDS = [
+    "ticker", "event_date", "timing", "source", "acceptance_datetime",
+    "known_date", "last_seen_date", "eps_forecast", "num_estimates", "last_year_eps",
+    "eps_actual", "eps_surprise_pct",
+]
 
 _FUNDAMENTALS_SUMMARY_FIELDS = [
     "as_of", "ticker", "revenue_ttm", "op_income_ttm", "fcf_ttm", "total_debt",
@@ -164,6 +169,7 @@ def import_state(conn: sqlite3.Connection, state_dir: Path) -> None:
     """Load every state/ CSV into conn. conn must already have init_db() applied.
     Safe to call on an empty state/ directory (each table simply stays empty)."""
     state_dir = Path(state_dir)
+    ensure_earnings_columns(conn)  # CSVs written before these columns existed load with NULLs
 
     def load_simple(name: str, table: str, fields: list[str]) -> None:
         raw_rows = _read_csv(_csv_path(state_dir, name))
@@ -213,6 +219,7 @@ def export_state(conn: sqlite3.Connection, state_dir: Path, as_of: Optional[date
     and defaults to date.today()."""
     state_dir = Path(state_dir)
     as_of = as_of or date.today()
+    ensure_earnings_columns(conn)
 
     _export_simple(
         conn, state_dir, "tickers", "tickers", _TICKERS_FIELDS,

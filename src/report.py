@@ -868,6 +868,8 @@ def _horizon_rows(stats: dict[str, Any]) -> list[dict[str, Any]]:
     for k, h in bh["overall"].items():
         if isinstance(h, dict):
             out.append({"name": str(k), **_horizon_cell(h)})
+    if not any((h.get("n") or 0) > 0 for h in bh["overall"].values() if isinstance(h, dict)):
+        return []  # stats always carry the horizons; an all-empty table is just noise
     return out
 
 

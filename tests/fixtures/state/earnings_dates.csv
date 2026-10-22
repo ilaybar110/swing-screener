@@ -1,3 +1,3 @@
-ticker,event_date,timing,source,acceptance_datetime
-MOMB1,2024-12-03,before_open,8-K_2.02,2024-12-03T07:00:00
-NEGB1,2024-12-03,before_open,8-K_2.02,2024-12-03T07:00:00
+ticker,event_date,timing,source,acceptance_datetime,known_date,last_seen_date,eps_forecast,num_estimates,last_year_eps,eps_actual,eps_surprise_pct
+MOMB1,2024-12-03,before_open,8-K_2.02,2024-12-03T07:00:00,,,,,,,
+NEGB1,2024-12-03,before_open,8-K_2.02,2024-12-03T07:00:00,,,,,,,

@@ -152,6 +152,19 @@ class TrackingConfig(BaseModel):
     sector_etfs: dict[str, str]
 
 
+class MeasurementConfig(BaseModel):
+    """Measurement / statistics settings (fixed-horizon forward returns, bootstrap
+    confidence intervals, evidence labels). Every field has a default so older
+    config files without a ``measurement`` section still load."""
+
+    forward_horizons: list[int] = Field(default_factory=lambda: [5, 10, 20, 40, 60])
+    bootstrap_iterations: int = 2000
+    bootstrap_seed: int = 20240101
+    ci_level: float = 0.95
+    min_n_for_evidence: int = 30       # observations needed before an evidence label is given
+    min_weeks_for_evidence: int = 4    # distinct signal weeks (bootstrap clusters) needed too
+
+
 class BaselineConfig(BaseModel):
     samples_per_recommendation: int
     random_seed: int
@@ -188,6 +201,7 @@ class Config(BaseModel):
     trade_plan: TradePlanConfig
     tracking: TrackingConfig
     baseline: BaselineConfig
+    measurement: MeasurementConfig = Field(default_factory=MeasurementConfig)
     report: ReportConfig
     llm: LLMConfig
     secrets: SecretsConfig = Field(default_factory=SecretsConfig)

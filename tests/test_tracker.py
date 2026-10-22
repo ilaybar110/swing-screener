@@ -122,11 +122,44 @@ def test_gap_above_entry_fills_at_open():
 
 
 def test_stop_touched_on_entry_day_counts():
-    res = run([(99, 101, 94, 96)])
+    # opened at the entry: filled at the open, so the later low is a real stop-out
+    res = run([(100, 101, 94, 96)])
     assert res.status == "stopped" and res.exit_reason == "stop"
     assert res.avg_exit_price == 95
     assert res.r_multiple == pytest.approx(-1 - COST_R)
     assert res.days_held == 0
+    assert res.ambiguous_fill is False
+
+
+def test_ambiguous_fill_bar_low_may_precede_fill_is_not_a_stop():
+    # opened below the entry, low pierced the stop, closed back above it: the low may
+    # have printed before the buy-stop filled -> no stop-out, flagged ambiguous
+    res = run([(99, 101, 94, 96)])
+    assert res.status == "open" and not res.is_final
+    assert res.entry_fill == 100
+    assert res.ambiguous_fill is True
+    assert res.mae_r == 0.0  # the pre-fill low is excluded from MAE too
+
+
+def test_ambiguous_fill_then_later_stop_still_stops():
+    res = run([(99, 101, 94, 96), (96, 97, 94, 95)])
+    assert res.status == "stopped" and res.days_held == 1
+    assert res.avg_exit_price == 95
+    assert res.ambiguous_fill is True
+
+
+def test_fill_bar_opened_below_entry_and_closed_below_stop_is_a_stop():
+    # the close is after the fill, so the stop was certainly crossed after entry
+    res = run([(99, 101, 93, 94)])
+    assert res.status == "stopped" and res.avg_exit_price == 95
+    assert res.ambiguous_fill is False
+
+
+def test_baseline_open_entry_is_never_ambiguous():
+    df, sig = mk_prices([(99, 101, 94, 96)])
+    res = simulate(mk_rec(sig, entry=99, stop=99 * 0.95, target=99 * 1.1), df, None, CFG,
+                   entry_mode="open")
+    assert res.status == "stopped" and res.ambiguous_fill is False
 
 
 def test_gap_down_through_stop_fills_at_open():

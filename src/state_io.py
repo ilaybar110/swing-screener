@@ -6,6 +6,9 @@ export_state(conn) writes the persisted subset of that connection back out to st
 deterministically (sorted rows, stable columns, UTF-8, "\n" line endings) so git diffs
 stay small and re-importing the export reproduces the same DB rows.
 
+forward_returns (complete fixed-horizon rows only) is month-sharded by signal date
+into state/forward_returns/YYYY-MM.csv, live source only, like baselines.
+
 Retention windows and sharding are documented table-by-table below and in
 docs/CONTRACTS.md. Tables not listed here (prices, fundamentals, filing_texts) are
 ephemeral and never touch state/.
@@ -19,6 +22,12 @@ import sqlite3
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any, Iterable, Optional
+
+# Fixed-horizon forward returns: src/forward_returns.py owns the table DDL (it is not
+# part of src/db.py's schema), so import/export create it on demand.
+from src.forward_returns import FIELDS as _FORWARD_RETURNS_FIELDS
+from src.forward_returns import ensure_table as _ensure_forward_returns
+from src.forward_returns import table_exists as _forward_returns_exists
 
 # Fields kept in state/filings.csv -- enough for dedupe/processing, not the full row
 # (primary_doc_url / exhibit_991_url are not persisted; they're re-derived on demand).
@@ -185,6 +194,13 @@ def import_state(conn: sqlite3.Connection, state_dir: Path) -> None:
             rows = [_deserialize_row_for_insert(table, r) for r in raw_rows]
             _insert_rows(conn, table, fields, rows)
 
+    fr_dir = state_dir / "forward_returns"
+    if fr_dir.exists():
+        _ensure_forward_returns(conn)
+        for csv_file in sorted(fr_dir.glob("*.csv")):
+            rows = [_deserialize_row_for_insert("forward_returns", r) for r in _read_csv(csv_file)]
+            _insert_rows(conn, "forward_returns", _FORWARD_RETURNS_FIELDS, rows)
+
 
 # ---------------------------------------------------------------------------
 # export_state
@@ -262,6 +278,13 @@ def export_state(conn: sqlite3.Connection, state_dir: Path, as_of: Optional[date
         conn, state_dir, "baselines", "baselines",
         _BASELINES_FIELDS, date_field="signal_date", order_by="id",
     )
+    # Only when the table exists (a DB that never ran the forward-return update, e.g.
+    # the committed fixture, exports exactly as before).
+    if _forward_returns_exists(conn):
+        _export_sharded(
+            conn, state_dir, "forward_returns", "forward_returns",
+            _FORWARD_RETURNS_FIELDS, date_field="signal_date", order_by="subject_id, horizon",
+        )
 
 
 def _export_simple(

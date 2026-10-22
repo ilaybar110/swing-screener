@@ -12,9 +12,16 @@ Bar-level conventions (all documented because daily bars hide intraday order):
 * PENDING: the first bar with ``high >= entry`` fills (at ``entry``, or at the open
   when the bar gapped above it). The order lives ``entry_validity_trading_days``
   bars; a close below the stop before any fill expires it early.
-* A stop touched on the entry bar counts (stop-out). If stop and target are both
-  touched on the same bar the stop wins. On the entry bar the stop exits at the stop
-  price; on later bars at the open when it gapped below the stop.
+* Stop on the entry bar (buy-stop mode): when the bar opened at/above the entry the
+  order filled at the open, so any ``low <= stop`` happened after the fill and counts.
+  When it opened *below* the entry the bar is ambiguous -- its low may have printed
+  before the buy-stop filled. Rule: such a bar is a stop-out only if it also closed
+  below the stop (the close is certainly after the fill, so the stop was crossed
+  after entry); otherwise the trade stays open and the result carries
+  ``ambiguous_fill=True``. Baselines (entry at the open) are never ambiguous.
+  If stop and target are both touched on the same bar the stop wins. On the entry
+  bar the stop exits at the stop price; on later bars at the open when it gapped
+  below the stop.
 * Target fills at the target price (not improved for gaps - conservative). After the
   partial exit the remaining stop moves to the actual fill price, effective from the
   *next* bar (the order within the target bar is unknowable).
@@ -231,6 +238,12 @@ def simulate(
             )
         fill = float(max(entry, bars.o[i0]))
 
+    # Fill bar opened below the buy-stop: intrabar order of low vs fill is unknown.
+    ambiguous_fill = (
+        entry_mode == "stop" and bars.o[i0] < entry and bars.l[i0] <= stop
+        and bars.c[i0] >= stop
+    )
+
     risk = entry - stop
     if risk <= 0:
         raise ValueError(f"{rec.id}: non-positive risk (entry={entry}, stop={stop})")
@@ -248,7 +261,7 @@ def simulate(
         if sma_pending:  # close < SMA20 on the previous bar -> sell this open
             exit_idx, exit_px, reason = i, float(bars.o[i]), "sma20_exit"
             break
-        if bars.l[i] <= cur_stop:
+        if bars.l[i] <= cur_stop and not (first and ambiguous_fill):
             gap_below = (not first) and bars.o[i] < cur_stop
             exit_idx, exit_px = i, float(bars.o[i] if gap_below else cur_stop)
             reason = "breakeven" if partial else "stop"
@@ -290,7 +303,10 @@ def simulate(
             mae = min(mae, (lo - fill) / risk)
 
     if not closed:
-        return _open_result(bars, i0, fill, r_of(blended(float(bars.c[n - 1]))), mae, mfe)
+        return _flag(
+            _open_result(bars, i0, fill, r_of(blended(float(bars.c[n - 1]))), mae, mfe),
+            ambiguous_fill,
+        )
 
     avg_exit = blended(exit_px)
     if reason == "time_stop":
@@ -311,7 +327,7 @@ def simulate(
         _maybe_bars(prices_df, etf), entry_date, exit_date, reason == "sma20_exit"
     ) if etf else None
 
-    return TrackResult(
+    return _flag(TrackResult(
         status=status, entry_date=entry_date, entry_fill=fill, exit_date=exit_date,
         avg_exit_price=avg_exit, exit_reason=reason, r_multiple=r_of(avg_exit),
         pct_return=pct, days_held=exit_idx - i0, mae_r=mae, mfe_r=mfe,
@@ -319,7 +335,16 @@ def simulate(
         excess_vs_spy=None if spy is None else pct - spy,
         excess_vs_sector=None if sec is None else pct - sec,
         is_final=True,
-    )
+    ), ambiguous_fill)
+
+
+def _flag(res: TrackResult, ambiguous_fill: bool) -> TrackResult:
+    """Attach the ``ambiguous_fill`` flag to a filled result. TrackResult (owned by
+    src/contracts.py) has no such field yet, so it rides as a plain instance
+    attribute: it does not take part in dataclass equality/asdict and is read with
+    ``getattr(res, "ambiguous_fill", False)``."""
+    res.ambiguous_fill = bool(ambiguous_fill)  # type: ignore[attr-defined]
+    return res
 
 
 def _maybe_bars(prices_df: Optional[pd.DataFrame], ticker: Optional[str]) -> Optional[_Bars]:
@@ -433,7 +458,8 @@ def update_all(
 ) -> dict[str, int]:
     """Re-simulate every non-final recommendation and baseline of ``source`` on
     prices up to ``as_of`` (point-in-time), update status/current_r/last_updated and
-    write each newly final result exactly once. Idempotent.
+    write each newly final result exactly once. Idempotent. Finally adds every newly
+    complete fixed-horizon forward return (``src.forward_returns``).
 
     Split adjustment of stored entry/stop/target is applied for ``source == "live"``
     only: backtest recommendations are struck from the same (already adjusted)
@@ -476,5 +502,13 @@ def update_all(
 
     b = update_baselines(conn, as_of, source, config)
     counts["baselines"], counts["baselines_finalised"] = b
+
+    from src.forward_returns import update_forward_returns  # local import: it imports tracker
+
+    try:
+        counts["forward_returns"] = update_forward_returns(conn, as_of, source, config)
+    except Exception:  # auxiliary measurement must never block trade tracking
+        log.exception("forward returns update failed for %s as of %s", source, as_of_s)
+        counts["forward_returns"] = 0
     log.info("update_all(%s, %s): %s", source, as_of_s, counts)
     return counts

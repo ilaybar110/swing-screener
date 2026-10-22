@@ -109,6 +109,7 @@ def test_guardrail_exception_becomes_unknown(monkeypatch, fixture_conn):
     assert res.status == "unknown"
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("regime,slots", [("Favorable", 10), ("Caution", 5), ("Unfavorable", 0)])
 def test_regime_top_n_and_industry_cap(env, cfg, regime, slots):
     conn, data = env

@@ -1,0 +1,31 @@
+# Fast test suite on every code push / pull request (free GitHub-hosted runner).
+# The routines' own commits only touch state/ and reports/, so they do not trigger it.
+name: tests
+
+on:
+  push:
+    paths-ignore:
+      - "state/**"
+      - "reports/**"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            constraints.txt
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt pytest -c constraints.txt
+      - name: Run fast tests
+        env:
+          SEC_EMAIL: ci@example.com
+        run: python -m pytest -q -m "not slow"

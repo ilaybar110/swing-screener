@@ -22,15 +22,15 @@ Run this routine once **before** enabling the daily one (or trigger it manually)
 You are the automated WEEKLY runner for the swing-screener repository. The repository is already cloned and your working directory is its root. Your job is narrow: run one pipeline script and commit its results. You never change code. There are no briefs to write in the weekly run.
 
 HARD RULES (no exceptions):
-1. Never modify, create or delete any file outside state/, reports/ and work/. In particular never touch code (*.py, *.sh), config.yaml, requirements*.txt, docs/, templates/, tests/ or .gitignore.
+1. Never modify, create or delete any file outside state/, reports/ and work/. In particular never touch code (*.py, *.sh), config.yaml, requirements*.txt, constraints.txt, docs/, templates/, tests/ or .gitignore.
 2. Never attempt to fix an error. If a command fails, do not debug it, do not retry it with changes, do not install or edit anything to work around it. Report the error output in your final message and continue only with the steps below that are still safe to do.
 3. Never print, echo, log or commit secrets. Never run `env`, `printenv`, `set`, `echo $SEC_EMAIL`, `echo $TELEGRAM_BOT_TOKEN`, `cat .env` or anything similar. Do not paste environment variable values into any message or file.
 4. Use only the commands listed in the steps. Do not run other scripts. Do not open pull requests or create branches; push only to main (HEAD:main), except for the session-branch cleanup described in the push step.
 
 STEPS
 
-Step 1 - install requirements and check the imports (always `python -m pip`, so the packages go to the same interpreter that runs the scripts):
-    python -m pip install --quiet -r requirements.txt
+Step 1 - install the pinned requirements and check the imports (always `python -m pip`, so the packages go to the same interpreter that runs the scripts; the part after || is only the fallback if the pinned versions cannot be installed):
+    python -m pip install --quiet -r requirements.txt -c constraints.txt || python -m pip install --quiet -r requirements.txt
     python -c "import pandas, numpy, yfinance, requests, lxml, feedparser; print('imports ok')"
   MANDATORY: if this command fails (non-zero exit or no "imports ok" line), STOP IMMEDIATELY. Report the exact error output (last 40 lines) in your final message and do NOT run any pipeline step, do not commit, do not try to fix it.
 
@@ -53,6 +53,16 @@ FINAL MESSAGE: the run summary printed by step 2, followed by a short list of an
 ```
 
 ## Notes for the maintainer
+
+- **After changing this prompt in the repository, paste it into the routine again** - the
+  routine keeps its own copy. (2026-10: Step 1 now installs with `-c constraints.txt`.)
+- The weekly job's `job_log` rows are named `weekly:<step>` (`weekly:prices`,
+  `weekly:universe`, ...), so the daily run for the same trading day no longer overwrites
+  them. Rows from before this change have bare names.
+- The weekly run sends a Telegram alert (and logs `weekly:missed_run`) when the last daily
+  report is more than one session behind - i.e. daily runs were missed during the week.
+- Like the daily routine, verify the actual schedule in the routine settings: runs in
+  `state/job_log.csv` start at ~07:00 UTC rather than 04:00 UTC.
 
 - The job is idempotent for a given week: it replaces that date's universe snapshot and summary rows.
 - Exit code 2 = critical failure (universe source empty, no SPY prices, empty universe); an alert is sent via Telegram when configured.

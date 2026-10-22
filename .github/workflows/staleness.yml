@@ -1,0 +1,33 @@
+# Missed-run watchdog: if the newest committed report (reports/latest.md, finalize rows in
+# state/job_log.csv) lags the latest finished NYSE session, send a Telegram alert and fail.
+# Needs repository secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID
+# (Settings -> Secrets and variables -> Actions). Without them the job still fails visibly.
+name: staleness
+
+on:
+  schedule:
+    - cron: "17 10 * * 1-5"   # weekdays ~10:17 UTC, ~3 h after the daily routine normally finishes
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            constraints.txt
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt -c constraints.txt
+      - name: Check report freshness
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python tools/check_staleness.py

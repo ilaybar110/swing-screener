@@ -6,6 +6,10 @@ earnings for the next 35 trading days, then export state.
 --dry-run: nothing is written to state/ and no alert is sent (the scratch DB
 data/run_dry.db is still used). --limit N: only the N largest listed companies are
 considered (trial runs).
+
+Steps are logged in job_log as ``weekly:<step>`` (e.g. ``weekly:prices``) under the as-of
+trading day, so the daily run for the same day keeps its own rows. The run also alerts
+when the daily reports are more than one session behind (missed daily runs).
 """
 
 from __future__ import annotations
@@ -24,8 +28,8 @@ from src.config import BASE_DIR_ENV, Config, load_config
 from src.data import earnings, fundamentals, prices
 from src.db import init_db
 from src.jobs import (
-    BENCHMARK, CriticalError, JobLog, latest_completed_session, new_run_id, price_message,
-    prune_job_log, sector_etfs,
+    BENCHMARK, WEEKLY_PREFIX, CriticalError, JobLog, check_missed_runs, latest_completed_session,
+    new_run_id, price_message, prune_job_log, sector_etfs,
 )
 from src.state_io import export_state, import_state
 from src.utils.calendar import add_trading_days
@@ -104,10 +108,11 @@ def run(cfg: Config, *, as_of: Optional[date] = None, dry_run: bool = False,
     as_of = as_of or latest_completed_session(now)
     owns_conn = conn is None
     conn = conn or open_db(cfg, dry_run=dry_run)
-    jl = JobLog(conn, run_id)
+    jl = JobLog(conn, run_id, prefix=WEEKLY_PREFIX)  # weekly:<step>, so a daily run cannot overwrite
     summary: dict = {}
     exit_code = 0
     try:
+        check_missed_runs(conn, jl, as_of, f"weekly run {as_of}", lambda text: _alert(text, dry_run))
         summary["universe"] = refresh_universe_job(conn, cfg, as_of, jl, limit=limit)
 
         jl.run("fundamentals_summary", lambda: fundamentals.update_summary(conn, as_of), as_of,

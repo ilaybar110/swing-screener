@@ -15,6 +15,10 @@ Time zones: the filing index page and the ``.txt`` header report acceptance in
 acceptance_datetime`` and ``earnings_dates.acceptance_datetime`` are always stored as
 naive Eastern ISO text (``YYYY-MM-DDTHH:MM:SS``), same as the fixture data.
 
+``process_index_date(conn, d)`` reads exactly ``d``'s index (no walking back) and raises
+``IndexNotPublished`` while it is unavailable; run_daily uses it to backfill days whose
+index was not yet published when they were processed.
+
 Idempotent: accessions already in ``filings`` with ``processed=1`` are skipped, so a
 catch-up run may safely re-walk days. A filing that errors is left unprocessed and is
 retried on the next run.
@@ -404,10 +408,47 @@ def process_day(
     client walks back to the latest published one (``latest_published_daily_index``);
     that is safe because already-processed accessions are skipped. The report's
     ``index_date`` says which day's index was actually read and ``index_is_requested_day``
-    whether it is the requested one.
+    whether it is the requested one. The caller records which index dates were read;
+    a day whose own index was missing can be read later with ``process_index_date``.
     """
     client = client or get_default_client()
-    report: dict[str, Any] = {
+    report = _new_report(date_)
+    index_date, text = client.latest_published_daily_index(date_, lookback_days)
+    report["index_date"] = index_date.isoformat()
+    report["index_is_requested_day"] = index_date == date_
+    if index_date != date_:
+        log.info("daily index for %s not published; using %s", date_, index_date)
+    _process_index(conn, client, index_date, text, report)
+    return report
+
+
+class IndexNotPublished(LookupError):
+    """The EDGAR daily form index for the requested date is not (yet) available."""
+
+
+def process_index_date(
+    conn: sqlite3.Connection,
+    index_date: date,
+    client: Optional[EdgarClient] = None,
+) -> dict[str, Any]:
+    """Process exactly ``index_date``'s daily form index (no walking back), e.g. to
+    backfill a day whose index was not published when ``process_day`` ran for it.
+    Raises ``IndexNotPublished`` when it is still unavailable. Same report shape as
+    ``process_day``; already-processed accessions are skipped."""
+    client = client or get_default_client()
+    try:
+        text = client.get_text(client.daily_index_url(index_date))
+    except Exception as exc:  # noqa: BLE001 -- 403/404 until (unless) the SEC publishes it
+        raise IndexNotPublished(f"daily index for {index_date} not available: {type(exc).__name__}: {exc}") from exc
+    report = _new_report(index_date)
+    report["index_date"] = index_date.isoformat()
+    report["index_is_requested_day"] = True
+    _process_index(conn, client, index_date, text, report)
+    return report
+
+
+def _new_report(date_: date) -> dict[str, Any]:
+    return {
         "requested_date": date_.isoformat(), "index_date": None,
         "index_is_requested_day": False,
         "form4_seen": 0, "form4_processed": 0, "form4_not_issuer": 0, "insider_rows": 0,
@@ -415,12 +456,16 @@ def process_day(
         "skipped_already_processed": 0, "errors": [],
     }
 
-    index_date, text = client.latest_published_daily_index(date_, lookback_days)
-    report["index_date"] = index_date.isoformat()
-    report["index_is_requested_day"] = index_date == date_
-    if index_date != date_:
-        log.info("daily index for %s not published; using %s", date_, index_date)
 
+def _process_index(
+    conn: sqlite3.Connection,
+    client: EdgarClient,
+    index_date: date,
+    text: str,
+    report: dict[str, Any],
+) -> None:
+    """Process the wanted filings of one daily form index into ``report`` (in place)."""
+    date_ = date.fromisoformat(report["requested_date"])
     cik_map = load_universe_cik_map(conn)
     entries = [e for e in parse_form_index(text, WANTED_FORMS) if e.cik in cik_map]
 
@@ -460,4 +505,3 @@ def process_day(
         report["insider_rows"], report["eightk_processed"], report["eightk_seen"],
         report["earnings_events"], report["skipped_already_processed"], len(report["errors"]),
     )
-    return report

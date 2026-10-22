@@ -112,3 +112,22 @@ def test_symbol_mapping_stores_under_our_symbol(conn, monkeypatch):
     prices.update_prices(conn, ["BRK/B"], START, END, sleep=lambda s: None)
     assert seen == [["BRK-B"]]
     assert conn.execute("SELECT COUNT(*) FROM prices WHERE ticker='BRK/B'").fetchone()[0] == 3
+
+
+def test_tickers_without_a_bar_for_the_expected_session_are_stale(conn, monkeypatch):
+    def fake_dl(tickers, start, end):
+        frame = _yf_frame(tickers)
+        if "OLD" in tickers:  # OLD stops trading after 2024-01-03
+            frame.loc[pd.Timestamp("2024-01-04"), ("OLD", "Close")] = float("nan")
+        return frame
+
+    monkeypatch.setattr(prices, "_yf_download", fake_dl)
+    monkeypatch.setattr(prices, "_nasdaq_history",
+                        lambda t, s, e: [(t, "2024-01-02", 1, 2, 0.5, 1.5, 1.5, 100, "nasdaq")])
+    rep = prices.update_prices(conn, ["AAA", "OLD"], START, END, sleep=lambda s: None)
+    assert rep["successes"] == ["AAA", "OLD"] and rep["stale"] == ["OLD"]
+
+    # a weekend end date expects the Friday session, not the weekend day itself
+    assert prices.expected_session(date(2024, 1, 6)) == date(2024, 1, 5)
+    rep = prices.update_prices(conn, ["AAA"], START, date(2024, 1, 5), sleep=lambda s: None)
+    assert rep["stale"] == ["AAA"]  # fake data ends 2024-01-04

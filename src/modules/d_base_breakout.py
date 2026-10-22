@@ -9,6 +9,12 @@ Interpretation notes (also in docs/status/BOT_4.md):
     x the 50-day average volume ending the day before. Any L that satisfies everything
     qualifies; the longest one is reported.
   * Stop = max(base midpoint, entry - atr_stop_multiple x ATR) i.e. the tighter of the two.
+  * Trend template (Minervini-style stage-2 filter): on the trigger day close > SMA150 and
+    close > SMA200, and SMA200 is above its value ``trend_sma_slope_sessions`` (20)
+    sessions earlier. A ticker without 200 + 20 sessions of history cannot qualify.
+  * Base depth = (base high - base low) / base high must be <= ``max_base_depth_pct``
+    (0.25), checked per candidate base length L: a deeper "base" is a correction.
+  Both filters are practitioner rules fixed a priori, not fitted to results.
 """
 
 from __future__ import annotations
@@ -23,6 +29,11 @@ from src.modules.base import PanelModule, ScanContext, f, param
 ATR_DAYS = 14
 VOL_AVG_DAYS = 50
 CONTRACTION_RATIO = 0.7
+TREND_TEMPLATE = True
+TREND_SMA_MID = 150
+TREND_SMA_LONG = 200
+TREND_SMA_SLOPE_SESSIONS = 20
+MAX_BASE_DEPTH_PCT = 0.25
 
 
 class BaseBreakout(PanelModule):
@@ -37,6 +48,11 @@ class BaseBreakout(PanelModule):
         self.min_vol_mult = c.min_volume_multiple
         self.atr_mult = c.atr_stop_multiple
         self.contraction = param(c, "contraction_ratio", CONTRACTION_RATIO)
+        self.trend_template = param(c, "trend_template", TREND_TEMPLATE)
+        self.sma_mid = param(c, "trend_sma_mid", TREND_SMA_MID)
+        self.sma_long = param(c, "trend_sma_long", TREND_SMA_LONG)
+        self.slope_sessions = param(c, "trend_sma_slope_sessions", TREND_SMA_SLOPE_SESSIONS)
+        self.max_depth = param(c, "max_base_depth_pct", MAX_BASE_DEPTH_PCT)
 
     def scan_ticker(self, ticker: str, df: pd.DataFrame, ctx: ScanContext) -> list[Candidate]:
         n = len(df)
@@ -46,7 +62,14 @@ class BaseBreakout(PanelModule):
         atr = ind.atr(df, ATR_DAYS)
         hi52 = ind.high_52w(df)
         vol_ratio = v / ind.avg_volume(df, VOL_AVG_DAYS).shift(1)
-        gate = (c >= self.high_floor * hi52) & (vol_ratio >= self.min_vol_mult)
+        sma_mid, sma_long = ind.sma(c, self.sma_mid), ind.sma(c, self.sma_long)
+        sma_long_ref = sma_long.shift(self.slope_sessions)
+        trend = (
+            (c > sma_mid) & (c > sma_long) & (sma_long > sma_long_ref)
+            if self.trend_template
+            else pd.Series(True, index=df.index)
+        )
+        gate = (c >= self.high_floor * hi52) & (vol_ratio >= self.min_vol_mult) & trend
 
         best_len = np.zeros(n, dtype=int)
         best_ratio = np.full(n, np.nan)
@@ -58,7 +81,8 @@ class BaseBreakout(PanelModule):
             base_low = lo.shift(1).rolling(L, min_periods=L).min()
             atr_start = atr.shift(L + 1)  # session just before the base began
             ratio = atr_end / atr_start
-            ok = (ratio < self.contraction) & (c > base_high) & gate
+            shallow = (base_high - base_low) / base_high <= self.max_depth
+            ok = (ratio < self.contraction) & (c > base_high) & shallow & gate
             sel = ok.to_numpy()
             best_len[sel] = L
             best_ratio[sel] = ratio.to_numpy()[sel]
@@ -119,6 +143,12 @@ class BaseBreakout(PanelModule):
                         "atr_stop_multiple": f(self.atr_mult),
                         "min_base_sessions": int(self.min_len),
                         "max_base_sessions": int(self.max_len),
+                        "base_depth_pct": f((best_high[i] - best_low[i]) / best_high[i]),
+                        "max_base_depth_pct": f(self.max_depth),
+                        "sma150": f(sma_mid.iloc[i]),
+                        "sma200": f(sma_long.iloc[i]),
+                        "sma200_slope_ref": f(sma_long_ref.iloc[i]),
+                        "trend_sma_slope_sessions": int(self.slope_sessions),
                     },
                 )
             )

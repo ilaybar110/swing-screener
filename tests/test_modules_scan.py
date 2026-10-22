@@ -5,6 +5,13 @@ within 0.3% of the prior close, so it cannot satisfy the spec'd "opened >= 5% ab
 close" test. Tests that need B therefore run on a private copy of the DB where the
 gap-day open of MOMB1 (+7%) / NEGB1 (+3%) is set to match the documented scenario (see
 docs/CHANGE_REQUESTS.md, Bot 4 entry).
+
+Module A's fixture ticker (MOMA1) predates the a-priori pullback-quality rules
+(volume dry-up < 0.8x, depth <= 3.5 ATR, close location >= 0.7): its "pullback" is 7.5 ATR
+deep on 0.99x volume, and no session of the synthetic fixture passes the dry-up rule. The
+fixture-based Module A tests therefore run with those three rules relaxed (``LEGACY_A``)
+and assert separately that the shipped config rejects MOMA1 for exactly those reasons;
+tests/test_modules_filters.py covers the rules themselves on textbook series.
 """
 
 from __future__ import annotations
@@ -21,6 +28,11 @@ from src.modules import MODULE_CLASSES, get_enabled_modules
 from src.utils.calendar import trading_days
 
 CFG = load_config()
+# CFG with Module A's pullback-quality rules switched off (see the module docstring).
+LEGACY_A = load_config()
+LEGACY_A.modules.a_momentum_pullback.max_pullback_volume_ratio = 1.0
+LEGACY_A.modules.a_momentum_pullback.max_pullback_depth_atr = float("inf")
+LEGACY_A.modules.a_momentum_pullback.min_close_location = 0.0
 GAP_DATE = "2024-12-03"
 TAIL_START = date(2024, 11, 1)
 END = date(2024, 12, 31)
@@ -45,12 +57,12 @@ def pdata(writable_fixture_conn) -> DataAccess:
     return DataAccess(writable_fixture_conn)
 
 
-def _module(name: str):
-    return next(m for m in get_enabled_modules(CFG) if m.name == name)
+def _module(name: str, cfg=CFG):
+    return next(m for m in get_enabled_modules(cfg) if m.name == name)
 
 
-def _hits(name: str, data, start=TAIL_START, end=END):
-    return _module(name).scan_history(start, end, data)
+def _hits(name: str, data, start=TAIL_START, end=END, cfg=CFG):
+    return _module(name, cfg).scan_history(start, end, data)
 
 
 def _by_ticker(cands):
@@ -66,9 +78,17 @@ def _by_ticker(cands):
 
 
 def test_module_a_triggers_on_moma1_not_nega1(pdata):
-    hits = _by_ticker(_hits("momentum_pullback", pdata))
+    hits = _by_ticker(_hits("momentum_pullback", pdata, cfg=LEGACY_A))
     assert [c.signal_date for c in hits["MOMA1"]] == [date(2024, 12, 31)]
     assert "NEGA1" not in hits
+
+
+def test_shipped_module_a_rejects_moma1_for_its_deep_high_volume_pullback(pdata):
+    legacy = _by_ticker(_hits("momentum_pullback", pdata, cfg=LEGACY_A))["MOMA1"][0].details
+    c = CFG.modules.a_momentum_pullback
+    assert legacy["pullback_depth_atr"] > c.max_pullback_depth_atr
+    assert legacy["pullback_volume_ratio"] >= c.max_pullback_volume_ratio
+    assert "MOMA1" not in _by_ticker(_hits("momentum_pullback", pdata))
 
 
 def test_module_b_triggers_on_momb1_not_negb1(pdata):
@@ -106,15 +126,16 @@ def test_module_d_triggers_on_momd1_not_negd1(pdata):
     assert "NEGD1" not in hits
 
 
-def test_no_module_fires_on_negatives_in_engineered_window(pdata):
-    for m in get_enabled_modules(CFG):
+@pytest.mark.parametrize("cfg", [CFG, LEGACY_A], ids=["shipped", "legacy_a"])
+def test_no_module_fires_on_negatives_in_engineered_window(pdata, cfg):
+    for m in get_enabled_modules(cfg):
         got = {c.ticker for c in m.scan_history(TAIL_START, END, pdata)}
         assert not got & {"NEGA1", "NEGB1", "NEGC1", "NEGD1"}, m.name
 
 
 def test_candidate_levels_are_valid(pdata):
     lo, hi = CFG.modules.stop_distance_pct_min, CFG.modules.stop_distance_pct_max
-    for m in get_enabled_modules(CFG):
+    for m in get_enabled_modules(LEGACY_A):
         for c in m.scan_history(date(2023, 6, 1), END, pdata):
             assert 0 <= c.setup_score <= 100
             dist = (c.entry - c.stop) / c.entry
@@ -142,24 +163,27 @@ def test_get_enabled_modules_respects_config():
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("name", [
-    "momentum_pullback", "earnings_gap_drift", "insider_cluster", "base_breakout"
-])
-def test_scan_matches_scan_history_day_by_day(pdata, name):
+@pytest.mark.parametrize("name,cfg", [
+    ("momentum_pullback", CFG), ("momentum_pullback", LEGACY_A), ("earnings_gap_drift", CFG),
+    ("insider_cluster", CFG), ("base_breakout", CFG),
+], ids=["A-shipped", "A-legacy", "B", "C", "D"])
+def test_scan_matches_scan_history_day_by_day(pdata, name, cfg):
     start, end = date(2024, 11, 12), END
-    mod = _module(name)
+    mod = _module(name, cfg)
     hist = mod.scan_history(start, end, pdata)
     daily = []
     for d in trading_days(start, end):
         daily.extend(mod.scan(d, pdata))
     assert hist == daily
-    assert len(hist) > 0 or name == "base_breakout"
+    if cfg is LEGACY_A or name != "momentum_pullback":
+        assert len(hist) > 0 or name == "base_breakout"
 
 
 @pytest.mark.slow
 def test_scan_matches_scan_history_over_a_long_range(pdata):
-    """Whole-history agreement for A on a window with many signals."""
-    mod = _module("momentum_pullback")
+    """Whole-history agreement for A on a window with many signals (rules relaxed so the
+    synthetic fixture produces some; the filters are element-wise and causal either way)."""
+    mod = _module("momentum_pullback", LEGACY_A)
     start, end = date(2023, 3, 1), date(2023, 5, 31)
     hist = mod.scan_history(start, end, pdata)
     daily = [c for d in trading_days(start, end) for c in mod.scan(d, pdata)]
@@ -174,7 +198,7 @@ def test_scan_matches_scan_history_over_a_long_range(pdata):
 
 @pytest.mark.parametrize("as_of", [date(2024, 11, 18), date(2024, 12, 10), date(2024, 12, 13), date(2024, 12, 24)])
 def test_scan_ignores_future_prices_and_filings(pdata, as_of):
-    mods = get_enabled_modules(CFG)
+    mods = get_enabled_modules(LEGACY_A)  # relaxed A so every as_of has candidates to protect
     before = {m.name: m.scan(as_of, pdata) for m in mods}
     assert any(before.values())
 

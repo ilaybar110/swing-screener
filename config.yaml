@@ -56,6 +56,9 @@ modules:
     pullback_close_floor: 0.97    # closes must stay above 97% of the SMA
     sma_slope_sessions: 10        # the 50-day SMA must be rising over this many sessions
     stop_atr_buffer: 0.1          # stop = pullback low - 0.1 ATR
+    max_pullback_volume_ratio: 0.8  # pullback avg volume must be < 0.8x the 20-day average (dry-up)
+    max_pullback_depth_atr: 3.5   # swing high -> pullback low at most 3.5 ATR (deeper = breakdown)
+    min_close_location: 0.7       # trigger day closes in the top 30% of its range
   b_earnings_gap_drift:
     enabled: true
     min_gap_pct: 0.05
@@ -83,6 +86,7 @@ modules:
     atr_stop_multiple: 2.0
     completion_window_sessions: 20   # trigger must come within this many sessions of the cluster completing
     stop_lookback_sessions: 10       # recent swing low window for the stop
+    cooldown_days: 90                # a cluster within 90 days of an earlier one is a continuation
   d_base_breakout:
     enabled: true
     pct_of_52w_high_max: 0.15
@@ -91,6 +95,11 @@ modules:
     min_volume_multiple: 1.5
     atr_stop_multiple: 2.0
     contraction_ratio: 0.7           # ATR at the end of the base < 0.7x ATR before it
+    trend_template: true             # stage-2 trend filter on the trigger day:
+    trend_sma_mid: 150               # close > SMA150 ...
+    trend_sma_long: 200              # ... and > SMA200 ...
+    trend_sma_slope_sessions: 20     # ... with SMA200 rising over 20 sessions
+    max_base_depth_pct: 0.25         # (base high - base low) / base high <= 25%
   stop_distance_pct_min: 0.02
   stop_distance_pct_max: 0.12
 
@@ -109,6 +118,11 @@ ranking:
   track_record_weight_once_unlocked: 0.10
   max_per_industry: 2
   earnings_window_trading_days: 25
+  # Setup quality is percentiled within each module (scores are not comparable across
+  # modules); relative strength is the universe RS percentile. See src/ranking.py.
+  min_setup_score: 20             # setups scoring below this (0-100) are tracked but never reported
+  min_slots_per_module: 1         # each module with an eligible candidate gets >= 1 report slot
+  stopout_cooldown_sessions: 10   # no new recommendation for 10 sessions after a stop-out (any module)
 
 trade_plan:
   target_r_multiple: 2.0

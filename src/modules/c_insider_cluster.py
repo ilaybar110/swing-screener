@@ -7,7 +7,16 @@ Interpretation notes (also in docs/status/BOT_4.md):
   * A cluster "completes" on the filing date F where, using trades filed <= F, some
     set of qualifying trades whose trade dates span <= cluster_window_days has >= 2
     distinct insiders and total >= min_cluster_total_value, and that was not already true
-    using trades filed < F. Later trades topping up the same cluster do not re-complete it.
+    using trades filed < F. Both checks only look at trades dated within the
+    ``cooldown_days`` (90) before F, so:
+      - later filings topping up a cluster, or a second cluster starting within
+        cooldown_days of the first one's trades, are continuations and do not re-fire;
+      - an old cluster never suppresses a new one forever (it used to: every earlier
+        trade counted, so the first qualifying cluster blocked all later ones);
+      - the decision at F depends on a bounded trade history, so a live scan (which only
+        has ~120 days of filings in state/) and scan_history agree. The trade history
+        loaded in ``prepare`` covers cooldown_days plus the completion window before the
+        first evaluated day.
   * The first session on/after F is the completion session. The trigger is the first
     session p >= completion with close > SMA20; it must fall within 20 sessions of the
     completion. Entry = trigger day's high.
@@ -16,6 +25,8 @@ Interpretation notes (also in docs/status/BOT_4.md):
 """
 
 from __future__ import annotations
+
+import math
 
 import pandas as pd
 
@@ -26,7 +37,9 @@ from src.modules.base import PanelModule, ScanContext, f, param
 ATR_DAYS = 14
 COMPLETION_WINDOW_SESSIONS = 20
 STOP_LOOKBACK_SESSIONS = 10
-TRADE_HISTORY_DAYS = 120
+COOLDOWN_DAYS = 90
+# Calendar days that cover completion_window_sessions sessions (holidays included) plus slack.
+SESSION_SPAN_SLACK_DAYS = 10
 SENIOR_TITLES = ("chief executive", "ceo", "chief financial", "cfo", "president", "chairman")
 
 
@@ -54,10 +67,18 @@ class InsiderCluster(PanelModule):
         self.atr_mult = c.atr_stop_multiple
         self.completion_sessions = param(c, "completion_window_sessions", COMPLETION_WINDOW_SESSIONS)
         self.stop_lookback = param(c, "stop_lookback_sessions", STOP_LOOKBACK_SESSIONS)
+        self.cooldown_days = param(c, "cooldown_days", COOLDOWN_DAYS)
         self._trades: dict[str, pd.DataFrame] = {}
 
     def prepare(self, tickers: list[str], ctx: ScanContext) -> None:
-        lo = (ctx.eval_dates[0] - pd.Timedelta(days=TRADE_HISTORY_DAYS)).date()
+        # A completion up to completion_window_sessions before the first evaluated day can
+        # still trigger inside the range, and deciding it needs cooldown_days of trades.
+        history_days = (
+            self.cooldown_days
+            + math.ceil(self.completion_sessions * 7 / 5)
+            + SESSION_SPAN_SLACK_DAYS
+        )
+        lo = (ctx.eval_dates[0] - pd.Timedelta(days=history_days)).date()
         # Nothing filed after ctx.end is visible; per-day filing cut-offs are applied in
         # _completions so scan_history cannot leak later filings into earlier days.
         trades = ctx.data.get_insider_trades(lo, ctx.end, ctx.end)
@@ -92,17 +113,22 @@ class InsiderCluster(PanelModule):
         return best
 
     def _completions(self, ticker: str) -> list[tuple[pd.Timestamp, dict]]:
+        """(filing date F, cluster) for every cluster completion of ``ticker``: a
+        qualifying cluster exists among trades filed <= F but did not among trades filed
+        < F, both restricted to trades dated within cooldown_days before F."""
         tr = self._trades.get(ticker)
         if tr is None or tr.empty:
             return []
         out = []
         for F in sorted(tr["filed_date"].unique()):
-            now = self._cluster(tr[tr["filed_date"] <= F])
+            F = pd.Timestamp(F)
+            recent = tr[tr["trans_date"] >= F - pd.Timedelta(days=self.cooldown_days)]
+            now = self._cluster(recent[recent["filed_date"] <= F])
             if now is None:
                 continue
-            before = self._cluster(tr[tr["filed_date"] < F])
+            before = self._cluster(recent[recent["filed_date"] < F])
             if before is None:
-                out.append((pd.Timestamp(F), now))
+                out.append((F, now))
         return out
 
     def scan_ticker(self, ticker: str, df: pd.DataFrame, ctx: ScanContext) -> list[Candidate]:
@@ -197,5 +223,6 @@ class InsiderCluster(PanelModule):
                 "stop_basis": "swing_low" if swing_low >= entry - self.atr_mult * atr_t else "atr_cap",
                 "atr_stop_multiple": f(self.atr_mult),
                 "completion_window_sessions": int(self.completion_sessions),
+                "cooldown_days": int(self.cooldown_days),
             },
         )

@@ -4,6 +4,11 @@ The golden file tests/fixtures/golden_candidates.json was produced by the module
 *before* annotation fields were added to ``details``. Every module is re-run on the same
 fixtures and must reproduce every candidate exactly (ticker, date, entry, stop, score,
 rationale) with each original ``details`` value unchanged; only new keys may appear.
+
+The modules run with the entry rules added after the golden file was made switched off
+(``LEGACY_A``: Module A's pullback-quality rules, which the synthetic MOMA1 fails), so the
+golden still pins every field the annotation work must not change. The new rules have
+their own tests in tests/test_modules_filters.py.
 """
 
 from __future__ import annotations
@@ -16,10 +21,9 @@ from pathlib import Path
 
 import pytest
 
-from src.config import load_config
 from src.data_access import DataAccess
 from src.modules import get_enabled_modules
-from tests.test_modules_scan import _patch_gap_opens
+from tests.test_modules_scan import LEGACY_A, _patch_gap_opens
 
 GOLDEN = Path(__file__).resolve().parent / "fixtures" / "golden_candidates.json"
 START, END = date(2023, 6, 1), date(2024, 12, 31)
@@ -28,7 +32,7 @@ START, END = date(2023, 6, 1), date(2024, 12, 31)
 def collect(conn: sqlite3.Connection) -> dict[str, list[dict]]:
     data = DataAccess(conn)
     out: dict[str, list[dict]] = {}
-    for m in get_enabled_modules(load_config()):
+    for m in get_enabled_modules(LEGACY_A):
         rows = []
         for c in m.scan_history(START, END, data):
             rows.append({

@@ -16,7 +16,10 @@ from src.config import load_config
 from src.data_access import DataAccess
 from tests.test_modules_scan import _patch_gap_opens
 
-CFG = load_config()
+CFG = load_config()  # Module A's pullback-quality rules relaxed: MOMA1 predates them
+CFG.modules.a_momentum_pullback.max_pullback_volume_ratio = 1.0
+CFG.modules.a_momentum_pullback.max_pullback_depth_atr = float("inf")
+CFG.modules.a_momentum_pullback.min_close_location = 0.0
 GOLDEN = json.loads((Path(__file__).parent / "fixtures" / "golden_candidates.json").read_text())["gap_patched"]
 CASES = [
     ("momentum_pullback", "MOMA1"), ("earnings_gap_drift", "MOMB1"),

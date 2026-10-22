@@ -78,6 +78,9 @@ class ModuleAConfig(BaseModel):
     pullback_close_floor: float = 0.97
     sma_slope_sessions: int = 10
     stop_atr_buffer: float = 0.1
+    max_pullback_volume_ratio: float = 0.8
+    max_pullback_depth_atr: float = 3.5
+    min_close_location: float = 0.7
 
 
 class ModuleBConfig(BaseModel):
@@ -109,6 +112,7 @@ class ModuleCConfig(BaseModel):
     atr_stop_multiple: float
     completion_window_sessions: int = 20
     stop_lookback_sessions: int = 10
+    cooldown_days: int = 90
 
 
 class ModuleDConfig(BaseModel):
@@ -119,6 +123,11 @@ class ModuleDConfig(BaseModel):
     min_volume_multiple: float
     atr_stop_multiple: float
     contraction_ratio: float = 0.7
+    trend_template: bool = True
+    trend_sma_mid: int = 150
+    trend_sma_long: int = 200
+    trend_sma_slope_sessions: int = 20
+    max_base_depth_pct: float = 0.25
 
 
 class ModulesConfig(BaseModel):
@@ -146,6 +155,9 @@ class RankingConfig(BaseModel):
     track_record_weight_once_unlocked: float
     max_per_industry: int
     earnings_window_trading_days: int
+    min_setup_score: float = 20.0
+    min_slots_per_module: int = 1
+    stopout_cooldown_sessions: int = 10
 
 
 class TradePlanConfig(BaseModel):

@@ -47,13 +47,17 @@ def next_earnings(data, ticker: str, as_of: date) -> Optional[date]:
     was not yet knowable. An event whose reaction session is ``as_of`` or earlier (the
     trade cannot be entered before it) is not a risk for the holding window. 8-K derived
     rows carry the reaction session as their date; a calendar row holds the report date,
-    whose reaction is the next session unless it is known to be before the open."""
+    whose reaction is the next session unless it is known to be before the open. A
+    calendar row whose ``known_date`` is after ``as_of`` was not yet listed and is skipped."""
     events = data.get_earnings_events(
         ticker, as_of, as_of + timedelta(days=EARNINGS_LOOKAHEAD_CALENDAR_DAYS)
     )
     for _, ev in events.iterrows():
         acc = ev.get("acceptance_datetime")
         if pd.notna(acc) and acc and str(acc)[:10] > as_of.isoformat():
+            continue
+        known = ev.get("known_date")  # calendar rows: first fetch that listed the date
+        if isinstance(known, str) and known and known[:10] > as_of.isoformat():
             continue
         day = date.fromisoformat(str(ev["event_date"])[:10])
         source = str(ev.get("source") or "").lower()
@@ -66,6 +70,52 @@ def next_earnings(data, ticker: str, as_of: date) -> Optional[date]:
             continue
         return day
     return None
+
+
+def earnings_blackout_end(signal_date: date, config) -> date:
+    """Last session of the earnings blackout of a signal: the entry window
+    (``trade_plan.entry_validity_trading_days``) plus ``earnings.min_sessions_before``
+    sessions, so a fill on the last valid entry day still has that many sessions before
+    the report."""
+    return add_trading_days(
+        signal_date,
+        config.trade_plan.entry_validity_trading_days + config.earnings.min_sessions_before,
+    )
+
+
+def earnings_block(data, ticker: str, signal_date: date, config) -> Optional[date]:
+    """The next known earnings date that disqualifies a new signal under
+    ``earnings.policy == "skip"``, else None (policy ``"flag"`` never blocks).
+
+    Point-in-time: only dates knowable on ``signal_date`` count (``next_earnings``), so a
+    backtest only skips where the live run could have. Module B's own event is already
+    behind its signal day and never blocks it; only the *next* report does."""
+    if config.earnings.policy != "skip":
+        return None
+    nxt = next_earnings(data, ticker, signal_date)
+    if nxt is not None and nxt <= earnings_blackout_end(signal_date, config):
+        return nxt
+    return None
+
+
+def apply_earnings_policy(
+    by_ticker: dict[str, list[Candidate]], as_of: date, data, config
+) -> dict[str, list[Candidate]]:
+    """Drop every ticker whose candidates ``earnings_block`` disqualifies (logged).
+    Pipeline hook for ``ranking.rank``: call it on the per-ticker candidate map before
+    ``build``."""
+    kept: dict[str, list[Candidate]] = {}
+    for ticker, cands in by_ticker.items():
+        blocked = earnings_block(data, ticker, as_of, config)
+        if blocked is not None:
+            log.info(
+                "earnings policy dropped %s on %s: earnings %s within %d+%d sessions",
+                ticker, as_of, blocked, config.trade_plan.entry_validity_trading_days,
+                config.earnings.min_sessions_before,
+            )
+            continue
+        kept[ticker] = cands
+    return kept
 
 
 def build(

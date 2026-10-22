@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 import yaml
 from pydantic import BaseModel, Field
@@ -88,6 +88,15 @@ class ModuleBConfig(BaseModel):
     hold_days_max: int
     tight_range_atr_multiple: float = 1.5
     stop_atr_buffer: float = 0.1
+    gap_close_min_range_position: float = 0.5
+    prefer_8k_window_days: int = 3
+    pullback_trigger_enabled: bool = True
+    pullback_window_sessions: int = 30
+    pullback_sma_days: list[int] = Field(default_factory=lambda: [10, 20])
+    pullback_touch_pct: float = 0.02
+    surprise_max_points: float = 10.0
+    surprise_eps_saturation: float = 0.20
+    surprise_sue_saturation: float = 2.0
 
 
 class ModuleCConfig(BaseModel):
@@ -147,6 +156,13 @@ class TradePlanConfig(BaseModel):
     exit_sma_days: int
 
 
+class EarningsConfig(BaseModel):
+    """Upcoming-earnings policy for new recommendations (src/trade_plan.py)."""
+
+    policy: Literal["skip", "flag"] = "skip"
+    min_sessions_before: int = 10
+
+
 class TrackingConfig(BaseModel):
     round_trip_cost_pct: float
     sector_etfs: dict[str, str]
@@ -199,6 +215,7 @@ class Config(BaseModel):
     guardrail: GuardrailConfig
     ranking: RankingConfig
     trade_plan: TradePlanConfig
+    earnings: EarningsConfig = Field(default_factory=EarningsConfig)
     tracking: TrackingConfig
     baseline: BaselineConfig
     measurement: MeasurementConfig = Field(default_factory=MeasurementConfig)

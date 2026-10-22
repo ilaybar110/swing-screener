@@ -257,6 +257,34 @@ _MIGRATIONS: list[tuple[int, str]] = [
 ]
 
 
+# Additive earnings_dates columns (see ensure_earnings_columns). Kept out of the numbered
+# migrations so they can be added idempotently to any existing DB -- including copies of
+# fixture.db or a research.db built before they existed -- without renumbering.
+EARNINGS_EXTRA_COLUMNS: list[tuple[str, str]] = [
+    ("known_date", "TEXT"),        # first as_of on which a calendar fetch listed this row
+    ("last_seen_date", "TEXT"),    # latest as_of on which a calendar fetch listed it
+    ("eps_forecast", "REAL"),      # Nasdaq consensus EPS forecast
+    ("num_estimates", "INTEGER"),  # Nasdaq number of estimates behind the forecast
+    ("last_year_eps", "REAL"),     # Nasdaq EPS of the same quarter a year earlier
+    ("eps_actual", "REAL"),        # Nasdaq reported EPS (only once the day has passed)
+    ("eps_surprise_pct", "REAL"),  # Nasdaq surprise, percent of the forecast
+]
+
+
+def ensure_earnings_columns(conn: sqlite3.Connection) -> None:
+    """Add any missing ``EARNINGS_EXTRA_COLUMNS`` to ``earnings_dates`` (idempotent)."""
+    have = {r[1] for r in conn.execute("PRAGMA table_info(earnings_dates)").fetchall()}
+    if not have:
+        return
+    added = False
+    for name, sql_type in EARNINGS_EXTRA_COLUMNS:
+        if name not in have:
+            conn.execute(f"ALTER TABLE earnings_dates ADD COLUMN {name} {sql_type}")
+            added = True
+    if added:
+        conn.commit()
+
+
 def get_conn(path: StrPath) -> sqlite3.Connection:
     """Open a SQLite connection with sane defaults (foreign keys on, WAL off for
     portability across the ephemeral cloud filesystem)."""
@@ -292,4 +320,5 @@ def init_db(path: StrPath) -> sqlite3.Connection:
             "INSERT INTO schema_migrations (version) VALUES (?)", (version,)
         )
         conn.commit()
+    ensure_earnings_columns(conn)
     return conn

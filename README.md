@@ -64,9 +64,10 @@ Requires Python 3.11+ (developed on 3.13).
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate        # Windows Git Bash;  Linux/macOS: source .venv/bin/activate
-python -m pip install -r requirements-local.txt   # runtime + dashboard + pytest
+python -m pip install -r requirements-local.txt -c constraints.txt   # runtime + dashboard + pytest
 cp .env.example .env                  # then edit: SEC_EMAIL is required for any EDGAR access
-pytest                                # full test suite, no network needed (~3 min)
+pytest                                # full test suite, no network needed (~6 min)
+pytest -m "not slow"                  # fast subset (what CI runs on every push)
 ```
 
 `.env` is read by every entrypoint (it is git-ignored; never commit it):
@@ -133,7 +134,9 @@ for realistic trial runs that must not touch the committed state; same as settin
 You need two Claude Code cloud Routines (create them from claude.ai/code). The exact
 prompts and settings are in:
 
-* [docs/ROUTINE_DAILY.md](docs/ROUTINE_DAILY.md) - **Tuesday-Saturday ~04:00 UTC**
+* [docs/ROUTINE_DAILY.md](docs/ROUTINE_DAILY.md) - **Tuesday-Saturday ~04:00 UTC** (the live
+  routine actually runs at ~07:00 UTC and has never run on a Saturday - see "Schedule check"
+  in that file and verify the routine's schedule settings)
 * [docs/ROUTINE_WEEKLY.md](docs/ROUTINE_WEEKLY.md) - **Sunday ~04:00 UTC**
 
 For both routines:
@@ -147,10 +150,11 @@ For both routines:
    already available at that point, use
 
    ```bash
-   python -m pip install --quiet -r requirements.txt
+   python -m pip install --quiet -r requirements.txt -c constraints.txt
    ```
 
-   otherwise install the packages from `requirements.txt` by name, still through
+   (`constraints.txt` pins the exact versions the pipeline was tested with; `requirements.txt`
+   keeps the ranges), otherwise install the packages from `requirements.txt` by name, still through
    `python -m pip` (never bare `pip`, which on the cloud image can target a different
    interpreter than `python`):
 
@@ -171,6 +175,31 @@ and commits - its prompt forbids it from changing code, "fixing" errors, or prin
 secrets. Failures that make a run meaningless (no prices at all, EDGAR completely down, no
 report) send a Telegram alert and make the script exit non-zero; everything else (one
 ticker's data, news, a brief, Telegram) is logged and the run carries on.
+
+### Monitoring (free GitHub Actions)
+
+* `.github/workflows/tests.yml` runs `pytest -m "not slow"` on every push and pull request
+  that changes code (the routines' `state/`/`reports/` commits are ignored).
+* `.github/workflows/staleness.yml` runs `tools/check_staleness.py` on weekdays at ~10:17 UTC:
+  if the newest report (`reports/latest.md`, `finalize` rows in `state/job_log.csv`) is
+  behind the latest finished NYSE session, it sends a Telegram alert and the workflow fails
+  (GitHub also emails you). Add the repository secrets **`TELEGRAM_BOT_TOKEN`** and
+  **`TELEGRAM_CHAT_ID`** under *Settings -> Secrets and variables -> Actions*; make sure
+  Actions are enabled for the repository. Run it by hand from the Actions tab
+  (*Run workflow*) or locally: `python tools/check_staleness.py --no-alert`.
+* The pipeline itself also alerts: `prepare` and the weekly run send a Telegram message
+  when the last finalised report is more than one session behind (missed runs), and a
+  day whose steps keep failing is retried by the next runs and then reported.
+
+What `state/job_log.csv` tells you: `day` rows are `ok`, `partial` (some step failed; the
+message lists it, the next runs retry, at most 3 attempts) or `failed` (gave up); the weekly
+job's rows are `weekly:<step>`; `edgar_index` rows track which SEC daily indexes were read
+(`missing` ones are backfilled later); `prices` JSON lists `missing`, `nasdaq_filled` and
+`stale` tickers; `merge_briefs` includes `invalid_reasons`; `telegram` records delivery.
+
+Updating dependencies: install `requirements.txt` without `-c` in a fresh venv, run
+`pytest`, then regenerate `constraints.txt` from `python -m pip freeze` (runtime packages
+and their dependencies only).
 
 Creating a Telegram bot: talk to `@BotFather`, `/newbot`, copy the token; send your bot a
 message, then read your chat id from `https://api.telegram.org/bot<TOKEN>/getUpdates`.

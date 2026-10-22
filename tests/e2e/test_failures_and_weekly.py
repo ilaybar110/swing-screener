@@ -140,7 +140,8 @@ def test_weekly_refreshes_universe_summary_and_earnings(env, monkeypatch):
     (as_of, days_ahead), = env.calls.earnings
     assert as_of == TARGET and 45 <= days_ahead <= 60  # 35 trading days ~ 8 calendar weeks
     jobs = read_csv(env.state / "job_log.csv")
-    assert {"prices", "universe", "fundamentals_summary", "earnings_calendar"} <= {j["job"] for j in jobs}
+    assert {"weekly:prices", "weekly:universe", "weekly:fundamentals_summary",
+            "weekly:earnings_calendar"} <= {j["job"] for j in jobs}
     tickers = {r["ticker"]: r for r in read_csv(env.state / "tickers.csv")}
     assert tickers["MOMA1"]["cik"]
 

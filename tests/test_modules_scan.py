@@ -141,6 +141,7 @@ def test_get_enabled_modules_respects_config():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("name", [
     "momentum_pullback", "earnings_gap_drift", "insider_cluster", "base_breakout"
 ])
@@ -155,6 +156,7 @@ def test_scan_matches_scan_history_day_by_day(pdata, name):
     assert len(hist) > 0 or name == "base_breakout"
 
 
+@pytest.mark.slow
 def test_scan_matches_scan_history_over_a_long_range(pdata):
     """Whole-history agreement for A on a window with many signals."""
     mod = _module("momentum_pullback")

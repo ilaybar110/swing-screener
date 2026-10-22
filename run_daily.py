@@ -6,9 +6,14 @@
 
 prepare: finds the last trading day completed in job_log and processes EVERY missed US
 session up to the latest finished one, oldest first (EDGAR -> regime -> scan -> rank ->
-save -> baselines), after downloading prices once for the whole range. It then updates
-tracking, writes the LLM inputs for the latest day and exports state so progress
-survives any later failure. It does nothing when already up to date.
+save -> baselines), after downloading prices once for the whole range. A day where one
+of those steps failed is recorded ``partial`` and re-processed by the next runs (all
+steps are idempotent; ``MAX_DAY_ATTEMPTS`` runs in total, then it is marked ``failed``
+and an alert is sent). EDGAR daily indexes that were not published yet are read on a
+later run. It then updates tracking, writes the LLM inputs for the latest day and
+exports state so progress survives any later failure. It does nothing when already up
+to date. When earlier scheduled runs were evidently missed (the last finalised report is
+more than one session behind) it sends a Telegram alert.
 
 finalize: merges briefs (missing/invalid ones are fine), builds the report, exports
 state, sends Telegram and prints a short summary. It does nothing if that day was
@@ -40,9 +45,11 @@ from src.data import earnings, edgar_daily, prices
 from src.data_access import DataAccess
 from src.db import init_db
 from src.jobs import (
-    BENCHMARK, CATCHUP_JOB, DAY_JOB, FINALIZE_JOB, CriticalError, JobLog, catchup_remaining,
-    finalize_done, last_completed_day, latest_completed_session, live_start, missed_days, new_run_id,
-    open_position_tickers, price_message, price_plan, prune_job_log,
+    BENCHMARK, CATCHUP_JOB, DAY_JOB, EDGAR_INDEX_JOB, FINALIZE_JOB, MAX_EDGAR_INDEX_ATTEMPTS,
+    CriticalError, JobLog, catchup_remaining, check_missed_runs, day_result, edgar_backfill_dates,
+    finalize_done, job_row, last_completed_day, latest_completed_session, live_start, missed_days,
+    new_run_id, open_position_tickers, parse_attempt, partial_days, price_message, price_plan,
+    prune_job_log, stale_message,
 )
 from src.llm import brief_io
 from src.modules import get_enabled_modules
@@ -124,6 +131,9 @@ def _download_prices(conn, cfg: Config, jl: JobLog, days: list[date], limit: Opt
     res = jl.run("prices", work, target, message_fn=price_message)
     if not res.ok:
         raise CriticalError(f"price download failed: {res.error}")
+    if res.value and res.value.get("stale"):  # shown in the report's data-quality note
+        jl.record("prices_stale", target, "warning", stale_message(res.value, target))
+        log.warning("prices: %d ticker(s) are stale (no bar for %s)", len(res.value["stale"]), target)
     n = conn.execute("SELECT COUNT(DISTINCT ticker) FROM prices").fetchone()[0]
     spy = conn.execute("SELECT MAX(date) FROM prices WHERE ticker = ?", (BENCHMARK,)).fetchone()[0]
     if n == 0 or spy is None:
@@ -152,14 +162,18 @@ def _largest(conn, day: date, core: list[str], limit: int) -> list[str]:
 def _process_day(conn, cfg: Config, jl: JobLog, day: date, modules, data: DataAccess) -> dict:
     out = {"edgar_ok": False, "candidates": 0, "recs": 0, "in_report": 0}
 
+    failed: list[str] = []
     r = jl.run("edgar", lambda: edgar_daily.process_day(conn, day), day,
-               message_fn=lambda rep: json.dumps({k: rep[k] for k in (
-                   "index_date", "form4_processed", "eightk_processed", "earnings_events")}
-                   | {"errors": len(rep["errors"])}))
+               message_fn=_edgar_message)
     out["edgar_ok"] = r.ok
+    if r.ok:
+        _record_edgar_index(jl, day, r.value)
+    else:
+        failed.append("edgar")
 
-    jl.run("regime", lambda: compute_regime(conn, day), day,
-           message_fn=lambda row: f"{row['regime']} breadth={row['breadth_pct']:.1f}%")
+    if not jl.run("regime", lambda: compute_regime(conn, day), day,
+                  message_fn=lambda row: f"{row['regime']} breadth={row['breadth_pct']:.1f}%").ok:
+        failed.append("regime")
 
     candidates = []
     for m in modules:
@@ -167,6 +181,8 @@ def _process_day(conn, cfg: Config, jl: JobLog, day: date, modules, data: DataAc
                      message_fn=lambda found: f"{len(found)} candidate(s)")
         if res.ok:
             candidates.extend(res.value)
+        else:
+            failed.append(f"scan:{m.name}")
     out["candidates"] = len(candidates)
 
     if candidates:  # share counts in the guardrail must be split-adjusted
@@ -174,17 +190,67 @@ def _process_day(conn, cfg: Config, jl: JobLog, day: date, modules, data: DataAc
                message_fn=lambda n_rows: f"{n_rows} split row(s)")
     ranked = jl.run("rank", lambda: rank(candidates, day, data, conn, cfg, "live"), day,
                     message_fn=lambda recs: f"{len(recs)} recommendation(s)")
+    if not ranked.ok:
+        failed.append("rank")
     recs = ranked.value or []
     _stamp(recs, day)
-    jl.run("save_recommendations", lambda: insert_recommendations(conn, recs), day,
-           message_fn=lambda n: f"{n} new")
-    jl.run("baselines", lambda: baseline.create_for(conn, recs, day, cfg), day,
-           message_fn=lambda n: f"{n} new")
+    if not jl.run("save_recommendations", lambda: insert_recommendations(conn, recs), day,
+                  message_fn=lambda n: f"{n} new").ok:
+        failed.append("save_recommendations")
+    if not jl.run("baselines", lambda: baseline.create_for(conn, recs, day, cfg), day,
+                  message_fn=lambda n: f"{n} new").ok:
+        failed.append("baselines")
     out["recs"] = len(recs)
     out["in_report"] = sum(1 for x in recs if x.in_report)
-    # Completed even if a step failed (errors are logged and shown in the summary): the
-    # next run starts after this day, so a crash cannot loop forever.
-    jl.record(DAY_JOB, day, "ok", f"{len(recs)} recs" + ("" if ranked.ok else "; ranking failed"))
+    # A day with failed steps is 'partial': it still counts as processed (the catch-up
+    # moves on), and the next runs re-process it until it succeeds or MAX_DAY_ATTEMPTS
+    # runs have tried, after which it is 'failed' - so a broken step cannot loop forever.
+    status, message = day_result(failed, len(recs), job_row(conn, DAY_JOB, day))
+    jl.record(DAY_JOB, day, status, message)
+    out["status"], out["failed"] = status, failed
+    if status != "ok":
+        log.warning("day %s is %s: %s", day, status, message)
+    return out
+
+
+def _edgar_message(rep: dict) -> str:
+    return json.dumps({k: rep[k] for k in ("index_date", "form4_processed", "eightk_processed",
+                                           "earnings_events")} | {"errors": len(rep["errors"])})
+
+
+def _record_edgar_index(jl: JobLog, day: date, rep: dict) -> None:
+    """Remember which EDGAR daily index was read, and that ``day``'s own index is still
+    missing when the client had to fall back to an older one (backfilled later)."""
+    index_date = date.fromisoformat(rep["index_date"])
+    jl.record(EDGAR_INDEX_JOB, index_date, "ok", f"read for {day}: " + _edgar_message(rep))
+    if index_date != day:
+        prev = job_row(jl.conn, EDGAR_INDEX_JOB, day)
+        if prev is None or prev[0] != "ok":
+            jl.record(EDGAR_INDEX_JOB, day, "missing",
+                      f"attempt 1/{MAX_EDGAR_INDEX_ATTEMPTS}: not published when processed (used {index_date})")
+
+
+def _backfill_edgar(conn, jl: JobLog, latest: date, skip: set[date]) -> dict:
+    """Read the EDGAR daily indexes of recent days that were not published when those
+    days were processed (``edgar_backfill_dates``). Each date is tried at most
+    ``MAX_EDGAR_INDEX_ATTEMPTS`` times (SEC holidays never get an index)."""
+    out = {"backfilled": [], "still_missing": []}
+    for d in edgar_backfill_dates(conn, latest):
+        if d in skip:
+            continue
+        try:
+            rep = edgar_daily.process_index_date(conn, d)
+        except Exception as exc:  # noqa: BLE001 - IndexNotPublished, or EDGAR trouble
+            prev = job_row(conn, EDGAR_INDEX_JOB, d)
+            attempt = parse_attempt(prev[1] if prev else "") + 1
+            jl.record(EDGAR_INDEX_JOB, d, "missing", f"attempt {attempt}/{MAX_EDGAR_INDEX_ATTEMPTS}: "
+                      + ("gave up; " if attempt >= MAX_EDGAR_INDEX_ATTEMPTS else "") + str(exc)[:300])
+            out["still_missing"].append(d.isoformat())
+            continue
+        jl.record(EDGAR_INDEX_JOB, d, "ok", "backfilled: " + _edgar_message(rep))
+        out["backfilled"].append(d.isoformat())
+    if out["backfilled"]:
+        log.info("EDGAR backfill: read the daily index of %s", ", ".join(out["backfilled"]))
     return out
 
 
@@ -206,21 +272,28 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
     jl = JobLog(conn, run_id)
 
     last = last_completed_day(conn)
-    days = missed_days(last, target)
-    if force and not days:
-        days = [target]
-    if not days:
+    new_days = missed_days(last, target)
+    if force and not new_days:
+        new_days = [target]
+    if not new_days:
         print(f"prepare: already up to date through {last}; nothing to do")
         conn.close()
         return 0
+    check_missed_runs(conn, jl, latest, f"daily run {target}", lambda text: _alert(text, dry_run))
     # R2: at most daily.max_catchup_days sessions per run, oldest first; the rest wait for
     # the next run. Everything below works on the last session actually processed.
-    remaining = max(0, len(days) - cfg.daily.max_catchup_days)
-    days = days[:cfg.daily.max_catchup_days]
+    # Partial days (a step failed earlier) are retried with whatever budget is left.
+    budget = cfg.daily.max_catchup_days
+    remaining = max(0, len(new_days) - budget)
+    new_days = new_days[:budget]
+    retry = [d for d in partial_days(conn, new_days[-1]) if d not in new_days][:budget - len(new_days)]
+    days = sorted({*new_days, *retry})
     if remaining:
         log.warning("prepare: catch-up limited to %d day(s); %d day(s) remain for the next run",
-                    len(days), remaining)
-    target = days[-1]
+                    len(new_days), remaining)
+    if retry:
+        log.info("prepare: retrying %d partial day(s): %s", len(retry), ", ".join(map(str, retry)))
+    target = new_days[-1]
     log.info("prepare: last completed day %s, processing %d day(s): %s..%s",
              last, len(days), days[0], days[-1])
 
@@ -242,8 +315,15 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
         per_day = [_process_day(conn, cfg, jl, d, modules, data) for d in days]
         summary["days"] = per_day
         jl.record(CATCHUP_JOB, target, "ok", str(remaining))
+        gave_up = [(d, p["failed"]) for d, p in zip(days, per_day) if p["status"] == "failed"]
+        if gave_up:
+            _alert(f"swing-screener daily run {target}: gave up on "
+                   + "; ".join(f"{d} (still failing: {', '.join(f)})" for d, f in gave_up)
+                   + " after repeated attempts; those days stay incomplete.", dry_run)
         if not any(p["edgar_ok"] for p in per_day):
             raise CriticalError("EDGAR is unavailable: no daily filing index could be processed")
+        jl.run("edgar_backfill", lambda: _backfill_edgar(conn, jl, target, set(days)), target,
+               message_fn=json.dumps)
 
         jl.run("tracker", lambda: tracker.update_all(conn, target, "live", cfg), target,
                message_fn=json.dumps)
@@ -269,9 +349,12 @@ def prepare(cfg: Config, *, target: Optional[date] = None, dry_run: bool = False
         _export(conn, cfg, target, dry_run)
 
     done = last_completed_day(conn)
+    incomplete = [f"{d} {p['status']}" for d, p in zip(days, summary.get("days", [])) if p["status"] != "ok"]
     print(f"prepare {target}{' (dry run)' if dry_run else ''}: processed {len(days)} day(s) "
           f"({days[0]}..{days[-1]}), completed through {done}, "
           f"{sum(p['recs'] for p in summary.get('days', []))} recommendation(s), "
+          + (f"{len(retry)} partial day(s) retried, " if retry else "")
+          + (f"incomplete: {', '.join(incomplete)}, " if incomplete else "")
           + (f"{remaining} missed day(s) remaining for the next run, " if remaining else "")
           + f"{len(jl.errors)} non-critical error(s)" + ("" if exit_code == 0 else f", FAILED (exit {exit_code})"))
     for e in jl.errors:
@@ -319,14 +402,14 @@ def finalize(cfg: Config, *, target: Optional[date] = None, dry_run: bool = Fals
 
     exit_code = 0
     html_path = None
+    summary_text = ""
     try:
         if rebuilt:
             _refetch_prices_for_report(conn, cfg, jl, target)
         _, out_dir = _work_dirs(cfg)
         in_dir, _ = _work_dirs(cfg)
         jl.run("merge_briefs", lambda: brief_io.merge_outputs(conn, out_dir, inputs_dir=in_dir), target,
-               message_fn=lambda rep: json.dumps({k: (len(v) if hasattr(v, "__len__") else v)
-                                                  for k, v in rep.items()}))
+               message_fn=merge_message)
         since = _previous_finalized(conn, target)
         remaining = catchup_remaining(conn, target)
         if dry_run:
@@ -346,11 +429,12 @@ def finalize(cfg: Config, *, target: Optional[date] = None, dry_run: bool = Fals
         exit_code = 2
         summary_text = f"finalize failed: {exc}"
     finally:
-        _export(conn, cfg, target, dry_run)
+        _export(conn, cfg, target, dry_run)  # the report is safe in state/ before anything is sent
 
     if exit_code == 0 and not dry_run and html_path:
         jl.run("telegram", lambda: telegram.send_report(html_path, summary_text), target,
                message_fn=lambda ok: "sent" if ok else "not sent (unconfigured or failed)")
+        _export(conn, cfg, target, dry_run)  # again, so the telegram row reaches job_log.csv
     print(summary_text)
     errs = [r[0] for r in conn.execute(
         "SELECT job || ': ' || COALESCE(message,'') FROM job_log WHERE status = 'error' AND trading_date = ?",
@@ -361,6 +445,21 @@ def finalize(cfg: Config, *, target: Optional[date] = None, dry_run: bool = Fals
             print(f"  - {e}")
     conn.close()
     return exit_code
+
+
+MAX_REASON_CHARS = 120
+
+
+def merge_message(rep: dict) -> str:
+    """job_log message for ``merge_briefs``: the counts (unchanged shape) plus a short
+    reason per invalid brief (``invalid_reasons``, first error, truncated)."""
+    msg = {k: (len(v) if hasattr(v, "__len__") else v) for k, v in rep.items()}
+    invalid = rep.get("invalid")
+    if isinstance(invalid, dict) and invalid:
+        msg["invalid_reasons"] = {
+            t: (str(errs[0]) if isinstance(errs, (list, tuple)) and errs else str(errs))[:MAX_REASON_CHARS]
+            for t, errs in sorted(invalid.items())}
+    return json.dumps(msg)
 
 
 def _previous_finalized(conn, target: date) -> Optional[date]:

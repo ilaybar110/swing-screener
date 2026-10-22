@@ -97,7 +97,8 @@ def install_stubs(monkeypatch) -> SimpleNamespace:
     """Replace every network-facing call with a stand-in serving fixture data."""
     fix = sqlite3.connect(f"file:{(FIXTURES / 'fixture.db').as_posix()}?mode=ro", uri=True)
     fix.row_factory = sqlite3.Row
-    calls = SimpleNamespace(prices=[], edgar=[], splits=[], earnings=[], report=[], alert=[], fix=fix)
+    calls = SimpleNamespace(prices=[], edgar=[], edgar_index=[], splits=[], earnings=[], report=[], alert=[],
+                            fix=fix)
 
     def fake_update_prices(conn, tickers, start, end, **kw):
         calls.prices.append((sorted(tickers), start, end))
@@ -131,12 +132,19 @@ def install_stubs(monkeypatch) -> SimpleNamespace:
                 "index_is_requested_day": True, "form4_processed": 0, "eightk_processed": 0,
                 "earnings_events": 0, "errors": []}
 
+    def fake_process_index_date(conn, index_date, client=None):
+        calls.edgar_index.append(index_date)
+        return {"requested_date": index_date.isoformat(), "index_date": index_date.isoformat(),
+                "index_is_requested_day": True, "form4_processed": 0, "eightk_processed": 0,
+                "earnings_events": 0, "errors": []}
+
     from notify import telegram
     from src.data import earnings, edgar_daily, fundamentals, news, prices, texts
 
     monkeypatch.setattr(prices, "update_prices", fake_update_prices)
     monkeypatch.setattr(prices, "update_splits", fake_update_splits)
     monkeypatch.setattr(edgar_daily, "process_day", fake_process_day)
+    monkeypatch.setattr(edgar_daily, "process_index_date", fake_process_index_date)
     monkeypatch.setattr(earnings, "update_upcoming_earnings",
                         lambda conn, as_of, days_ahead: calls.earnings.append((as_of, days_ahead)))
     monkeypatch.setattr(fundamentals, "fetch_company", lambda conn, cik, client=None: 0)

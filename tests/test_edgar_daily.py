@@ -235,6 +235,42 @@ def test_process_day_walks_back_when_day_unpublished(conn):
     assert rep["eightk_processed"] == 3
 
 
+class ExactIndexClient(FakeClient):
+    """Serves the daily form index only for the dates in ``published``."""
+
+    def __init__(self, published, **kw):
+        super().__init__(**kw)
+        self.published = set(published)
+
+    def daily_index_url(self, day):
+        return f"https://www.sec.gov/Archives/edgar/daily-index/form.{day:%Y%m%d}.idx"
+
+    def get_text(self, url, use_cache=True):
+        if "/daily-index/" in url:
+            self.calls.append(url)
+            for d in self.published:
+                if f"form.{d:%Y%m%d}.idx" in url:
+                    return self.index_text
+            raise RuntimeError("403 Forbidden")
+        return super().get_text(url, use_cache)
+
+
+def test_process_index_date_reads_exactly_that_day(conn):
+    client = ExactIndexClient({date(2026, 9, 29)})
+    rep = ed.process_index_date(conn, date(2026, 9, 29), client=client)
+    assert rep["index_date"] == "2026-09-29" and rep["index_is_requested_day"] is True
+    assert rep["eightk_processed"] == 3 and rep["form4_processed"] == 1
+    # a second pass (or process_day) skips what is already stored
+    assert ed.process_index_date(conn, date(2026, 9, 29), client=client)["skipped_already_processed"] == 4
+
+
+def test_process_index_date_raises_when_unpublished(conn):
+    client = ExactIndexClient(set())
+    with pytest.raises(ed.IndexNotPublished):
+        ed.process_index_date(conn, date(2026, 9, 30), client=client)
+    assert len(client.calls) == 1  # no walking back to older indexes
+
+
 def test_8k_amendment_does_not_create_earnings_event(conn):
     text = ("8-K/A            AAR CORP                                                      "
             "1750        20260929    edgar/data/1750/0001104659-26-111999.txt\n")

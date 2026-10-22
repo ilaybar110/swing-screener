@@ -5,6 +5,10 @@ yfinance (``auto_adjust=False``), retries failed tickers once after a pause, the
 fills still-missing tickers from Nasdaq's historical API (flagged
 ``price_source="nasdaq"``). Stooq is deliberately not used (blocked in the cloud).
 
+A ticker whose newest bar is older than the expected session (the latest NYSE trading
+day on or before ``end``) still counts as downloaded but is also reported as ``stale``
+(delisted, halted, or a vendor that has not published the day yet).
+
 ``update_splits`` pulls split actions from yfinance and upserts into ``splits``.
 
 Everything is idempotent: rows are upserted by (ticker, date).
@@ -20,6 +24,7 @@ from typing import Any, Callable, Iterable, Optional
 import pandas as pd
 
 from src.config import load_config
+from src.utils.calendar import latest_trading_day_on_or_before
 from src.utils.http import get_session
 from src.utils.logging import get_logger
 
@@ -204,8 +209,10 @@ def update_prices(
     """Download [start, end] for every ticker and upsert into ``prices``.
 
     Returns {"successes": [...], "retried": [...], "nasdaq_filled": [...],
-    "missing": [...]} -- ``retried`` are tickers recovered by the retry pass.
-    ``progress(done, total)`` is called after each chunk.
+    "missing": [...], "stale": [...]} -- ``retried`` are tickers recovered by the retry
+    pass; ``stale`` are downloaded tickers (any of the first three lists) whose newest bar
+    is before the expected session (see ``expected_session``). ``progress(done, total)``
+    is called after each chunk.
     """
     cfg = load_config()
     chunk = chunk_size or cfg.prices.chunk_size
@@ -214,11 +221,17 @@ def update_prices(
 
     successes: list[str] = []
     failed: list[str] = []
+    last_bar: dict[str, str] = {}
+
+    def note_last(t: str, rows: list[tuple]) -> None:
+        last_bar[t] = max(r[1] for r in rows)
+
     for i in range(0, len(tickers), chunk):
         part = tickers[i:i + chunk]
         got, bad = _download_chunk(part, start, end)
         for t, rows in got.items():
             _upsert_prices(conn, rows)
+            note_last(t, rows)
             successes.append(t)
         failed.extend(bad)
         if progress:
@@ -233,6 +246,7 @@ def update_prices(
             got, bad = _download_chunk(failed[i:i + chunk], start, end)
             for t, rows in got.items():
                 _upsert_prices(conn, rows)
+                note_last(t, rows)
                 retried.append(t)
             still.extend(bad)
 
@@ -246,20 +260,36 @@ def update_prices(
             rows = []
         if rows:
             _upsert_prices(conn, rows)
+            note_last(t, rows)
             nasdaq_filled.append(t)
         else:
             missing.append(t)
 
+    expected = expected_session(end).isoformat()
+    stale = sorted(t for t, last in last_bar.items() if last < expected)
+    if stale:
+        log.warning("update_prices: %d ticker(s) have no bar for %s (stale): %s",
+                    len(stale), expected, ", ".join(stale[:20]) + (" ..." if len(stale) > 20 else ""))
     log.info(
-        "update_prices: %d requested, %d ok, %d retried, %d nasdaq, %d missing",
-        len(tickers), len(successes), len(retried), len(nasdaq_filled), len(missing),
+        "update_prices: %d requested, %d ok, %d retried, %d nasdaq, %d missing, %d stale",
+        len(tickers), len(successes), len(retried), len(nasdaq_filled), len(missing), len(stale),
     )
     return {
         "successes": sorted(successes),
         "retried": sorted(retried),
         "nasdaq_filled": sorted(nasdaq_filled),
         "missing": sorted(missing),
+        "stale": stale,
     }
+
+
+def expected_session(end: date) -> date:
+    """The session a complete download up to ``end`` must reach: the latest NYSE trading
+    day on or before ``end`` (``end`` itself when it is one)."""
+    try:
+        return latest_trading_day_on_or_before(end)
+    except ValueError:  # outside the calendar range: fall back to the requested day
+        return end
 
 
 def _yf_splits(ticker: str) -> pd.Series:

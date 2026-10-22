@@ -7,12 +7,33 @@ Paste the prompt below, **exactly as written**, into a new Claude Code cloud Rou
 | Setting | Value |
 |---|---|
 | Repository | `ilaybar110/swing-screener`, branch `main` (fresh clone every run) |
-| Schedule | **Tuesday-Saturday, ~04:00 UTC** (cron `0 4 * * 2-6`). That is after the US close, mornings in Israel, and covers the Mon-Fri sessions. Missed days are caught up automatically by the next run. |
+| Schedule | **Tuesday-Saturday, ~04:00 UTC** (cron `0 4 * * 2-6`). That is after the US close, mornings in Israel, and covers the Mon-Fri sessions. Missed days are caught up automatically by the next run. **See "Schedule check" below: the live routine does not match this.** |
 | Network access | **Full** (Yahoo Finance, Nasdaq, SEC EDGAR, Google News, Telegram) |
 | Environment variables | `SEC_EMAIL` (required, your contact email for the SEC User-Agent), `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` (optional; Telegram is skipped silently without them) |
 | Git | Allow pushes to `main` (unrestricted branch pushes) |
 
 Typical run time: 10-25 minutes (price download for the universe dominates).
+
+### Schedule check (action needed)
+
+`state/job_log.csv` and the git history show what the routine actually did, and it does
+not match the schedule above:
+
+- daily runs **start at ~07:00 UTC**, not 04:00 UTC (every scheduled daily run since
+  2026-10-11 committed between 07:08 and 07:16 UTC; the weekly routine does run at
+  ~04:06 UTC on Sundays as documented);
+- **no Saturday daily run has ever happened**. The daily runs fell on Tuesday, Wednesday,
+  Thursday, Friday and **Sunday** (2026-10-11, 2026-10-18), so Friday's session is only
+  processed on Sunday.
+
+Open the daily routine's settings on claude.ai/code and **verify the schedule
+(days and time zone)**, in particular that **Saturday** is selected (Friday's session is
+otherwise only reported on Sunday) and whether Sunday was meant to be included. Routine schedules are usually entered in
+your local time zone, which may explain the 3-hour offset; ~07:00 UTC is fine for the
+pipeline (it only needs the previous US session closed), so the time itself does not
+need to change. The free GitHub Actions watchdog (`.github/workflows/staleness.yml`,
+weekdays ~10:17 UTC) alerts you on Telegram whenever a run is missed, and every
+`prepare`/weekly run alerts when the last report is more than one session behind.
 
 ## Prompt to paste
 
@@ -20,15 +41,15 @@ Typical run time: 10-25 minutes (price download for the universe dominates).
 You are the automated DAILY runner for the swing-screener repository. The repository is already cloned and your working directory is its root. Your job is narrow: run the pipeline scripts, write short stock briefs from the input files, and commit the results. You never change code.
 
 HARD RULES (no exceptions):
-1. Never modify, create or delete any file outside state/, reports/ and work/. In particular never touch code (*.py, *.sh), config.yaml, requirements*.txt, docs/, templates/, tests/ or .gitignore.
+1. Never modify, create or delete any file outside state/, reports/ and work/. In particular never touch code (*.py, *.sh), config.yaml, requirements*.txt, constraints.txt, docs/, templates/, tests/ or .gitignore.
 2. Never attempt to fix an error. If a command fails, do not debug it, do not retry it with changes, do not install or edit anything to work around it. Report the error output in your final message and continue only with the steps below that are still safe to do.
 3. Never print, echo, log or commit secrets. Never run `env`, `printenv`, `set`, `echo $SEC_EMAIL`, `echo $TELEGRAM_BOT_TOKEN`, `cat .env` or anything similar. Do not paste environment variable values into any message or file.
 4. Use only the commands listed in the steps. Do not run other scripts. Do not open pull requests or create branches; push only to main (HEAD:main), except for the session-branch cleanup described in the push step.
 
 STEPS
 
-Step 1 - install requirements and check the imports (always `python -m pip`, so the packages go to the same interpreter that runs the scripts):
-    python -m pip install --quiet -r requirements.txt
+Step 1 - install the pinned requirements and check the imports (always `python -m pip`, so the packages go to the same interpreter that runs the scripts; the part after || is only the fallback if the pinned versions cannot be installed):
+    python -m pip install --quiet -r requirements.txt -c constraints.txt || python -m pip install --quiet -r requirements.txt
     python -c "import pandas, numpy, yfinance, requests, lxml, feedparser; print('imports ok')"
   MANDATORY: if this command fails (non-zero exit or no "imports ok" line), STOP IMMEDIATELY. Report the exact error output (last 40 lines) in your final message and do NOT run any pipeline step, do not commit, do not try to fix it.
 
@@ -71,6 +92,21 @@ FINAL MESSAGE: the run summary printed by step 4 (or by step 2 when step 4 did n
 ```
 
 ## Notes for the maintainer
+
+- **After changing this prompt in the repository, paste it into the routine again** - the
+  routine keeps its own copy. (2026-10: Step 1 now installs with `-c constraints.txt`.)
+- `day` rows in `state/job_log.csv` are `ok`, `partial` (EDGAR, regime, a module scan,
+  ranking, saving or baselines failed - the message lists which, e.g.
+  `4 recs; failed: scan:base_breakout; attempt 1/3`) or `failed`. A partial day is
+  re-processed by the next runs that have a new session to do (within
+  `daily.max_catchup_days`, last 5 sessions only); after 3 attempts it is marked `failed`
+  and a Telegram alert is sent, so a step that always fails cannot loop.
+- EDGAR daily indexes not yet published when a day was processed (`edgar_index` rows with
+  status `missing`) are read by a later run (`edgar_backfill`), at most 3 tries per date
+  (SEC holidays such as Columbus Day never get an index).
+- `missed_run` rows / alerts: the last finalised report was more than one session behind
+  the latest finished session when the run started. `prices_stale` rows list tickers whose
+  data stops before the session (shown in the report's data-quality note).
 
 - `python run_daily.py --stage prepare` is idempotent: if the latest finished session is already processed it exits 0 immediately. `--stage finalize` likewise does nothing when that day was already finalized, so a rerun never double-sends Telegram or rewrites the report.
 - Exit code 2 = critical failure (no prices at all, EDGAR fully down, report could not be built); an alert is sent via Telegram when configured.

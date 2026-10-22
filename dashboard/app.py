@@ -8,7 +8,8 @@ hypothetical outcome of each, and statistics about them.
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import date, timedelta
+from typing import Optional
 from pathlib import Path
 
 # `streamlit run dashboard/app.py` puts dashboard/ on sys.path, not the repo root.
@@ -20,12 +21,13 @@ import streamlit as st  # noqa: E402
 
 from dashboard import data as dd  # noqa: E402
 from dashboard import rec_view  # noqa: E402
+from src.report import module_label  # noqa: E402
 from src.stats import NOT_ENOUGH_DATA, summary  # noqa: E402
 
 st.set_page_config(page_title="Swing Screener", layout="wide")
 
 VIEWS = [
-    "Overview", "Modules vs baseline", "Rank buckets", "Breakdowns", "Equity curve",
+    "Today", "Overview", "Modules vs baseline", "Rank buckets", "Breakdowns", "Equity curve",
     "Excess returns", "All recommendations", "Recommendation detail",
 ]
 STAT_COLS = [
@@ -116,7 +118,7 @@ def show_stats(df: pd.DataFrame) -> None:
 
 def warn_small(stats: dict) -> None:
     for module, msg in stats.get("warnings", {}).items():
-        st.warning(f"**{module}**: {msg}")
+        st.warning(f"**{module_label(module)}**: {msg}")
 
 
 def bar(df: pd.DataFrame, x: str, y: str, title: str) -> alt.Chart:
@@ -134,6 +136,64 @@ def bar(df: pd.DataFrame, x: str, y: str, title: str) -> alt.Chart:
 # ---------------------------------------------------------------------------
 # views
 # ---------------------------------------------------------------------------
+
+
+def _last_close(ticker: str, signal: date) -> Optional[float]:
+    """Latest close via the same cached Yahoo fetch the chart uses (None on failure)."""
+    try:
+        start = signal - timedelta(days=rec_view.rec_data.HISTORY_DAYS)
+        px = rec_view._prices(ticker, start, date.today())
+        return float(px["close"].iloc[-1]) if len(px) else None
+    except Exception:  # noqa: BLE001 - network problems must not break the page
+        return None
+
+
+def view_today(d: dict) -> None:
+    """Today's ideas as cards (latest signal day of the source), sortable, with the
+    explanatory chart one toggle away."""
+    ideas = dd.latest_ideas(d["recs"])
+    if ideas.empty:
+        st.info("No recommendations shown in a report yet.")
+        return
+    day = ideas["signal_date"].iloc[0]
+    is_live = d.get("source") == dd.LIVE
+    st.caption(f"{len(ideas)} idea(s) from {day}. Levels are the planned buy-stop entry, stop and target; "
+               "research only, not financial advice.")
+    c1, c2 = st.columns([2, 1])
+    how = c1.selectbox("Sort by", list(dd.TODAY_SORTS), key="today_sort")
+    fetch = c2.toggle("Last close (Yahoo)", value=is_live, key="today_fetch",
+                      help="Fetch the latest close to show the move needed to trigger the entry.")
+    if fetch:
+        closes = {t: _last_close(t, date.fromisoformat(str(s)[:10]))
+                  for t, s in zip(ideas["ticker"], ideas["signal_date"])}
+        ideas = ideas.assign(close=ideas["ticker"].map(closes))
+        ideas["to_trigger"] = [dd.pct_to_trigger(e, c) for e, c in zip(ideas["entry"], ideas["close"])]
+    for _, row in dd.sort_ideas(ideas, how).iterrows():
+        with st.container(border=True):
+            rank = "-" if pd.isna(row["rank"]) else int(row["rank"])
+            badges = []
+            if row["earnings_in_window"]:
+                badges.append(f":orange-badge[Earnings {row['earnings_date'] or ''} in window]")
+            if row["red_flags"]:
+                badges.append(f":red-badge[{int(row['red_flags'])} red flag(s)]")
+            g = (row["guardrail_status"] or "unknown").lower()
+            colour = {"pass": "green", "fail": "red"}.get(g, "orange")
+            badges.append(f":{colour}-badge[guardrail: {g.replace('_', ' ')}]")
+            st.markdown(f"#### #{rank} {row['ticker']} · {row['module_label']}  \n" + " ".join(badges))
+            cols = st.columns(6)
+            close = row.get("close")
+            cols[0].metric("Last close", "-" if close is None or pd.isna(close) else f"{close:.2f}")
+            tt = row.get("to_trigger")
+            cols[1].metric("To trigger", "-" if tt is None or pd.isna(tt) else f"{tt:+.1%}")
+            cols[2].metric("Entry", f"{row['entry']:.2f}")
+            cols[3].metric("Stop", f"{row['stop']:.2f}", f"{row['stop'] / row['entry'] - 1:+.1%}", delta_color="off")
+            cols[4].metric("Target", f"{row['target']:.2f}", f"{row['target'] / row['entry'] - 1:+.1%}",
+                           delta_color="off")
+            cols[5].metric("R/R", "-" if pd.isna(row["rr"]) else f"{row['rr']:.1f}")
+            if row["rationale"]:
+                st.caption(row["rationale"])
+            if st.toggle("Show chart (prices fetched from Yahoo Finance)", value=False, key=f"today_chart_{row['id']}"):
+                rec_view.render(row, _state_stamp(), is_live)
 
 
 def view_overview(d: dict) -> None:
@@ -381,7 +441,7 @@ def view_detail(d: dict) -> None:
 
 
 VIEW_FUNCS = {
-    "Overview": view_overview, "Modules vs baseline": view_modules, "Rank buckets": view_rank_buckets,
+    "Today": view_today, "Overview": view_overview, "Modules vs baseline": view_modules, "Rank buckets": view_rank_buckets,
     "Breakdowns": view_breakdowns, "Equity curve": view_equity, "Excess returns": view_excess,
     "All recommendations": view_all, "Recommendation detail": view_detail,
 }
@@ -411,7 +471,7 @@ def main() -> None:
         st.info("This source has no recommendations yet.")
         if view != "Overview":
             return
-    VIEW_FUNCS[view](data)
+    VIEW_FUNCS[view]({**data, "source": source})
 
 
 main()

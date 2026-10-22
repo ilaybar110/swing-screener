@@ -137,3 +137,40 @@ def test_unexpected_exception_swallowed(monkeypatch, tmp_path):
     html.write_text("x", encoding="utf-8")
     assert telegram.send_report(html, "x", session=object()) is False
     assert telegram.send_alert("x", session=object()) is False
+
+
+def test_send_report_html_digest_parse_mode_and_split(tmp_path):
+    from src.report import TelegramDigest
+
+    html = tmp_path / "r.html"
+    html.write_text("x", encoding="utf-8")
+    big = "\n\n".join(f"<b>T{i}</b> block " + "y" * 200 for i in range(40))  # > 4096 chars
+    digest = TelegramDigest("plain text", ["<b>head</b>", big])
+    s = FakeSession([])
+    assert telegram.send_report(html, digest, session=s, sleep=NOSLEEP) is True
+    msgs = [c for c in s.calls if c["url"].endswith("sendMessage")]
+    assert len(msgs) >= 3 and _methods(s)[-1] == "sendDocument"
+    assert all(c["data"]["parse_mode"] == "HTML" and len(c["data"]["text"]) <= 4096 for c in msgs)
+    assert msgs[0]["data"]["text"] == "<b>head</b>"
+    for c in msgs:
+        assert c["data"]["text"].count("<b>") == c["data"]["text"].count("</b>")
+
+
+def test_send_report_html_rejected_falls_back_to_plain(tmp_path):
+    html = tmp_path / "r.html"
+    html.write_text("x", encoding="utf-8")
+    s = FakeSession([FakeResponse(400, text="Bad Request: can't parse entities"), FakeResponse(), FakeResponse()])
+    assert telegram.send_report(html, ["<b>A&amp;B</b> ok"], session=s, sleep=NOSLEEP) is True
+    assert _methods(s) == ["sendMessage", "sendMessage", "sendDocument"]
+    assert s.calls[1]["data"]["text"] == "A&B ok" and "parse_mode" not in s.calls[1]["data"]
+
+
+def test_plain_summary_has_no_parse_mode_and_is_split(tmp_path):
+    html = tmp_path / "r.html"
+    html.write_text("x", encoding="utf-8")
+    s = FakeSession([])
+    text = "\n".join("line <not html> " + "z" * 90 for _ in range(100))
+    assert telegram.send_report(html, text, session=s, sleep=NOSLEEP) is True
+    msgs = [c for c in s.calls if c["url"].endswith("sendMessage")]
+    assert len(msgs) >= 2 and all("parse_mode" not in c["data"] for c in msgs)
+    assert all(len(c["data"]["text"]) <= telegram.MAX_MESSAGE_CHARS for c in msgs)

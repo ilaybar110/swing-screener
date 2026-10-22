@@ -18,18 +18,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from src import indicators as ind
+from src.report import MODULE_NAMES, module_label
 
 ENTRY, STOP, TARGET = "#4C9AFF", "#EF5350", "#2FBF71"
 SUPPORT, RESIST = "#26A69A", "#D62828"
 AMBER, VIOLET, GOLD, GRAY, PINK = "#F2B134", "#8B7CF6", "#FFD60A", "#8A94A8", "#E56BC2"
 UP, DOWN = "#26A69A", "#EF5350"
 
-MODULE_LABEL = {
-    "momentum_pullback": "A Momentum pullback",
-    "earnings_gap_drift": "B Earnings gap",
-    "insider_cluster": "C Insider cluster",
-    "base_breakout": "D Base breakout",
-}
+# shared with the report (src/report.py MODULE_NAMES): 'A - Momentum pullback', ...
+MODULE_LABEL = {key: module_label(key) for key in MODULE_NAMES}
 TIMING = {
     "before_open": "before the open (BMO)", "bmo": "before the open (BMO)",
     "after_close": "after the close (AMC)", "amc": "after the close (AMC)",

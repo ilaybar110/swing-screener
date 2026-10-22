@@ -48,7 +48,7 @@ def test_recommendations_table_decodes_json_and_joins_results(populated):
     conn, rid, _ = populated
     df = dd.recommendations_table(conn, rid)
     assert len(df) == 2
-    assert df["modules"].iloc[0] == ["fake_module"] and df["modules_str"].iloc[0] == "fake_module"
+    assert df["modules"].iloc[0] == ["fake_module"] and df["modules_str"].iloc[0] == "Fake module"
     assert df["result_r"].notna().all()
 
 
@@ -89,7 +89,7 @@ def test_chart_window_bounds():
 
 
 @pytest.mark.parametrize("view", [
-    "Overview", "Modules vs baseline", "Rank buckets", "Breakdowns", "Equity curve",
+    "Today", "Overview", "Modules vs baseline", "Rank buckets", "Breakdowns", "Equity curve",
     "Excess returns", "All recommendations", "Recommendation detail"])
 def test_every_view_renders_for_a_backtest_run(populated, monkeypatch, view):
     from streamlit.testing.v1 import AppTest
@@ -116,3 +116,23 @@ def test_live_source_with_empty_state_renders(monkeypatch, tmp_path):
     monkeypatch.setattr(dd, "state_dir", lambda: tmp_path / "no_state")
     at = AppTest.from_file(str(APP), default_timeout=60).run()
     assert not at.exception
+
+
+def test_latest_ideas_and_sorting():
+    recs = pd.DataFrame({
+        "id": ["a", "b", "c", "old"], "ticker": ["AAA", "BBB", "CCC", "OLD"],
+        "signal_date": ["2026-10-20"] * 3 + ["2026-10-19"], "in_report": [1, 1, 0, 1],
+        "rank": [2, 1, None, 1], "entry": [100.0, 50.0, 10.0, 20.0], "stop": [95.0, 45.0, 9.0, 19.0],
+        "target": [115.0, 60.0, 12.0, 22.0], "primary_module": ["momentum_pullback", "base_breakout", "x", "x"],
+        "earnings_in_window": [1, 0, 0, 0], "llm_brief": [{"summary": "s", "red_flags": ["r1", "r2"]}, None, None, None],
+    })
+    ideas = dd.latest_ideas(recs)
+    assert list(ideas["ticker"]) == ["BBB", "AAA"]  # newest day, shown only, by rank
+    assert list(ideas["rr"]) == [2.0, 3.0] and list(ideas["red_flags"]) == [0, 2]
+    assert ideas["module_label"].iloc[0] == "D - Base breakout"
+    assert list(dd.sort_ideas(ideas, "R/R (highest first)")["ticker"]) == ["AAA", "BBB"]
+    assert list(dd.sort_ideas(ideas, "Earnings in window last")["ticker"]) == ["BBB", "AAA"]
+    assert list(dd.sort_ideas(ideas, "% to trigger (closest first)")["ticker"]) == ["BBB", "AAA"]  # no closes: rank
+    ideas["to_trigger"] = [0.05, -0.01]
+    assert list(dd.sort_ideas(ideas, "% to trigger (closest first)")["ticker"]) == ["AAA", "BBB"]
+    assert dd.pct_to_trigger(102.0, 100.0) == pytest.approx(0.02) and dd.pct_to_trigger(1.0, None) is None

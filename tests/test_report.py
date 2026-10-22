@@ -22,7 +22,12 @@ def _build(conn, cfg, as_of=AS_OF, **kw):
 
 def _assert_clean(html: str, md: str) -> None:
     """Self-contained HTML, no sizing language, footer present in both."""
-    assert not re.search(r"""(src|href)\s*=""", html), "HTML must not load/link external resources"
+    assert not re.search(r"""\bsrc\s*=""", html), "HTML must not load external resources"
+    assert "<link" not in html and "<script" not in html and "<img" not in html
+    # the only hrefs are plain outbound source links (no loading, no javascript:)
+    for m in re.finditer(r"""<(\w+)[^>]*\bhref\s*=\s*"([^"]*)"[^>]*>""", html):
+        assert m.group(1) == "a" and m.group(2).startswith(("https://", "http://")), m.group(0)
+        assert 'rel="noopener noreferrer"' in m.group(0)
     assert "url(" not in html and "@import" not in html
     for text in (html, md):
         low = text.lower()

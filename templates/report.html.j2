@@ -6,30 +6,57 @@
 <meta name="color-scheme" content="light dark">
 <title>{{ title }}</title>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1}
-@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b}}
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1;--accbg:#ddf4ff}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b;--accbg:#0c2d4a}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
 main{max-width:860px;margin:0 auto;padding:12px}
-h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}
+h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}h4{margin:1rem 0 .3rem;font-size:.98rem}
+a{color:var(--acc)}
 .banner{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
 .banner.Favorable{background:var(--goodbg);border-color:var(--good)}.banner.Caution{background:var(--warnbg);border-color:var(--warn)}.banner.Unfavorable{background:var(--badbg);border-color:var(--bad)}
+.score{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.score b{font-size:1.02rem}.score .lbl{color:var(--mut);font-size:.8rem;text-transform:uppercase;letter-spacing:.02em}
 .note{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
 .head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
-.co{color:var(--mut);font-size:.9rem}
-.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
-.chip.pass,.chip.pass_partial{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
-.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
-.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
+.badges{display:flex;flex-wrap:wrap;gap:4px}
+.co{color:var(--mut);font-size:.9rem;font-weight:400}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0;max-width:100%}
+.chip.pass{color:var(--good);border-color:var(--good)}.chip.pass_partial,.chip.unknown{color:var(--warn);border-color:var(--warn)}.chip.fail{color:var(--bad);border-color:var(--bad)}
+.badge{display:inline-block;border-radius:6px;padding:1px 7px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.badge.earn{background:var(--warnbg);color:var(--warn);border:1px solid var(--warn)}.badge.flag{background:var(--badbg);color:var(--bad);border:1px solid var(--bad)}
+.badge.pre{background:var(--warnbg);color:var(--warn);font-weight:500}.badge.ev{background:var(--accbg);color:var(--acc);font-weight:500}.badge.ev-positive{background:var(--goodbg);color:var(--good)}.badge.ev-negative{background:var(--badbg);color:var(--bad)}.badge.ev-insufficient,.badge.ev-no_edge{background:var(--bg);color:var(--mut);border:1px solid var(--line)}
+.strip{margin:10px 0 4px}@media (min-width:700px){.strip.has-spark{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:center}}
+.now{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline}.now b{font-size:1.15rem}.now .trg{font-weight:600;color:var(--acc)}.now .dt{color:var(--mut);font-size:.8rem}
+.bar{position:relative;height:10px;border-radius:5px;background:var(--line);margin:12px 0 6px}
+.bar .z{position:absolute;top:0;bottom:0}.bar .risk{background:var(--bad);opacity:.35}.bar .rew{background:var(--good);opacity:.35}
+.bar .tk{position:absolute;top:-3px;width:2px;height:16px;margin-left:-1px}.bar .tk.s{background:var(--bad)}.bar .tk.e{background:var(--acc)}.bar .tk.t{background:var(--good)}
+.bar .px{position:absolute;top:-4px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--card);border:3px solid var(--fg)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0 10px}
+.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.74rem;text-transform:uppercase}.lv i{font-style:normal;font-size:.85rem}
+.lv.s{border-left:3px solid var(--bad)}.lv.e{border-left:3px solid var(--acc);text-align:center}.lv.t{border-left:3px solid var(--good);text-align:right}
+.spark{width:100%;height:auto;display:block;margin:4px 0 2px}
+.spark .px{fill:none;stroke:var(--fg);stroke-width:1.5;stroke-linejoin:round}.spark .dot{fill:var(--fg)}
+.spark line{stroke-width:1.2}.spark .lv-s{stroke:var(--bad);stroke-dasharray:4 3}.spark .lv-e{stroke:var(--acc)}.spark .lv-t{stroke:var(--good);stroke-dasharray:4 3}
+.spark text{font-size:10px;font-family:ui-monospace,Menlo,Consolas,monospace}.spark .tx-s{fill:var(--bad)}.spark .tx-e{fill:var(--acc)}.spark .tx-t{fill:var(--good)}
+.cap{color:var(--mut);font-size:.76rem;margin:0 0 6px}
 dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
 .warn{color:var(--warn);font-weight:600}
+.pos{color:var(--good);font-weight:600}.neg{color:var(--bad);font-weight:600}.zero{color:var(--mut)}
 .flags{background:var(--badbg);border:1px solid var(--bad);border-radius:8px;padding:6px 12px;margin:8px 0}.flags b{color:var(--bad)}
+details{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}summary{cursor:pointer;color:var(--acc);font-weight:600;padding:2px 0}
 ul{margin:.3rem 0;padding-left:1.2rem}
-.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
-td.wrap{white-space:normal}
-.src{font-size:.78rem;color:var(--mut);word-break:break-all}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+tr:last-child td{border-bottom:0}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tbl th:first-child,.tbl td:first-child{position:sticky;left:0;background:var(--card);z-index:1;box-shadow:1px 0 0 var(--line)}
+.att{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:6px 12px;margin:8px 0}.att ul{margin:.2rem 0}
+.src{font-size:.8rem;color:var(--mut)}.src a{margin-right:8px;white-space:nowrap}
+.foot{font-size:.8rem;color:var(--mut);margin:.4rem 0}.foot ol{margin:.2rem 0;padding-left:1.2rem}
+sup{color:var(--warn)}
 footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:600px){main{padding:8px}.card{padding:10px}h3{font-size:1.05rem}table{font-size:.82rem}th,td{padding:5px 6px}.lv{padding:5px 6px}.lv b{font-size:.95rem}dl{grid-template-columns:1fr;gap:0}dt{margin-top:4px;font-size:.8rem}}
 </style>
 </head>
 <body>
@@ -37,6 +64,9 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 <h1>{{ title }}</h1>
 <div class="banner {{ regime.label }}"><b>Market regime: {{ regime.label }}</b>{% if regime.banner %}<br>{{ regime.banner }}{% endif %}
 {% if suppressed %}<br><b>No new recommendations today.</b> Candidates are still tracked; the table is suppressed in an Unfavorable regime.{% endif %}</div>
+{% if scoreboard %}
+<div class="score"><span class="lbl">Live record</span><b>{{ scoreboard.n }} closed</b>{% if scoreboard.n %}<span>{{ scoreboard.win }} wins</span><span>avg <span class="{{ scoreboard.avg_r_cls }}">{{ scoreboard.avg_r }}</span></span><span>baseline <span class="{{ scoreboard.baseline_cls }}">{{ scoreboard.baseline_r }}</span></span>{% if scoreboard.ci %}<span class="cap">95% CI {{ scoreboard.ci }}</span>{% endif %}{% endif %}{% if scoreboard.preliminary %}<span class="badge pre">{{ scoreboard.tag }}</span>{% endif %}{% if scoreboard.evidence %}<span class="badge ev">{{ scoreboard.evidence }}</span>{% endif %}{% if scoreboard.h20 %}<span>20d vs baseline <span class="{{ scoreboard.h20.vs_base_cls }}">{{ scoreboard.h20.vs_base }}</span>{% if scoreboard.h20.ci %} <span class="cap">(CI {{ scoreboard.h20.ci }}, n={{ scoreboard.h20.n }})</span>{% endif %}</span>{% endif %}{% for e in scoreboard.module_evidence %}<span class="badge ev ev-{{ e.evidence }}" title="{{ e.label }}">{{ e.letter or e.label }}: {{ e.evidence | replace("_", " ") }}</span>{% endfor %}<span class="cap">{{ scoreboard.open }} open, {{ scoreboard.pending }} pending</span></div>
+{% endif %}
 {% if catchup_note %}
 <div class="note">{{ catchup_note | capitalize }}.</div>
 {% endif %}
@@ -52,29 +82,41 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 {% endif %}
 {% for c in cards %}
 <article class="card">
-<div class="head"><h3>{% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker }} <span class="co">{{ c.company }}</span></h3><span class="chip {{ c.guardrail }}">guardrail: {{ c.guardrail_label }}</span></div>
+<div class="head"><h3>{% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker }} <span class="co">{{ c.company }}</span></h3>
+<div class="badges">{% if c.earnings and c.earnings.in_window %}<span class="badge earn" title="{{ c.earnings.warning }}">&#9888; Earnings {{ c.earnings.date }}</span>{% endif %}{% if c.red_flag_count %}<span class="badge flag">&#9873; {{ c.red_flag_count }} red flag{{ "s" if c.red_flag_count != 1 }}</span>{% endif %}<span class="chip {{ c.guardrail }}">guardrail: {{ c.guardrail_label }}</span></div></div>
+{% set s = c.strip %}
+<div class="strip{% if s %} has-spark{% endif %}"><div class="sl">
+{% if s %}
+<div class="now"><span>Last close <b>{{ s.close }}</b></span><span class="trg">{{ s.to_entry }}</span><span class="dt">close of {{ s.close_date }}</span></div>
+<div class="bar" role="img" aria-label="Stop {{ c.stop }}, entry {{ c.entry }}, target {{ c.target }}, last close {{ s.close }}"><span class="z risk" style="left:{{ s.bar.stop }}%;width:{{ s.bar.entry - s.bar.stop }}%"></span><span class="z rew" style="left:{{ s.bar.entry }}%;width:{{ s.bar.target - s.bar.entry }}%"></span><span class="tk s" style="left:{{ s.bar.stop }}%"></span><span class="tk e" style="left:{{ s.bar.entry }}%"></span><span class="tk t" style="left:{{ s.bar.target }}%"></span><span class="px" style="left:{{ s.bar.now }}%" title="Last close {{ s.close }}"></span></div>
+{% endif %}
+<div class="levels">
+<div class="lv s"><span>Stop</span><b>{{ c.stop }}</b><i>{{ c.stop_pct }}</i></div>
+<div class="lv e"><span title="buy-stop">Entry</span><b>{{ c.entry }}</b><i>R/R {{ c.rr }}</i></div>
+<div class="lv t"><span>Target ({{ c.target_r }}R)</span><b>{{ c.target }}</b><i>{{ c.target_pct }}</i></div>
+</div>
+</div>
+{% if s %}<div class="sr">{{ s.spark }}<p class="cap">Last {{ s.sessions }} closes; S stop, E entry, T target.</p></div>{% endif %}
+</div>
 <div>{% for m in c.modules %}<span class="chip">{{ m }}</span>{% endfor %}{% if c.sector %}<span class="chip">{{ c.sector }}{% if c.industry %} / {{ c.industry }}{% endif %}</span>{% endif %}</div>
 <p>{{ c.rationale }}</p>
-<div class="levels">
-<div class="lv"><span>Entry (buy-stop)</span><b>{{ c.entry }}</b></div>
-<div class="lv"><span>Stop</span><b>{{ c.stop }}</b>{{ c.stop_pct }}</div>
-<div class="lv"><span>Target ({{ c.target_r }}R)</span><b>{{ c.target }}</b>{{ c.target_pct }}</div>
-</div>
 <dl>
 <dt>Time stop</dt><dd>{{ c.time_stop }}</dd>
-<dt>Valid until</dt><dd>{{ c.valid_until }}</dd>
+<dt>Entry valid until</dt><dd>{{ c.valid_until }}</dd>
 {% if c.guardrail_reasons %}<dt>Guardrail</dt><dd>{{ c.guardrail_reasons | join("; ") }}</dd>{% endif %}
 {% if c.ev_fcf %}<dt>EV/FCF</dt><dd>{{ c.ev_fcf }}</dd>{% endif %}
 {% if c.earnings %}<dt>Earnings</dt><dd>{{ c.earnings.date }}{% if c.earnings.warning %} <span class="warn">&#9888; {{ c.earnings.warning }}</span>{% endif %}</dd>{% endif %}
 {% if c.insiders %}<dt>Insider buys</dt><dd>{{ c.insiders | join("; ") }}</dd>{% endif %}
-<dt>{{ c.primary_module }} record</dt><dd>{{ c.track }}</dd>
+<dt>{{ c.primary_module }} record</dt><dd>{{ c.track_info.text }}{% if c.track_info.preliminary %} <span class="badge pre">{{ c.track_info.tag }}</span>{% endif %}{% if c.track_info.evidence %} <span class="badge ev">{{ c.track_info.evidence }}</span>{% endif %}</dd>
 </dl>
 {% if c.brief %}
-<p><b>Summary.</b> {{ c.brief.summary }}</p>
 {% if c.brief.red_flags %}<div class="flags"><b>&#9873; Red flags</b><ul>{% for f in c.brief.red_flags %}<li>{{ f }}</li>{% endfor %}</ul></div>{% endif %}
+<details><summary>AI brief{% if c.brief.source_links %} &middot; {{ c.brief.source_links | length }} source{{ "s" if c.brief.source_links | length != 1 }}{% endif %}</summary>
+<p><b>Summary.</b> {{ c.brief.summary }}</p>
 {% if c.brief.positives %}<div><b>Recent positives</b><ul>{% for f in c.brief.positives %}<li>{{ f }}</li>{% endfor %}</ul></div>{% endif %}
 {% if c.brief.catalysts %}<div><b>Upcoming catalysts</b><ul>{% for k in c.brief.catalysts %}<li>{{ k.event }}{% if k.date %} ({{ k.date }}){% endif %}</li>{% endfor %}</ul></div>{% endif %}
-{% if c.brief.sources %}<div class="src">Sources: {{ c.brief.sources | join(" · ") }}</div>{% endif %}
+{% if c.brief.source_links %}<div class="src">Sources: {% for l in c.brief.source_links %}{% if l.url %}<a href="{{ l.url }}" rel="noopener noreferrer" target="_blank" title="{{ l.title }}">{{ l.label }}</a> {% else %}<span title="{{ l.title }}">{{ l.label }}</span> {% endif %}{% endfor %}</div>{% endif %}
+</details>
 {% endif %}
 </article>
 {% endfor %}
@@ -83,43 +125,67 @@ footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid
 <h2>Catch-up: recommendations from missed days</h2>
 <p>New recommendations since the previous report ({{ since }}).</p>
 <div class="tbl"><table>
-<tr><th>Date</th><th>Ticker</th><th>Modules</th><th>Entry</th><th>Stop</th><th>Target</th><th>Status</th><th>R</th><th>Note</th></tr>
-{% for r in catch_up %}<tr><td>{{ r.date }}</td><td><b>{{ r.ticker }}</b></td><td>{{ r.modules }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.status }}</td><td>{{ r.current_r }}</td><td>{{ r.note }}</td></tr>
+<tr><th>Ticker</th><th>Date</th><th>Status</th><th class="n">R</th><th class="n">Entry</th><th class="n">Stop</th><th class="n">Target</th><th>Valid until</th><th>Modules</th><th>Note</th></tr>
+{% for r in catch_up %}<tr><td><b>{{ r.ticker }}</b></td><td>{{ r.date }}</td><td>{{ r.status }}</td><td class="n {{ r.r_cls }}">{{ r.current_r }}</td><td class="n">{{ r.entry }}</td><td class="n">{{ r.stop }}</td><td class="n">{{ r.target }}</td><td>{{ r.valid_until }}</td><td>{{ r.modules }}</td><td>{{ r.note }}</td></tr>
 {% endfor %}</table></div>
 {% endif %}
 
 <h2>Tracking updates since {{ since }}</h2>
 {% if updates %}
 <div class="tbl"><table>
-<tr><th>Date</th><th>Ticker</th><th>Event</th><th>R</th><th>Return</th><th>Note</th></tr>
-{% for u in updates %}<tr><td>{{ u.date }}</td><td><b>{{ u.ticker }}</b></td><td>{{ u.label }}</td><td>{{ u.r }}</td><td>{{ u.pct }}</td><td>{{ u.note }}</td></tr>
+<tr><th>Ticker</th><th>Event</th><th class="n">R</th><th class="n">Return</th><th>Date</th><th>Note</th></tr>
+{% for u in updates %}<tr><td><b>{{ u.ticker }}</b></td><td>{{ u.label }}</td><td class="n {{ u.r_cls }}">{{ u.r }}</td><td class="n">{{ u.pct }}</td><td>{{ u.date }}</td><td>{{ u.note }}</td></tr>
 {% endfor %}</table></div>
 {% else %}<p>No changes since the previous report.</p>{% endif %}
 
+{% set P = positions %}
 <h2>Open recommendations ({{ open_recs | length }})</h2>
-{% if open_recs %}
+<p class="cap">{{ P.open | length }} open (entry filled), {{ P.pending | length }} pending (buy-stop still working). Hypothetical trades, tracked as planned.{% if P.n_hidden %} &dagger; = tracked but not shown in a report.{% endif %}</p>
+{% if P.attention %}
+<div class="att"><b>Needs attention</b> <span class="cap">(within {{ attention_r }}R of stop or target, or &le;{{ attention_sessions }} sessions to the time stop)</span><ul>
+{% for p in P.attention %}<li><b>{{ p.ticker }}</b> <span class="{{ p.r_cls }}">{{ p.current_r }}</span>: {{ p.attention | join("; ") }}</li>
+{% endfor %}</ul></div>
+{% endif %}
+<h4>Open positions ({{ P.open | length }}) &middot; nearest to stop first</h4>
+{% if P.open %}
 <div class="tbl"><table>
-<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th><th>Note</th></tr>
-{% for r in open_recs %}<tr><td><b>{{ r.ticker }}</b></td><td>{{ r.date }}</td><td>{{ r.status }}</td><td>{{ r.entry }}</td><td>{{ r.stop }}</td><td>{{ r.target }}</td><td>{{ r.current_r }}</td><td>{{ r.valid_until }}</td><td>{{ r.note }}</td></tr>
+<tr><th>Ticker</th><th class="n">Now R</th><th class="n">To stop</th><th class="n">To target</th><th class="n">Held</th><th>Time stop</th><th class="n">Close</th><th class="n">Entry</th><th class="n">Stop</th><th class="n">Target</th><th>Signal</th><th>Note</th></tr>
+{% for r in P.open %}<tr><td><b>{{ r.ticker }}</b>{% if not r.shown %}&dagger;{% endif %}</td><td class="n {{ r.r_cls }}">{{ r.current_r }}</td><td class="n">{{ r.to_stop }}</td><td class="n">{{ r.to_target }}</td><td class="n">{{ r.days }}</td><td>{{ r.time_stop }}</td><td class="n">{{ r.close }}</td><td class="n">{{ r.entry }}</td><td class="n">{{ r.stop }}</td><td class="n">{{ r.target }}</td><td>{{ r.date }}</td><td>{{ r.note }}</td></tr>
+{% endfor %}</table></div>
+<p class="cap">Held = sessions since entry / time-stop length; "~" dates are estimated (weekdays, holidays ignored). After the 2R partial the stop moves to breakeven.</p>
+{% else %}<p>None.</p>{% endif %}
+<h4>Pending entries ({{ P.pending | length }})</h4>
+{% if P.pending %}
+<div class="tbl"><table>
+<tr><th>Ticker</th><th class="n">To trigger</th><th class="n">Close</th><th class="n">Entry</th><th class="n">Stop</th><th class="n">Target</th><th>Valid until</th><th>Signal</th><th>Note</th></tr>
+{% for r in P.pending %}<tr><td><b>{{ r.ticker }}</b>{% if not r.shown %}&dagger;{% endif %}</td><td class="n">{{ r.to_entry }}</td><td class="n">{{ r.close }}</td><td class="n">{{ r.entry }}</td><td class="n">{{ r.stop }}</td><td class="n">{{ r.target }}</td><td>{{ r.valid_until }}</td><td>{{ r.date }}</td><td>{{ r.note }}</td></tr>
 {% endfor %}</table></div>
 {% else %}<p>None.</p>{% endif %}
+{% if P.pending_note %}<p class="cap">{{ P.pending_note }}</p>{% endif %}
 
 <h2>Statistics (live)</h2>
 {% if stats %}
 <p>{{ stats.counts.get("recommendations", 0) }} recommendations tracked: {{ stats.counts.get("open", 0) }} open, {{ stats.counts.get("pending", 0) }} pending, {{ stats.counts.get("closed", 0) }} closed, {{ stats.counts.get("expired", 0) }} expired unfilled. Closed-trade averages vs SPY {{ stats.excess_spy }}, vs sector ETF {{ stats.excess_sector }}.</p>
 <h3>By module vs baseline</h3>
 <div class="tbl"><table>
-<tr><th>Module</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>PF</th><th>vs SPY</th><th>Baseline R</th><th>Edge (R)</th><th></th></tr>
-{% for m in [stats.overall] + stats.modules %}<tr><td>{{ m.name }}</td><td>{{ m.count }}</td><td>{{ m.win_rate }}</td><td>{{ m.avg_r }}</td><td>{{ m.expectancy }}</td><td>{{ m.profit_factor }}</td><td>{{ m.vs_spy }}</td><td>{{ m.baseline_r }}</td><td>{{ m.vs_baseline }}</td><td class="wrap">{{ m.note }}</td></tr>
+<tr><th>Module</th><th class="n">Closed</th><th class="n">Win</th><th class="n">Avg R</th>{% if stats.any_ci %}<th>95% CI</th>{% endif %}<th class="n">Expect.</th><th class="n">PF</th><th class="n">vs SPY</th><th class="n">Baseline R</th><th class="n">Edge (R)</th></tr>
+{% for m in [stats.overall] + stats.modules %}<tr><td>{{ m.name }}{% if m.preliminary %}<sup>*</sup>{% endif %}{% if m.evidence %} <span class="badge ev ev-{{ m.evidence }}">{{ m.evidence | replace("_", " ") }}</span>{% endif %}</td><td class="n">{{ m.count }}</td><td class="n">{{ m.win_rate }}</td><td class="n {{ m.avg_r_cls }}">{{ m.avg_r }}</td>{% if stats.any_ci %}<td>{{ m.avg_r_ci or "-" }}</td>{% endif %}<td class="n {{ m.exp_cls }}">{{ m.expectancy }}</td><td class="n">{{ m.profit_factor }}</td><td class="n {{ m.vs_spy_cls }}">{{ m.vs_spy }}</td><td class="n {{ m.baseline_cls }}">{{ m.baseline_r }}</td><td class="n {{ m.edge_cls }}">{{ m.vs_baseline }}</td></tr>
 {% endfor %}</table></div>
+<div class="foot"><sup>*</sup> Preliminary (not enough data yet): fewer than {{ stats.min_closed }} closed live results{% if stats.prelim_counts %} ({{ stats.prelim_counts }}){% endif %}, so the numbers are shown but are not yet meaningful.</div>
+{% if stats.horizons %}
+<h3>Forward returns by horizon</h3>
+<div class="tbl"><table>
+<tr><th>Horizon</th><th class="n">n</th><th class="n">Mean ret.</th><th class="n">vs SPY</th><th class="n">vs baseline</th><th>95% CI</th><th>Evidence</th></tr>
+{% for h in stats.horizons %}<tr><td>{{ h.name }}</td><td class="n">{{ h.n }}</td><td class="n {{ h.ret_cls }}">{{ h.ret }}</td><td class="n {{ h.vs_spy_cls }}">{{ h.vs_spy }}</td><td class="n {{ h.vs_base_cls }}">{{ h.vs_base }}</td><td>{{ h.ci or "-" }}</td><td>{{ (h.evidence or "-") | replace("_", " ") }}</td></tr>
+{% endfor %}</table></div>
+{% endif %}
 {% if stats.rank_buckets %}
 <h3>By rank bucket</h3>
 <div class="tbl"><table>
-<tr><th>Rank</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>vs SPY</th><th>Baseline R</th></tr>
-{% for m in stats.rank_buckets %}<tr><td>{{ m.name }}</td><td>{{ m.count }}</td><td>{{ m.win_rate }}</td><td>{{ m.avg_r }}</td><td>{{ m.expectancy }}</td><td>{{ m.vs_spy }}</td><td>{{ m.baseline_r }}</td></tr>
+<tr><th>Rank</th><th class="n">Closed</th><th class="n">Win</th><th class="n">Avg R</th><th class="n">Expect.</th><th class="n">vs SPY</th><th class="n">Baseline R</th></tr>
+{% for m in stats.rank_buckets %}<tr><td>{{ m.name }}</td><td class="n">{{ m.count }}</td><td class="n">{{ m.win_rate }}</td><td class="n {{ m.avg_r_cls }}">{{ m.avg_r }}</td><td class="n {{ m.exp_cls }}">{{ m.expectancy }}</td><td class="n {{ m.vs_spy_cls }}">{{ m.vs_spy }}</td><td class="n {{ m.baseline_cls }}">{{ m.baseline_r }}</td></tr>
 {% endfor %}</table></div>
 {% endif %}
-<p class="src">Modules need {{ stats.min_closed }} closed live results before their record is shown as meaningful.</p>
 {% else %}<p>Statistics unavailable.</p>{% endif %}
 
 <footer>{{ footer }}</footer>

@@ -2,6 +2,10 @@
 
 **Market regime: {{ regime.label | md }}**{% if regime.banner %} - {{ regime.banner | md }}{% endif %}
 
+{% if scoreboard %}
+**{{ scoreboard.text | md }}**{% if scoreboard.h20 %} 20d excess vs baseline {{ scoreboard.h20.vs_base }}{% if scoreboard.h20.ci %} (CI {{ scoreboard.h20.ci }}, n={{ scoreboard.h20.n }}){% endif %}.{% endif %}{% if scoreboard.module_evidence %} Evidence: {% for e in scoreboard.module_evidence %}{{ e.letter or e.label | md }} {{ e.evidence | md }}{{ ", " if not loop.last }}{% endfor %}.{% endif %}
+
+{% endif %}
 {% if suppressed %}
 > **No new recommendations today.** Unfavorable regime: candidates are still tracked, but the table is suppressed.
 
@@ -27,6 +31,16 @@ No new recommendations today.
 ### {% if c.rank %}#{{ c.rank }} {% endif %}{{ c.ticker | md }}{% if c.company %} - {{ c.company | md }}{% endif %}
 
 
+{% set badges = [] %}
+{% if c.earnings and c.earnings.in_window %}{% set _ = badges.append("⚠ earnings " ~ c.earnings.date ~ " in window") %}{% endif %}
+{% if c.red_flag_count %}{% set _ = badges.append("⚑ " ~ c.red_flag_count ~ " red flag" ~ ("s" if c.red_flag_count != 1 else "")) %}{% endif %}
+{% set _ = badges.append("guardrail: " ~ c.guardrail_label) %}
+{{ badges | join(" · ") | md }}
+
+{% if c.strip %}
+**Last close {{ c.strip.close }}** ({{ c.strip.close_date }}) - {{ c.strip.to_entry }}
+
+{% endif %}
 {{ c.modules | join(", ") | md }}{% if c.sector %} | {{ c.sector | md }}{% if c.industry %} / {{ c.industry | md }}{% endif %}{% endif %}
 
 {{ c.rationale | md }}
@@ -35,7 +49,7 @@ No new recommendations today.
 - **Stop:** {{ c.stop }} ({{ c.stop_pct }})
 - **Target ({{ c.target_r }}R):** {{ c.target }} ({{ c.target_pct }})
 - **Time stop:** {{ c.time_stop }}
-- **Valid until:** {{ c.valid_until }}
+- **Entry valid until:** {{ c.valid_until }}
 - **Guardrail:** {{ c.guardrail_label }}{% if c.guardrail_reasons %} - {{ c.guardrail_reasons | join("; ") | md }}{% endif %}
 
 {% if c.ev_fcf %}
@@ -75,8 +89,9 @@ No new recommendations today.
 {% endfor %}
 
 {% endif %}
-{% if c.brief.sources %}
-Sources: {{ c.brief.sources | join(" ; ") | md }}
+{% if c.brief.source_links %}
+Sources: {% for l in c.brief.source_links %}{% if l.url %}[{{ l.label | md }}](<{{ l.url | replace(">", "%3E") | replace(" ", "%20") }}>){% else %}{{ l.label | md }}{% endif %}{{ " · " if not loop.last }}{% endfor %}
+
 {% endif %}
 {% endif %}
 
@@ -86,10 +101,10 @@ Sources: {{ c.brief.sources | join(" ; ") | md }}
 
 New recommendations since the previous report ({{ since }}).
 
-| Date | Ticker | Modules | Entry | Stop | Target | Status | R | Note |
-|---|---|---|---|---|---|---|---|---|
+| Ticker | Date | Status | R | Entry | Stop | Target | Valid until | Modules | Note |
+|---|---|---|---|---|---|---|---|---|---|
 {% for r in catch_up %}
-| {{ r.date }} | {{ r.ticker | md }} | {{ r.modules | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.status | md }} | {{ r.current_r }} | {{ r.note | md }} |
+| {{ r.ticker | md }} | {{ r.date }} | {{ r.status | md }} | {{ r.current_r }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.valid_until }} | {{ r.modules | md }} | {{ r.note | md }} |
 {% endfor %}
 
 {% endif %}
@@ -105,16 +120,45 @@ New recommendations since the previous report ({{ since }}).
 No changes since the previous report.
 {% endif %}
 
+{% set P = positions %}
 ## Open recommendations ({{ open_recs | length }})
 
-{% if open_recs %}
-| Ticker | Signal | Status | Entry | Stop | Target | Current R | Valid until | Note |
-|---|---|---|---|---|---|---|---|---|
-{% for r in open_recs %}
-| {{ r.ticker | md }} | {{ r.date }} | {{ r.status | md }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.current_r }} | {{ r.valid_until }} | {{ r.note | md }} |
+{{ P.open | length }} open (entry filled), {{ P.pending | length }} pending (buy-stop still working).{% if P.n_hidden %} † = tracked but not shown in a report.{% endif %}
+
+{% if P.attention %}
+**Needs attention** (within {{ attention_r }}R of stop or target, or ≤{{ attention_sessions }} sessions to the time stop):
+
+{% for p in P.attention %}
+- **{{ p.ticker | md }}** {{ p.current_r }}: {{ p.attention | join("; ") | md }}
+{% endfor %}
+
+{% endif %}
+### Open positions ({{ P.open | length }}), nearest to stop first
+
+{% if P.open %}
+| Ticker | Now R | To stop | To target | Held | Time stop | Close | Entry | Stop | Target | Signal | Note |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+{% for r in P.open %}
+| {{ r.ticker | md }}{% if not r.shown %}†{% endif %} | {{ r.current_r }} | {{ r.to_stop }} | {{ r.to_target }} | {{ r.days }} | {{ r.time_stop }} | {{ r.close }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.date }} | {{ r.note | md }} |
 {% endfor %}
 {% else %}
 None.
+{% endif %}
+
+### Pending entries ({{ P.pending | length }})
+
+{% if P.pending %}
+| Ticker | To trigger | Close | Entry | Stop | Target | Valid until | Signal | Note |
+|---|---|---|---|---|---|---|---|---|
+{% for r in P.pending %}
+| {{ r.ticker | md }}{% if not r.shown %}†{% endif %} | {{ r.to_entry }} | {{ r.close }} | {{ r.entry }} | {{ r.stop }} | {{ r.target }} | {{ r.valid_until }} | {{ r.date }} | {{ r.note | md }} |
+{% endfor %}
+{% else %}
+None.
+{% endif %}
+{% if P.pending_note %}
+
+{{ P.pending_note | md }}
 {% endif %}
 
 ## Statistics (live)
@@ -124,12 +168,24 @@ None.
 
 ### By module vs baseline
 
-| Module | Closed | Win | Avg R | Expect. | PF | vs SPY | Baseline R | Edge (R) | Note |
-|---|---|---|---|---|---|---|---|---|---|
+| Module | Closed | Win | Avg R |{% if stats.any_ci %} 95% CI |{% endif %} Expect. | PF | vs SPY | Baseline R | Edge (R) |
+|---|---|---|---|{% if stats.any_ci %}---|{% endif %}---|---|---|---|---|
 {% for m in [stats.overall] + stats.modules %}
-| {{ m.name | md }} | {{ m.count }} | {{ m.win_rate }} | {{ m.avg_r }} | {{ m.expectancy }} | {{ m.profit_factor }} | {{ m.vs_spy }} | {{ m.baseline_r }} | {{ m.vs_baseline }} | {{ m.note | md }} |
+| {{ m.name | md }}{% if m.preliminary %}\*{% endif %} | {{ m.count }} | {{ m.win_rate }} | {{ m.avg_r }} |{% if stats.any_ci %} {{ m.avg_r_ci or "-" }} |{% endif %} {{ m.expectancy }} | {{ m.profit_factor }} | {{ m.vs_spy }} | {{ m.baseline_r }} | {{ m.vs_baseline }} |
 {% endfor %}
 
+\* Preliminary (not enough data yet): fewer than {{ stats.min_closed }} closed live results{% if stats.prelim_counts %} ({{ stats.prelim_counts }}){% endif %}, so the numbers are shown but are not yet meaningful.
+
+{% if stats.horizons %}
+### Forward returns by horizon
+
+| Horizon | n | Mean ret. | vs SPY | vs baseline | 95% CI | Evidence |
+|---|---|---|---|---|---|---|
+{% for h in stats.horizons %}
+| {{ h.name | md }} | {{ h.n }} | {{ h.ret }} | {{ h.vs_spy }} | {{ h.vs_base }} | {{ h.ci or "-" }} | {{ (h.evidence or "-") | md }} |
+{% endfor %}
+
+{% endif %}
 {% if stats.rank_buckets %}
 ### By rank bucket
 
@@ -140,7 +196,6 @@ None.
 {% endfor %}
 
 {% endif %}
-Modules need {{ stats.min_closed }} closed live results before their record is shown as meaningful.
 {% else %}
 Statistics unavailable.
 {% endif %}

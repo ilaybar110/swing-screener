@@ -17,6 +17,7 @@ import pandas as pd
 
 from src.config import data_root, load_config
 from src.db import init_db
+from src.report import module_label
 from src.state_io import import_state
 
 LIVE = "live"
@@ -97,10 +98,53 @@ def recommendations_table(conn: sqlite3.Connection, source: str) -> pd.DataFrame
         return df
     for col in ("modules", "guardrail_reasons", "valuation_info", "details", "llm_brief"):
         df[col] = df[col].map(_loads)
-    df["modules_str"] = df["modules"].map(lambda m: ", ".join(m) if isinstance(m, list) else "")
+    df["modules_str"] = df["modules"].map(lambda m: ", ".join(module_label(x) for x in m) if isinstance(m, list) else "")
     # one number for "how is it doing": final R when closed, else the live mark
     df["result_r"] = df["r_multiple"].where(df["r_multiple"].notna(), df["current_r"])
     return df
+
+
+def latest_ideas(recs: pd.DataFrame) -> pd.DataFrame:
+    """The newest signal day's in-report recommendations ("today's ideas"), with
+    ``rr`` (reward/risk), ``red_flags`` (count from the brief) and ``module_label``."""
+    if recs.empty or "in_report" not in recs:
+        return recs.iloc[0:0]
+    shown = recs[recs["in_report"].fillna(0).astype(int) == 1]
+    if shown.empty:
+        return shown
+    day = shown["signal_date"].max()
+    out = shown[shown["signal_date"] == day].copy()
+    risk = out["entry"] - out["stop"]
+    out["rr"] = ((out["target"] - out["entry"]) / risk).where(risk > 0)
+    out["red_flags"] = out["llm_brief"].map(lambda b: len(brief_sections(b).get("red_flags") or []))
+    out["module_label"] = out["primary_module"].map(module_label)
+    out["earnings_in_window"] = out["earnings_in_window"].fillna(0).astype(int).astype(bool)
+    return out.sort_values(["rank", "ticker"], na_position="last")
+
+
+def pct_to_trigger(entry: Optional[float], close: Optional[float]) -> Optional[float]:
+    """Move needed from the last close to the buy-stop entry (+0.02 = 2% higher)."""
+    if entry is None or close is None or not close or pd.isna(close) or pd.isna(entry):
+        return None
+    return float(entry) / float(close) - 1.0
+
+
+TODAY_SORTS = {
+    "Rank": (["rank"], [True]),
+    "R/R (highest first)": (["rr"], [False]),
+    "% to trigger (closest first)": (["abs_to_trigger"], [True]),
+    "Earnings in window last": (["earnings_in_window", "rank"], [True, True]),
+}
+
+
+def sort_ideas(ideas: pd.DataFrame, how: str) -> pd.DataFrame:
+    cols, asc = TODAY_SORTS.get(how, TODAY_SORTS["Rank"])
+    df = ideas.copy()
+    if "to_trigger" in df:
+        df["abs_to_trigger"] = df["to_trigger"].abs()
+    elif "abs_to_trigger" in cols:
+        return df.sort_values(["rank"], na_position="last")
+    return df.sort_values(cols, ascending=asc, na_position="last")
 
 
 def regime_history(conn: sqlite3.Connection) -> pd.DataFrame:

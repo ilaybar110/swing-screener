@@ -1,7 +1,11 @@
 """Telegram delivery (docs/PLAN.md section 12).
 
-``send_report`` posts a short text summary and attaches the HTML report with
-``sendDocument``; ``send_alert`` posts a plain text message. If ``TELEGRAM_BOT_TOKEN`` or
+``send_report`` posts the daily digest and attaches the HTML report with
+``sendDocument``; ``send_alert`` posts a plain text message. The digest is either plain
+text, or HTML messages (parse_mode=HTML) when given a list of strings or an object with a
+``messages`` attribute (``src.report.TelegramDigest``). Every message is kept under
+Telegram's 4096-character limit by splitting at blank lines / line breaks; an HTML message
+Telegram rejects (HTTP 400, e.g. a parse error) is re-sent once as plain text. If ``TELEGRAM_BOT_TOKEN`` or
 ``TELEGRAM_CHAT_ID`` is missing the module logs that once and does nothing. Nothing in
 here ever raises: failures are retried with backoff, then logged (with the bot token
 scrubbed) and swallowed so a notification problem can never fail the pipeline.
@@ -9,7 +13,9 @@ scrubbed) and swallowed so a notification problem can never fail the pipeline.
 
 from __future__ import annotations
 
+import html
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
@@ -21,6 +27,7 @@ log = get_logger(__name__)
 
 API_BASE = "https://api.telegram.org"
 MAX_MESSAGE_CHARS = 4000  # Telegram's hard limit is 4096
+TELEGRAM_HARD_LIMIT = 4096
 MAX_ATTEMPTS = 3
 UPLOAD_TIMEOUT = 60
 BACKOFF_SECONDS = 2.0
@@ -47,6 +54,70 @@ def _scrub(text: object, token: str) -> str:
 
 def _truncate(text: str, limit: int = MAX_MESSAGE_CHARS) -> str:
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
+
+def split_message(text: str, limit: int = MAX_MESSAGE_CHARS) -> list[str]:
+    """Split ``text`` into chunks of at most ``limit`` characters, preferring blank-line
+    boundaries, then line breaks (HTML built one tag pair per line stays well-formed);
+    a single over-long line is hard-cut as a last resort."""
+    text = text.strip("\n")
+    if len(text) <= limit:
+        return [text] if text else []
+    out: list[str] = []
+    cur = ""
+    for para in text.split("\n\n"):
+        pieces = [para] if len(para) <= limit else _split_lines(para, limit)
+        for piece in pieces:
+            cand = f"{cur}\n\n{piece}" if cur else piece
+            if len(cand) <= limit:
+                cur = cand
+            else:
+                if cur:
+                    out.append(cur)
+                cur = piece
+    if cur:
+        out.append(cur)
+    return out
+
+
+def _split_lines(text: str, limit: int) -> list[str]:
+    out: list[str] = []
+    cur = ""
+    for line in text.split("\n"):
+        while len(line) > limit:
+            if cur:
+                out.append(cur)
+                cur = ""
+            out.append(line[: limit - 1] + "…")
+            line = ""
+        cand = f"{cur}\n{line}" if cur else line
+        if len(cand) <= limit:
+            cur = cand
+        else:
+            out.append(cur)
+            cur = line
+    if cur:
+        out.append(cur)
+    return out
+
+
+def html_to_plain(text: str) -> str:
+    """Drop tags and unescape entities (fallback when Telegram rejects the HTML)."""
+    return html.unescape(re.sub(r"<[^>]+>", "", text))
+
+
+def _digest_messages(summary: Any) -> tuple[list[str], bool]:
+    """(messages, is_html) for whatever send_report was given."""
+    if isinstance(summary, (list, tuple)):
+        msgs, is_html = [str(m) for m in summary], True
+    elif getattr(summary, "messages", None):
+        msgs, is_html = [str(m) for m in summary.messages], True
+    else:
+        msgs, is_html = [str(summary or "")], False
+    out: list[str] = []
+    for m in msgs:
+        out += split_message(m)
+    return out, is_html
 
 
 def _post(
@@ -127,20 +198,31 @@ def send_alert(text: str, *, session: Optional[Any] = None,
         return False
 
 
-def send_report(html_path: Union[str, Path], summary_text: str, *, session: Optional[Any] = None,
+def send_report(html_path: Union[str, Path], summary_text: Any, *, session: Optional[Any] = None,
                 sleep: Callable[[float], None] = time.sleep) -> bool:
-    """Send ``summary_text`` and attach the HTML report. No-op (returns False) when
-    Telegram is not configured; never raises. The text is sent first so the summary
-    still arrives if the upload fails."""
+    """Send the digest and attach the HTML report. ``summary_text`` is plain text, a list
+    of HTML messages, or a ``TelegramDigest`` (a str carrying ``.messages`` in HTML).
+    No-op (returns False) when Telegram is not configured; never raises. The text is sent
+    first so the summary still arrives if the upload fails."""
     try:
         creds = _credentials()
         if creds is None:
             return False
         token, chat_id = creds
         session = session or _make_session()
-        text_ok = _post(session, token, "sendMessage",
-                        data={"chat_id": chat_id, "text": _truncate(summary_text),
-                              "disable_web_page_preview": "true"}, sleep=sleep)
+        messages, is_html = _digest_messages(summary_text)
+        text_ok = True
+        for msg in messages:
+            data = {"chat_id": chat_id, "text": msg, "disable_web_page_preview": "true"}
+            if is_html:
+                data["parse_mode"] = "HTML"
+            ok = _post(session, token, "sendMessage", data=data, sleep=sleep)
+            if not ok and is_html:
+                log.warning("Telegram rejected an HTML message; re-sending it as plain text")
+                ok = _post(session, token, "sendMessage",
+                           data={"chat_id": chat_id, "text": _truncate(html_to_plain(msg)),
+                                 "disable_web_page_preview": "true"}, sleep=sleep)
+            text_ok = text_ok and ok
         path = Path(html_path)
         if not path.is_file():
             log.error("Telegram: report file %s not found; summary only", path)

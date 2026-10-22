@@ -9,6 +9,17 @@ Interpretation notes (also in docs/status/BOT_4.md):
     (the swing high) to the day before the trigger; it needs >= 3 sessions.
   * Pullback volume is compared with the 20-day average volume ending the day before
     the trigger, so the trigger day's own volume never contaminates the comparison.
+    "Dried up" means the pullback's average volume is below ``max_pullback_volume_ratio``
+    (0.8) of that average -- clearly below average, not merely a hair under it.
+  * Pullback depth (swing high - pullback low, in trigger-day ATR14) is capped at
+    ``max_pullback_depth_atr`` (3.5): a deeper drop is a breakdown, not an orderly pullback.
+  * The trigger day must close in the upper part of its own range: close location
+    ``(close - low) / (high - low) >= min_close_location`` (0.7). A zero-range day closes
+    at its high and counts as 1.0.
+  * ``setup_score`` keeps its RS component (it is the module's own quality read-out), but
+    ``details["setup_score_ex_rs"]`` carries the same score without RS; ranking uses that
+    one, because ranking already weighs relative strength separately (src/ranking.py).
+  These three thresholds are practitioner rules of thumb fixed a priori, not fitted.
 """
 
 from __future__ import annotations
@@ -29,6 +40,9 @@ SMA_SLOPE_SESSIONS = 10
 STOP_ATR_BUFFER = 0.1
 ATR_DAYS = 14
 VOL_AVG_DAYS = 20
+MAX_PULLBACK_VOLUME_RATIO = 0.8
+MAX_PULLBACK_DEPTH_ATR = 3.5
+MIN_CLOSE_LOCATION = 0.7
 
 
 class MomentumPullback(PanelModule):
@@ -49,6 +63,9 @@ class MomentumPullback(PanelModule):
         self.close_floor = param(c, "pullback_close_floor", CLOSE_FLOOR_PCT)
         self.slope_sessions = param(c, "sma_slope_sessions", SMA_SLOPE_SESSIONS)
         self.stop_atr = param(c, "stop_atr_buffer", STOP_ATR_BUFFER)
+        self.max_vol_ratio = param(c, "max_pullback_volume_ratio", MAX_PULLBACK_VOLUME_RATIO)
+        self.max_depth_atr = param(c, "max_pullback_depth_atr", MAX_PULLBACK_DEPTH_ATR)
+        self.min_close_loc = param(c, "min_close_location", MIN_CLOSE_LOCATION)
 
     def scan_ticker(self, ticker: str, df: pd.DataFrame, ctx: ScanContext) -> list[Candidate]:
         n = len(df)
@@ -71,7 +88,9 @@ class MomentumPullback(PanelModule):
         w = self.touch_window
         touched = touch.astype(float).rolling(w, min_periods=w).max() == 1.0
         broke = (c < self.close_floor * sma_s).astype(float).rolling(w, min_periods=w).max() == 1.0
-        trigger = c > h.shift(1)
+        rng = h - lo
+        close_loc = ((c - lo) / rng.where(rng > 0)).fillna(1.0).where(c.notna())
+        trigger = (c > h.shift(1)) & (close_loc >= self.min_close_loc)
 
         # Swing high / pullback structure over the 20 sessions ending the day before t.
         hv, lv, vv = h.to_numpy(), lo.to_numpy(), v.to_numpy()
@@ -95,12 +114,14 @@ class MomentumPullback(PanelModule):
         ok_struct = np.zeros(n, dtype=bool)
         ok_struct[SWING_LOOKBACK:] = (~bad) & (since >= MIN_PULLBACK_SESSIONS)
         pull_vol_a, pull_low_a, swing_a = pad(pull_vol), pad(pull_low), pad(swing_high)
-        dry = pull_vol_a < avgv_prev.to_numpy()
+        with np.errstate(invalid="ignore"):
+            dry = pull_vol_a < self.max_vol_ratio * avgv_prev.to_numpy()
+            shallow = (swing_a - pull_low_a) <= self.max_depth_atr * atr.to_numpy()
         rs_line = ind.rs_raw(c, ctx.spy["close"], self.rs_lookback, self.rs_skip) if len(ctx.spy) else None
 
         sig = (
             cond & touched & ~broke & trigger
-            & pd.Series(ok_struct & dry, index=df.index)
+            & pd.Series(ok_struct & dry & shallow, index=df.index)
         )
         idx = np.flatnonzero(sig.to_numpy() & df.index.isin(ctx.eval_dates))
         out: list[Candidate] = []
@@ -116,6 +137,7 @@ class MomentumPullback(PanelModule):
             dry_score = ind.clip01((1.0 - vol_ratio) / 0.5)
             depth_score = ind.clip01(1.0 - (depth_atr - 1.0) / 5.0)
             score = 100.0 * (0.4 * rs / 100.0 + 0.3 * dry_score + 0.3 * depth_score)
+            score_ex_rs = 100.0 * (0.5 * dry_score + 0.5 * depth_score)
             # chart annotations (details only; nothing below feeds entry/stop/score)
             s_idx = i - SWING_LOOKBACK + int(k[i - SWING_LOOKBACK])  # swing-high session
             low_idx = s_idx + 1 + int(np.argmin(lv[s_idx + 1: i]))  # first pullback-low session
@@ -161,6 +183,11 @@ class MomentumPullback(PanelModule):
                         "rs_raw": f(rs_line.iloc[i]) if rs_line is not None else None,
                         "rs_lookback": int(self.rs_lookback),
                         "rs_skip": int(self.rs_skip),
+                        "close_location": f(close_loc.iloc[i], 3),
+                        "min_close_location": f(self.min_close_loc),
+                        "max_pullback_volume_ratio": f(self.max_vol_ratio),
+                        "max_pullback_depth_atr": f(self.max_depth_atr),
+                        "setup_score_ex_rs": f(score_ex_rs, 2),
                     },
                 )
             )

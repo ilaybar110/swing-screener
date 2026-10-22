@@ -3,6 +3,26 @@
 ``rank`` turns a day's raw candidates into ranked ``Recommendation``s. Every
 recommendation that survives the fundamental guardrail is returned (all of them are
 tracked); ``in_report`` marks the subset surfaced in the report.
+
+Why the score is built the way it is (changed from the original "percentile everything
+across the day's candidates" scheme, which was biased):
+  * Setup quality is percentiled **within each primary module**. Each module scores its
+    setups with its own 0-100 formula, so the numbers are not comparable across modules;
+    pooling them let whichever module happens to score generously crowd the report.
+  * Percentiles use the mid-rank (Hazen) position ``(rank - 0.5) / n``: a lone candidate
+    sits at 50, not 100, so being the only signal of a module (or of the day) is not
+    mistaken for being the best one.
+  * Relative strength is the universe RS percentile itself (``rec.rs_pct``, already
+    0-100 against the whole universe) instead of a re-percentile among the day's few
+    candidates, which turned a weak-RS name into "100" on a quiet day.
+  * Module A's own setup score contains RS; ranking uses its ``setup_score_ex_rs``
+    (details) so RS is not counted twice.
+  * Setups below ``min_setup_score`` are tracked but never reported (absolute floor:
+    a within-module percentile alone would promote a poor setup on a thin day).
+  * Each primary module with an eligible candidate is guaranteed
+    ``min_slots_per_module`` report slots (within the regime top-N and the industry cap),
+    so the report keeps showing every strategy and each one accumulates live results.
+The weights stay configurable (config.yaml ``ranking``) and were not tuned on results.
 """
 
 from __future__ import annotations
@@ -43,8 +63,70 @@ def guardrail_evaluate(ticker: str, as_of: date, data) -> GuardrailResult:
 
 
 def _percentile(values: list[float]) -> list[float]:
-    """0-100 percentile of each value within the list (top = 100, ties averaged)."""
-    return list((pd.Series(values, dtype=float).rank(pct=True, method="average") * 100.0).round(4))
+    """0-100 mid-rank percentile of each value within the list: ``(rank - 0.5) / n``
+    with ties averaged, so the top of n values scores 100 * (1 - 0.5 / n) and a single
+    value scores 50."""
+    if not values:
+        return []
+    ranks = pd.Series(values, dtype=float).rank(method="average")
+    return list(((ranks - 0.5) / len(values) * 100.0).round(4))
+
+
+def setup_quality(rec: Recommendation) -> float:
+    """The primary module's setup score as used for ranking: Module A's score without its
+    relative-strength component (ranking weighs RS separately), else ``setup_score``."""
+    primary = (rec.details or {}).get("primary") or {}
+    q = primary.get("setup_score_ex_rs")
+    return float(q) if isinstance(q, (int, float)) else float(rec.setup_score)
+
+
+def _within_module_percentile(recs: list[Recommendation], quality: list[float]) -> list[float]:
+    """Percentile of each recommendation's setup quality among the day's recommendations
+    with the same primary module."""
+    groups: dict[str, list[int]] = defaultdict(list)
+    for i, r in enumerate(recs):
+        groups[r.primary_module].append(i)
+    out = [0.0] * len(recs)
+    for idx in groups.values():
+        for i, p in zip(idx, _percentile([quality[i] for i in idx])):
+            out[i] = p
+    return out
+
+
+def select_for_report(recs: list[Recommendation], slots: int, config) -> int:
+    """Set ``in_report`` on ``recs`` (already sorted best first); returns how many.
+
+    Eligible: setup quality >= ``min_setup_score``. Pass 1 reserves up to
+    ``min_slots_per_module`` slots per primary module (modules in the order of their best
+    eligible recommendation), pass 2 fills the remaining slots by rank. Both passes respect
+    the ``slots`` total and ``max_per_industry``."""
+    rk = config.ranking
+    per_industry: dict[str, int] = defaultdict(int)
+    chosen: set[int] = set()
+
+    def take(i: int) -> bool:
+        if len(chosen) >= slots or i in chosen:
+            return False
+        ind_ = recs[i].industry
+        if ind_ and per_industry[ind_] >= rk.max_per_industry:
+            return False
+        if ind_:
+            per_industry[ind_] += 1
+        chosen.add(i)
+        return True
+
+    eligible = [i for i, r in enumerate(recs) if setup_quality(r) >= rk.min_setup_score]
+    if rk.min_slots_per_module > 0:
+        per_module: dict[str, int] = defaultdict(int)
+        for i in eligible:  # best first, so each module's best eligible candidates
+            m = recs[i].primary_module
+            if per_module[m] < rk.min_slots_per_module and take(i):
+                per_module[m] += 1
+    for i in eligible:
+        take(i)
+    for i, r in enumerate(recs):
+        r.in_report = i in chosen
+    return len(chosen)
 
 
 def universe_rs_pct(data, as_of: date, tickers: list[str], rs_lookback: int, rs_skip: int) -> dict[str, float]:
@@ -120,11 +202,13 @@ def rank(
        repeat signal is recorded on the existing recommendation (``src.repeats``).
     1. Merge candidates per ticker (``trade_plan.build``).
     2. Run the fundamental guardrail; drop only ``fail`` results.
-    3. Score: percentile of setup quality and of relative strength within the day's
-       candidates, the overlap score (1/2/3+ modules -> 0/70/100), and -- only for a
-       primary module with enough closed live results -- a track-record component.
-       The base weights are scaled by (1 - track weight) when the track component applies.
-    4. Rank by total score; mark ``in_report`` by regime top-N and the per-industry cap.
+    3. Score: percentile of setup quality within the primary module (``setup_quality``),
+       the universe RS percentile, the overlap score (1/2/3+ modules -> 0/70/100), and --
+       only for a primary module with enough closed live results -- a track-record
+       component. The base weights are scaled by (1 - track weight) when the track
+       component applies.
+    4. Rank by total score; mark ``in_report`` (``select_for_report``): regime top-N,
+       per-industry cap, minimum setup score, at least min_slots_per_module per module.
 
     Returns every surviving recommendation, ranked.
     """
@@ -166,10 +250,11 @@ def rank(
 
     rk = config.ranking
     overlap_map = {1: rk.overlap_score_1_module, 2: rk.overlap_score_2_modules}
-    setup_pct = _percentile([r.setup_score for r in recs])
-    rs_pct_c = _percentile([r.rs_pct for r in recs])
+    quality = [setup_quality(r) for r in recs]
+    setup_pct = _within_module_percentile(recs, quality)
     tracks = track_scores(conn, as_of, config, source)
-    for r, sp, rp in zip(recs, setup_pct, rs_pct_c):
+    for r, q, sp in zip(recs, quality, setup_pct):
+        rp = float(r.rs_pct)
         r.overlap_score = float(overlap_map.get(len(r.modules), rk.overlap_score_3plus_modules))
         track = tracks.get(r.primary_module)
         if track is not None:
@@ -184,27 +269,18 @@ def rank(
             4,
         )
         r.details["score_components"] = {
+            "setup_quality": round(q, 4),
             "setup_percentile": sp,
-            "rs_percentile_in_candidates": rp,
+            "setup_percentile_scope": "module",
+            "rs_percentile_universe": rp,
             "overlap_score": r.overlap_score,
             "track_score": r.track_score,
             "track_weight": tw,
         }
 
     recs.sort(key=lambda r: (-r.total_score, -r.setup_score, r.ticker))
-    slots = _report_slots(recs[0].regime, config)
-    per_industry: dict[str, int] = defaultdict(int)
-    shown = 0
     for i, r in enumerate(recs, start=1):
         r.rank = i
-        r.in_report = False
-        if shown >= slots:
-            continue
-        if r.industry:
-            if per_industry[r.industry] >= rk.max_per_industry:
-                continue
-            per_industry[r.industry] += 1
-        r.in_report = True
-        shown += 1
+    shown = select_for_report(recs, _report_slots(recs[0].regime, config), config)
     log.info("ranked %d recommendation(s) for %s; %d in report", len(recs), as_of, shown)
     return recs

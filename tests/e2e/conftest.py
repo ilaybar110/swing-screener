@@ -153,7 +153,13 @@ def make_root(root: Path):
     """state/ seeded from the fixtures, an empty reports/, and a sandboxed config."""
     shutil.copytree(FIXTURES / "state", root / "state")
     (root / "reports").mkdir(exist_ok=True)
-    return load_config(base_dir=root)
+    cfg = load_config(base_dir=root)
+    # The synthetic MOMA1 fixture predates Module A's pullback-quality rules (see
+    # tests/test_modules_scan.py); relax them so the flow tests keep a Module A signal.
+    a = cfg.modules.a_momentum_pullback
+    a.max_pullback_volume_ratio, a.max_pullback_depth_atr, a.min_close_location = 1.0, float("inf"), 0.0
+    cfg.ranking.min_setup_score = 0.0  # MOMA1's legacy pullback scores ~0 without the RS term
+    return cfg
 
 
 @pytest.fixture()

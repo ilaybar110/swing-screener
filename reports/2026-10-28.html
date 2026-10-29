@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Swing Screener - 2026-10-28</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:12px}
+h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}
+.banner{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
+.banner.Favorable{background:var(--goodbg);border-color:var(--good)}.banner.Caution{background:var(--warnbg);border-color:var(--warn)}.banner.Unfavorable{background:var(--badbg);border-color:var(--bad)}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
+.co{color:var(--mut);font-size:.9rem}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
+.chip.pass,.chip.pass_partial{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
+dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
+.warn{color:var(--warn);font-weight:600}
+.flags{background:var(--badbg);border:1px solid var(--bad);border-radius:8px;padding:6px 12px;margin:8px 0}.flags b{color:var(--bad)}
+ul{margin:.3rem 0;padding-left:1.2rem}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+td.wrap{white-space:normal}
+.src{font-size:.78rem;color:var(--mut);word-break:break-all}
+footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>Swing Screener - 2026-10-28</h1>
+<div class="banner Caution"><b>Market regime: Caution</b><br>SPY $772.31 is above its 200-day average ($728.15); 48% of the universe is above its 50-day average.</div>
+
+<h2>New recommendations (5)</h2>
+<article class="card">
+<div class="head"><h3>#1 BNS <span class="co">Bank Nova Scotia Halifax Pfd 3 Ordinary Shares</span></h3><span class="chip pass_partial">guardrail: Pass (partial)</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Financials / Major Banks</span></div>
+<p>Relative-strength leader (RS percentile 80) pulled back 1.4 ATR to the 20-day SMA on 78% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$94.75</b></div>
+<div class="lv"><span>Stop</span><b>$92.16</b>-2.7%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$99.93</b>+5.5%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-04</dd>
+<dt>Guardrail</dt><dd>not evaluated: TTM operating income / free cash flow unavailable</dd><dt>Earnings</dt><dd>2026-12-01 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (16/30 closed live results)</dd>
+</dl>
+</article>
+<article class="card">
+<div class="head"><h3>#2 VRTX <span class="co">Vertex Pharmaceuticals Incorporated Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Health Care / Biotechnology: Pharmaceutical Preparations</span></div>
+<p>Relative-strength leader (RS percentile 82) pulled back 1.8 ATR to the 20-day SMA on 80% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$534.94</b></div>
+<div class="lv"><span>Stop</span><b>$507.65</b>-5.1%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$589.53</b>+10.2%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-04</dd>
+<dt>Earnings</dt><dd>2026-11-02 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (16/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Vertex appointed Daniel Brennan to its board on Oct 20, 2026, raising the board from ten to eleven members; he joined the Audit and Finance Committee. Headlines report positive Phase 3 results for povetacicept in kidney disease and a planned Harwell research facility. Q3 earnings are referenced as upcoming.</p>
+<div><b>Recent positives</b><ul><li>Positive Phase 3 results for povetacicept (Yahoo Finance headline, 2026-10-25)</li><li>Board appointment of Daniel Brennan, former Boston Scientific CFO (8-K 2026-10-20)</li></ul></div><div><b>Upcoming catalysts</b><ul><li>Q3 earnings report (per headlines; exact date not stated)</li></ul></div><div class="src">Sources: 0000875320-26-000278 · https://news.google.com/rss/articles/CBMipgFBVV95cUxNZHJ3T19LVjBFdDc3RUxicks1UUFqdjlYNEZDZ19CNmRZeWdJc0tjbkZiNjY5NlZCSlhUaUtWSzNKbEhValJ1aWtiS2h6SzlyN3hVNzgzMlNzNTVPRzNXZTFlV1BPUHB3U1dUZy1IMWM4c3dDQ2k2bk5mZkd6VDUtazd5aUZVMGpjUTMtVW9reDk4aTBIcWFvUWNxLUFmN2lBR0FDOG1R?oc=5 · https://news.google.com/rss/articles/CBMidkFVX3lxTE5EQUlFMWdKMTNmMUxkakdLNTRSNnNPUEZXa2dCcXd2QUNTM0JJck5SQUhuQ0gtb1hYb1FyNUhSUUtCel9OOWtmM0FSaENmbjdMaWx3MjhBSGVZRV9jdHZwRTF6XzFsX2VoVXNyNEhKNnktN0U2VWc?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#3 DGX <span class="co">Quest Diagnostics Incorporated Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Health Care / Medical Specialities</span></div>
+<p>Relative-strength leader (RS percentile 80) pulled back 1.0 ATR to the 20-day SMA on 89% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$249.73</b></div>
+<div class="lv"><span>Stop</span><b>$238.93</b>-4.3%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$271.34</b>+8.6%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-04</dd>
+<dt>EV/FCF</dt><dd>61th percentile vs sector (EV/FCF 23.3)</dd><dt>momentum pullback record</dt><dd>not enough data yet (16/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Quest Diagnostics reported Q3 2026 revenue of $3.10B (up 10.0%) and adjusted EPS of $3.00 (up 15.4%), and raised full-year revenue and EPS guidance. Headlines report a patient-data breach via its Quanum lab-ordering portal and related class action lawsuits.</p>
+<div class="flags"><b>&#9873; Red flags</b><ul><li>Patient records accessed through Quanum lab-ordering portal; number affected unknown (Medical Daily, 2026-10-27)</li><li>Multiple class action lawsuits over lab data breach (Top Class Actions, 2026-10-28)</li></ul></div><div><b>Recent positives</b><ul><li>Raised FY2026 revenue and EPS guidance (8-K 2026-10-22)</li><li>Q3 adjusted diluted EPS $3.00, up 15.4% (8-K 2026-10-22)</li></ul></div><div><b>Upcoming catalysts</b><ul><li>2027 Investor Day at the New York Stock Exchange (2027-03-25)</li></ul></div><div class="src">Sources: 0001022079-26-000097 · https://news.google.com/rss/articles/CBMilAFBVV95cUxOWDFZX1V4M3hpUVFFZzVkOEJ2elFFa25Ld0Qzem16WWJqT2daMExmaElNQ21fV3hZT01OUjc2ZHdGZTRPSW05VUkwRE5teTdmUUs0TFRGdjZQb1gxNXFRNXNkeGQxaTNzM1llQXNyVlpiTm1mVGwtclBPdDR0UlZEakhYQU4xM3h2WFNSVU9HZGxualJk?oc=5 · https://news.google.com/rss/articles/CBMi0wFBVV95cUxQOVN0TGJ5ZENZWXhwTXRyUHlCVmc4ZEo2UTAzUlQzWXZoaUZLQkJsRXprX0VBMTdDTWRIclpWdVRCaHhlRlhZb3QtaGlxaExYUm5nWF9QdmlDdklKS0Jma3RuQUlreVFYLThCcm56a3dBOHNHeVhLcDNFajFvSWN6QmRsOGM0MWNLdEZkQ0lLbF9UclJ5bVRNb3BhVm9qdWxWVWppZkhXbUJycXVLcW9zT2E4a0RJSURUY1hLc2xhMDV4OWstRDhtRElJUU9TR1RFc013?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#4 ACN <span class="co">Accenture plc Class A Ordinary Shares (Ireland)</span></h3><span class="chip pass_partial">guardrail: Pass (partial)</span></div>
+<div><span class="chip">insider cluster</span><span class="chip">Consumer Discretionary / Business Services</span></div>
+<p>2 officers/directors bought $3,200,889 of stock on the open market (cluster completed 2026-10-28); price has now closed above its 20-day SMA.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$246.79</b></div>
+<div class="lv"><span>Stop</span><b>$226.40</b>-8.3%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$287.57</b>+16.5%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-04</dd>
+<dt>Guardrail</dt><dd>not evaluated: shares outstanding history unavailable</dd><dt>Insider buys</dt><dd>Sweet Julie Spellman (Chair and CEO) bought $515K (filed 2026-10-28); Price Paula A (Director) bought $200K (filed 2026-10-28); Sweet Julie Spellman (Chair and CEO) bought $2.5M (filed 2026-10-28)</dd><dt>insider cluster record</dt><dd>not enough data yet (1/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Accenture furnished its Oct 14, 2026 Investor Day presentation via 8-K (Items 7.01, 9.01), showing FY26 revenue of $74.2B, adjusted EPS of $13.97 and FY27-FY29 growth and margin ambitions. News mentions director and CEO share purchases, a $151M task order and a Physical AI safety suite.</p>
+<div><b>Recent positives</b><ul><li>FY26 adjusted EPS $13.97 vs original guidance $13.52-$13.90 (8-K Investor Day presentation, 2026-10-14)</li><li>Cash returned to shareholders of $11.5B in FY26 (8-K Investor Day presentation)</li><li>Secures $151.46M task order for ICBM engineering services (GuruFocus headline, 2026-10-28)</li></ul></div><div class="src">Sources: 0001467373-26-000042 · https://news.google.com/rss/articles/CBMirAFBVV95cUxQVHhSX0ppTUQzaVNXMkxwMjJ4VFlPQkNTdm9yelE5aEJHblpleV9NY2RLSzdMcmp5S2d6Ykw0M0h6azNtNXlGXzBOVXByWjlTZmpBdUxjTVJQMHpUTmhMRDl0TUlLZnZjenhqeDROMWk0cVc0ckhYR19BV0pmaWJmMjc1cmM3ZFlmX0FTVHc5WDNNTkNRUmhjazVrQ2pwMlUyVTE5djc4Y2NrX0pH?oc=5 · https://news.google.com/rss/articles/CBMinwFBVV95cUxPWTRKME03MFZPTmVyVjBucXQtRkRDajRTQzNDMERJX1BpclY1aThJZW5JSHJ5XzBNeGd2YVNDMFZrdV9PVF9ORk5zZXBsRXBxR3pQRDNGMjZLUWI1MXNOTGF0dFY3U3YyT25EWURBek1EVmRKOS1wby1OdHdmeHVVRVE1OTlGLTUzM29EdmtYM09rTHR2MTB5ZVh0UG1EQUk?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#5 CHE <span class="co">Chemed Corp</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">base breakout</span><span class="chip">Health Care / Medical/Nursing Services</span></div>
+<p>Broke out above a 30-session base (volatility contracted to 69% of its starting ATR) on 2.2x average volume, within 5% of the 52-week high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$562.24</b></div>
+<div class="lv"><span>Stop</span><b>$534.33</b>-5.0%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$618.06</b>+9.9%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-04</dd>
+<dt>EV/FCF</dt><dd>58th percentile vs sector (EV/FCF 21.2)</dd><dt>base breakout record</dt><dd>not enough data yet (8/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Chemed reported Q3 2026: revenue up 10.6% to $690.9M, adjusted diluted EPS $6.75 (up 28.1%). VITAS net patient revenue up 12.2%; Roto-Rooter revenue up 7.5% with adjusted EBITDA down 2.5%. Company expects full-year adjusted EPS at or slightly above the high end of guidance.</p>
+<div class="flags"><b>&#9873; Red flags</b><ul><li>Roto-Rooter adjusted EBITDA declined 2.5% and margin fell 213 basis points (8-K Ex. 99.1)</li></ul></div><div><b>Recent positives</b><ul><li>Q3 adjusted diluted EPS $6.75, up 28.1% (8-K 2026-10-27)</li><li>Expects FY2026 adjusted EPS at or slightly above high end of guidance (8-K 2026-10-27)</li><li>Jefferies upgrade to Buy (Investing.com headline, 2026-10-28)</li></ul></div><div class="src">Sources: 0000019584-26-000022 · https://news.google.com/rss/articles/CBMi0AFBVV95cUxNNld3eHhaeFJEQUFvVG96a0N1NC1rdnY1VGlWZ1hnTk5CejBsdFBVT19RLWdwX0x2bENnQXRxS2ZtVVo1N1F3bkc4MEZxN0hTRXpTb2xyb2pNc3BoNmhOY3hkNFFlTk9naG1ycGhuQnRfeFlWUFBVR0p4LWY0TlVGTHJyVHNIRVV0WmdvaU5IbjRRN0d5MnRIU2Y1TE04My1QUTMtYTZnc3JOdTRKU3J3ZlkxS2N5SzFiYXloQ2RsOWwxMk1oRFVWWlBTdHhtdW1B?oc=5</div></article>
+
+
+<h2>Tracking updates since 2026-10-27</h2>
+<div class="tbl"><table>
+<tr><th>Date</th><th>Ticker</th><th>Event</th><th>R</th><th>Return</th><th>Note</th></tr>
+<tr><td>2026-10-28</td><td><b>CAI</b></td><td>Triggered (entry filled)</td><td>+0.35R</td><td>-</td><td>filled at $34.06</td></tr>
+<tr><td>2026-10-28</td><td><b>CPAY</b></td><td>Expired (never triggered)</td><td>-</td><td>-</td><td>setup broke before entry</td></tr>
+<tr><td>2026-10-28</td><td><b>HRB</b></td><td>Stopped out</td><td>-1.02R</td><td>-6.5%</td><td>stop</td></tr>
+<tr><td>2026-10-28</td><td><b>ILMN</b></td><td>Triggered (entry filled)</td><td>+0.06R</td><td>-</td><td>filled at $286.40</td></tr>
+<tr><td>2026-10-28</td><td><b>NAT</b></td><td>Triggered (entry filled)</td><td>-0.19R</td><td>-</td><td>filled at $8.10</td></tr>
+<tr><td>2026-10-28</td><td><b>NTRA</b></td><td>Triggered (entry filled)</td><td>+0.09R</td><td>-</td><td>filled at $420.15</td></tr>
+<tr><td>2026-10-28</td><td><b>TNK</b></td><td>Triggered (entry filled)</td><td>-0.34R</td><td>-</td><td>filled at $102.53</td></tr>
+<tr><td>2026-10-28</td><td><b>VTRS</b></td><td>Triggered (entry filled)</td><td>-0.08R</td><td>-</td><td>filled at $18.83</td></tr>
+<tr><td>2026-10-28</td><td><b>WOR</b></td><td>Expired (never triggered)</td><td>-</td><td>-</td><td>entry window elapsed</td></tr>
+</table></div>
+
+<h2>Open recommendations (67)</h2>
+<div class="tbl"><table>
+<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th><th>Note</th></tr>
+<tr><td><b>CRM</b></td><td>2026-10-08</td><td>open</td><td>$227.95</td><td>$220.39</td><td>$243.06</td><td>+1.69R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-09, 2026-10-12, 2026-10-15, 2026-10-22)</td></tr>
+<tr><td><b>DOCU</b></td><td>2026-10-08</td><td>open</td><td>$71.52</td><td>$63.67</td><td>$87.20</td><td>+1.46R</td><td>2026-10-15</td><td></td></tr>
+<tr><td><b>MANH</b></td><td>2026-10-08</td><td>open</td><td>$207.14</td><td>$196.23</td><td>$228.95</td><td>+2.36R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>MATX</b></td><td>2026-10-08</td><td>open</td><td>$228.10</td><td>$217.33</td><td>$249.63</td><td>+0.05R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-13)</td></tr>
+<tr><td><b>PAYC</b></td><td>2026-10-08</td><td>open</td><td>$230.46</td><td>$211.72</td><td>$267.94</td><td>+1.85R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-09)</td></tr>
+<tr><td><b>SKWD</b></td><td>2026-10-08</td><td>open</td><td>$60.02</td><td>$57.11</td><td>$65.84</td><td>-0.73R</td><td>2026-10-15</td><td></td></tr>
+<tr><td><b>ATRC</b></td><td>2026-10-09</td><td>open</td><td>$55.89</td><td>$51.36</td><td>$64.95</td><td>+1.12R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12, 2026-10-20)</td></tr>
+<tr><td><b>LFST</b></td><td>2026-10-09</td><td>open</td><td>$12.46</td><td>$11.43</td><td>$14.52</td><td>+0.89R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>NSIT</b></td><td>2026-10-09</td><td>open</td><td>$164.28</td><td>$151.34</td><td>$190.15</td><td>+1.04R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>VEEV</b></td><td>2026-10-09</td><td>open</td><td>$297.45</td><td>$271.93</td><td>$348.50</td><td>+0.79R</td><td>2026-10-16</td><td></td></tr>
+<tr><td><b>AAPL</b></td><td>2026-10-12</td><td>open</td><td>$342.63</td><td>$325.17</td><td>$377.55</td><td>-0.07R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>ALRM</b></td><td>2026-10-12</td><td>open</td><td>$56.47</td><td>$52.00</td><td>$65.42</td><td>+1.88R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>MET</b></td><td>2026-10-12</td><td>open</td><td>$100.18</td><td>$95.21</td><td>$110.11</td><td>-0.30R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>VSXY</b></td><td>2026-10-12</td><td>open</td><td>$89.35</td><td>$81.09</td><td>$105.87</td><td>+0.55R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>ADP</b></td><td>2026-10-13</td><td>open</td><td>$277.50</td><td>$255.42</td><td>$321.65</td><td>+0.34R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-14)</td></tr>
+<tr><td><b>CDNA</b></td><td>2026-10-13</td><td>open</td><td>$67.39</td><td>$60.77</td><td>$80.64</td><td>+0.71R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>GO</b></td><td>2026-10-13</td><td>open</td><td>$12.53</td><td>$11.18</td><td>$15.23</td><td>+0.02R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>HURN</b></td><td>2026-10-13</td><td>open</td><td>$178.15</td><td>$165.99</td><td>$202.47</td><td>+1.62R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>IT</b></td><td>2026-10-13</td><td>open</td><td>$200.85</td><td>$183.71</td><td>$235.12</td><td>+1.06R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>SXT</b></td><td>2026-10-13</td><td>open</td><td>$134.12</td><td>$127.45</td><td>$147.45</td><td>-0.40R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>WST</b></td><td>2026-10-13</td><td>open</td><td>$378.84</td><td>$358.57</td><td>$419.37</td><td>+1.20R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-15)</td></tr>
+<tr><td><b>A</b></td><td>2026-10-14</td><td>open</td><td>$175.54</td><td>$162.86</td><td>$200.90</td><td>+0.45R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-28)</td></tr>
+<tr><td><b>AMN</b></td><td>2026-10-14</td><td>open</td><td>$38.00</td><td>$34.48</td><td>$45.03</td><td>+2.23R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-16)</td></tr>
+<tr><td><b>AVTR</b></td><td>2026-10-14</td><td>open</td><td>$16.00</td><td>$14.92</td><td>$18.17</td><td>+0.62R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-16)</td></tr>
+<tr><td><b>BBY</b></td><td>2026-10-14</td><td>open</td><td>$89.12</td><td>$83.40</td><td>$100.56</td><td>+1.37R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-22)</td></tr>
+<tr><td><b>EC</b></td><td>2026-10-14</td><td>open</td><td>$18.02</td><td>$16.00</td><td>$22.06</td><td>-0.18R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>FTRE</b></td><td>2026-10-14</td><td>open</td><td>$22.15</td><td>$19.67</td><td>$27.12</td><td>+1.49R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>HALO</b></td><td>2026-10-14</td><td>open</td><td>$119.21</td><td>$106.30</td><td>$145.02</td><td>+0.83R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>AAMI</b></td><td>2026-10-15</td><td>open</td><td>$93.39</td><td>$88.81</td><td>$102.57</td><td>-0.49R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-20, 2026-10-21, 2026-10-26)</td></tr>
+<tr><td><b>AVPT</b></td><td>2026-10-15</td><td>open</td><td>$14.89</td><td>$13.88</td><td>$16.91</td><td>+1.99R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-20)</td></tr>
+<tr><td><b>BTI</b></td><td>2026-10-15</td><td>open</td><td>$58.77</td><td>$56.73</td><td>$62.85</td><td>+0.35R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>FLYW</b></td><td>2026-10-15</td><td>open</td><td>$19.43</td><td>$17.68</td><td>$22.92</td><td>-0.29R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-22, 2026-10-23)</td></tr>
+<tr><td><b>ROKU</b></td><td>2026-10-15</td><td>open</td><td>$155.13</td><td>$149.84</td><td>$165.70</td><td>-0.12R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SHO</b></td><td>2026-10-15</td><td>open</td><td>$11.99</td><td>$11.51</td><td>$12.94</td><td>+1.59R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SIG</b></td><td>2026-10-15</td><td>open</td><td>$120.00</td><td>$111.93</td><td>$136.15</td><td>-0.61R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SPSC</b></td><td>2026-10-15</td><td>open</td><td>$88.23</td><td>$82.25</td><td>$100.20</td><td>-0.46R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SWKS</b></td><td>2026-10-15</td><td>open</td><td>$79.17</td><td>$73.33</td><td>$90.85</td><td>+1.37R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-16)</td></tr>
+<tr><td><b>WDAY</b></td><td>2026-10-15</td><td>open</td><td>$200.23</td><td>$180.80</td><td>$239.08</td><td>+0.20R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>GMAB</b></td><td>2026-10-19</td><td>open</td><td>$39.00</td><td>$34.93</td><td>$47.14</td><td>+3.24R</td><td>2026-10-26</td><td>still valid from 2026-10-19 (repeat signal 2026-10-20, 2026-10-21)</td></tr>
+<tr><td><b>IOSP</b></td><td>2026-10-19</td><td>open</td><td>$98.49</td><td>$93.43</td><td>$108.60</td><td>+0.42R</td><td>2026-10-26</td><td>still valid from 2026-10-19 (repeat signal 2026-10-20, 2026-10-26)</td></tr>
+<tr><td><b>AMPL</b></td><td>2026-10-20</td><td>open</td><td>$15.91</td><td>$14.56</td><td>$18.62</td><td>+1.12R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>AZTA</b></td><td>2026-10-20</td><td>open</td><td>$36.41</td><td>$32.73</td><td>$43.76</td><td>+1.14R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>CRL</b></td><td>2026-10-20</td><td>open</td><td>$317.59</td><td>$287.11</td><td>$378.55</td><td>+1.84R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>GTLB</b></td><td>2026-10-20</td><td>open</td><td>$55.73</td><td>$50.02</td><td>$67.16</td><td>+0.38R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>HNGE</b></td><td>2026-10-20</td><td>open</td><td>$108.00</td><td>$97.02</td><td>$129.96</td><td>+0.64R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>MMSI</b></td><td>2026-10-20</td><td>open</td><td>$91.59</td><td>$86.32</td><td>$102.14</td><td>+0.10R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>SAIC</b></td><td>2026-10-20</td><td>open</td><td>$135.57</td><td>$128.74</td><td>$149.23</td><td>+1.96R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>ZBRA</b></td><td>2026-10-20</td><td>open</td><td>$384.74</td><td>$364.78</td><td>$424.66</td><td>-0.09R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>ILMN</b></td><td>2026-10-21</td><td>open</td><td>$286.40</td><td>$252.43</td><td>$354.35</td><td>+0.06R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>MEDP</b></td><td>2026-10-21</td><td>open</td><td>$666.65</td><td>$588.20</td><td>$823.56</td><td>+0.32R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>NTAP</b></td><td>2026-10-21</td><td>open</td><td>$217.84</td><td>$201.58</td><td>$250.36</td><td>+0.34R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-26)</td></tr>
+<tr><td><b>NTRA</b></td><td>2026-10-21</td><td>open</td><td>$420.15</td><td>$378.52</td><td>$503.41</td><td>+0.09R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>P</b></td><td>2026-10-21</td><td>open</td><td>$133.00</td><td>$120.61</td><td>$157.78</td><td>+0.44R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>TEN</b></td><td>2026-10-21</td><td>open</td><td>$52.70</td><td>$48.77</td><td>$60.56</td><td>+0.26R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>CSX</b></td><td>2026-10-22</td><td>open</td><td>$52.04</td><td>$50.20</td><td>$55.72</td><td>-0.06R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>DBX</b></td><td>2026-10-22</td><td>open</td><td>$37.84</td><td>$34.55</td><td>$44.41</td><td>-0.42R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>UNP</b></td><td>2026-10-22</td><td>open</td><td>$299.38</td><td>$289.05</td><td>$320.05</td><td>-0.18R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>MSFT</b></td><td>2026-10-26</td><td>open</td><td>$533.25</td><td>$514.59</td><td>$570.57</td><td>-0.15R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>NAT</b></td><td>2026-10-26</td><td>open</td><td>$8.10</td><td>$7.26</td><td>$9.77</td><td>-0.19R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>NTNX</b></td><td>2026-10-26</td><td>open</td><td>$72.84</td><td>$66.07</td><td>$86.40</td><td>-0.04R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>TNK</b></td><td>2026-10-26</td><td>open</td><td>$102.53</td><td>$92.84</td><td>$121.92</td><td>-0.34R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>CAI</b></td><td>2026-10-27</td><td>open</td><td>$34.06</td><td>$30.14</td><td>$41.89</td><td>+0.35R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>VTRS</b></td><td>2026-10-27</td><td>open</td><td>$18.83</td><td>$17.81</td><td>$20.87</td><td>-0.08R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>FTDR</b></td><td>2026-10-22</td><td>pending</td><td>$87.00</td><td>$81.85</td><td>$97.30</td><td>-</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>CVI</b></td><td>2026-10-26</td><td>pending</td><td>$62.79</td><td>$56.97</td><td>$74.42</td><td>-</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>EXPD</b></td><td>2026-10-27</td><td>pending</td><td>$199.74</td><td>$193.30</td><td>$212.63</td><td>-</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>SONO</b></td><td>2026-10-27</td><td>pending</td><td>$17.89</td><td>$16.65</td><td>$20.38</td><td>-</td><td>2026-11-03</td><td></td></tr>
+</table></div>
+
+<h2>Statistics (live)</h2>
+<p>110 recommendations tracked: 63 open, 9 pending, 25 closed, 13 expired unfilled. Closed-trade averages vs SPY -4.9%, vs sector ETF -5.8%.</p>
+<h3>By module vs baseline</h3>
+<div class="tbl"><table>
+<tr><th>Module</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>PF</th><th>vs SPY</th><th>Baseline R</th><th>Edge (R)</th><th></th></tr>
+<tr><td>All modules</td><td>25</td><td>8%</td><td>-1.03R</td><td>-1.03R</td><td>0.07</td><td>-4.9%</td><td>-0.76R</td><td>-0.27R</td><td class="wrap"></td></tr>
+<tr><td>base breakout</td><td>8</td><td>12%</td><td>-0.91R</td><td>-0.91R</td><td>0.12</td><td>-2.8%</td><td>-0.75R</td><td>-0.16R</td><td class="wrap">not enough data yet (8/30 closed)</td></tr>
+<tr><td>insider cluster</td><td>1</td><td>0%</td><td>-1.14R</td><td>-1.14R</td><td>0.00</td><td>-3.5%</td><td>-1.02R</td><td>-0.11R</td><td class="wrap">not enough data yet (1/30 closed)</td></tr>
+<tr><td>momentum pullback</td><td>16</td><td>6%</td><td>-1.08R</td><td>-1.08R</td><td>0.05</td><td>-6.1%</td><td>-0.54R</td><td>-0.53R</td><td class="wrap">not enough data yet (16/30 closed)</td></tr>
+</table></div>
+<h3>By rank bucket</h3>
+<div class="tbl"><table>
+<tr><th>Rank</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>vs SPY</th><th>Baseline R</th></tr>
+<tr><td>1-10</td><td>17</td><td>6%</td><td>-1.08R</td><td>-1.08R</td><td>-5.7%</td><td>-0.48R</td></tr>
+<tr><td>11-20</td><td>8</td><td>12%</td><td>-0.91R</td><td>-0.91R</td><td>-3.3%</td><td>-0.90R</td></tr>
+</table></div>
+<p class="src">Modules need 30 closed live results before their record is shown as meaningful.</p>
+
+<footer>Research tool, not financial advice. All candidates are tracked, including ones not shown.</footer>
+</main>
+</body>
+</html>

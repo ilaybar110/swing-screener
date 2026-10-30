@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Swing Screener - 2026-10-29</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:12px}
+h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}
+.banner{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
+.banner.Favorable{background:var(--goodbg);border-color:var(--good)}.banner.Caution{background:var(--warnbg);border-color:var(--warn)}.banner.Unfavorable{background:var(--badbg);border-color:var(--bad)}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
+.co{color:var(--mut);font-size:.9rem}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
+.chip.pass,.chip.pass_partial{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
+dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
+.warn{color:var(--warn);font-weight:600}
+.flags{background:var(--badbg);border:1px solid var(--bad);border-radius:8px;padding:6px 12px;margin:8px 0}.flags b{color:var(--bad)}
+ul{margin:.3rem 0;padding-left:1.2rem}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+td.wrap{white-space:normal}
+.src{font-size:.78rem;color:var(--mut);word-break:break-all}
+footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>Swing Screener - 2026-10-29</h1>
+<div class="banner Favorable"><b>Market regime: Favorable</b><br>SPY $769.36 is above its 200-day average ($728.53); 55% of the universe is above its 50-day average.</div>
+
+<h2>New recommendations (7)</h2>
+<article class="card">
+<div class="head"><h3>#1 CNK <span class="co">Cinemark Holdings Inc Cinemark Holdings Inc. Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Consumer Discretionary / Movies/Entertainment</span></div>
+<p>Relative-strength leader (RS percentile 85) pulled back 1.6 ATR to the 20-day SMA on 82% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$40.15</b></div>
+<div class="lv"><span>Stop</span><b>$38.57</b>-3.9%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$43.32</b>+7.9%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>Earnings</dt><dd>2026-11-03 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (19/30 closed live results)</dd>
+</dl>
+</article>
+<article class="card">
+<div class="head"><h3>#2 AMG <span class="co">Affiliated Managers Group Inc. Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Financials / Investment Managers</span></div>
+<p>Relative-strength leader (RS percentile 84) pulled back 1.4 ATR to the 20-day SMA on 70% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$400.13</b></div>
+<div class="lv"><span>Stop</span><b>$382.84</b>-4.3%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$434.70</b>+8.6%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>Earnings</dt><dd>2026-11-02 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (19/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Input contains headlines only (no 8-K filings). Affiliated Managers Group reached a new 52-week high per MarketBeat (2026-10-29). A headline says earnings are expected on Monday. Goldman Sachs maintained its Buy rating (Globe and Mail, 2026-10-15). A Form 4 dated 26 October is listed without details. Items about AMG Critical Materials and Mercedes-AMG are unrelated and not used.</p>
+<div><b>Recent positives</b><ul><li>Reached a new 52-week high (MarketBeat, 2026-10-29)</li><li>Goldman Sachs maintained Buy rating (The Globe and Mail, 2026-10-15)</li></ul></div><div><b>Upcoming catalysts</b><ul><li>Q3 earnings release expected &#39;on Monday&#39; per MarketBeat headline</li></ul></div><div class="src">Sources: https://news.google.com/rss/articles/CBMixwFBVV95cUxNVldQeDBlS1p0al9idzFwdERMUHFCNFhrZUJ2S0NRTzctRFJtNHdQQm10cGdGbEFoblBiZjJNTVVVSDFMU1NVR3JlU0o4SDNWdkdRZXBxdWtjMnlDQ3gwQjAxdFNJX2tTOHJpd0I0aXROemVBTloyYTZHYklncGMtaE9pZW1lRy1MRjhYNUdmNGpPOXFyczJJYU0yRUZaWmZ1aGdlQ2w2TXc2U2l2Q3lmcWtBdGtyNW4yb3JHRUlJcFh4d215eDFz?oc=5 · https://news.google.com/rss/articles/CBMizwFBVV95cUxPcEh4ZTA0RWdlWHAybkFpSGRFQXVlN0pQM3c4Q04zYlJaMlpWcXRCS01NbkIwaE9LVmNKNVpmbDlGTGZCb0lsYmVzNjlFVHAyd3ZNZ1BYQ2RjOTRGXzI2a3ZDeXUtODN5ZHRTalVHS1I5anJiN3BPUUc0YlhRdWlkSXZNZHpnX1FPRzZBY1dETjlrSVloV0RlbWdhb1E0NlFMOTk3UGF5Nl9mb0tNd1hKMGZxX2dTVGE5cl9WOFItRlZqQmRQZlhWcFlwcnpFN2M?oc=5 · https://news.google.com/rss/articles/CBMi6gFBVV95cUxNa3QtUWJ6U3FnOUlyNXNpaVVOYUNfR0lpVkdCalhHZVJtczl6YXFxR1hrSGdCem1kUXA3cnBVTUh4bEk5dXZXZC1kUGFsUDlqd2FIV3V5eDd1b0dzZ2lRa09ESHlpRE12TzgzY3czX3loeW9NMnpLNi1oVnJzTnR5b1hCSVc4aXF2bGZMLWZscHQ5RjdBRmVBck80NDBlMTBnWUsyQ3FPN082M1RicE1Fa29tc2N5SFExM2RfNnczYzFObnVWZlRQdnlEb3FBMjE0X2pEcG5RaU1vaWlhVkpaOUZ4eTdTLTNmcVE?oc=5 · https://news.google.com/rss/articles/CBMisgFBVV95cUxQcm1aWmd2VmlXV1dLNEN4X0dTdXptdGhoM0NGWXZjclZmejh0dWVOTG96TWJUSUJrc0lrVE9FaXlPbl9FMDZKRVFTQUpyTDVRc0xqT3pRUnZMTi0wODhCY0E0T09fTm5XSW9OcXdHLUsxZF8xVFFIVDJfUFVjYU1vVnBwdDZFaENWcFFnRjhybkR2UHJEZk5xel9VdnhUUVgxeDVnX3RPNDF5S0VKa0doWDl3?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#3 SN <span class="co">SharkNinja Inc. Ordinary Shares</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Consumer Discretionary / Consumer Electronics/Appliances</span></div>
+<p>Relative-strength leader (RS percentile 93) pulled back 1.1 ATR to the 20-day SMA on 99% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$209.55</b></div>
+<div class="lv"><span>Stop</span><b>$191.63</b>-8.6%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$245.38</b>+17.1%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>EV/FCF</dt><dd>92th percentile vs sector (EV/FCF 57.3)</dd><dt>Earnings</dt><dd>2026-11-04 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (19/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Input contains headlines only (no 8-K filings). Few headlines concern SharkNinja directly; most are unrelated tickers ending in .SN. SharkNinja items: up 5.29% in one week (Yahoo Finance UK, 2026-10-29); Q3 2026 earnings date and estimates article (MarketBeat, 2026-10-23); institutional holdings articles. No earnings date is stated in the titles.</p>
+<div><b>Recent positives</b><ul><li>Described as up 5.29% in one week (Yahoo Finance UK, 2026-10-29)</li><li>Meets Minervini Trend Template criteria per ChartMill headline (2026-10-20)</li></ul></div><div class="src">Sources: https://news.google.com/rss/articles/CBMie0FVX3lxTE9idm9nTElaZl9oTGRfUHlfZ1d1eWkxS1VLdURjZFdna0VwQ0tWTTZMMnhBcnV1WW5Oek04U051LTdwQ2U5SDBzUGxQV05BZ0NsMHZCNEtfOENWM3BlOFh2TndueUlTMFY1LW1CWlpaVTJOQUwxNEo1cUFCWQ?oc=5 · https://news.google.com/rss/articles/CBMigAFBVV95cUxPaXBkSXhjY2R4ejItOTBVOExLOUpHVXN3UEJoM2lEa1pnMkxuZFZBUnRMUHhnUzNGX0dTc28zSjNkSmpsbVZFY2M1R2ZwYk1RaWhiUEdsNVVxWDNxVW8tNHhfUFdRaWQ5MzBKUFBxSjd3OXZpWjJlZFJKU3JBdnV1YQ?oc=5 · https://news.google.com/rss/articles/CBMizAFBVV95cUxPaTZmVW94X1hpSklUak5mS2YycmpHOWVPcDBOS1BqODNjWGRUb0xWVEtjSGhfelhSWXZoTzU1ZndxWWtCUFlORXEwMzk2b2lZRlk4QXZrNVBzaXhLeVBvbGI5M1djcHc4WDhsaGlJZkE3NFpRWGwtdGhTT2pKajFRbUUzTzNPaFctOHc3Wk9nMG9pUVhYTHplTXBBaEdpQXJsMGYtZWtSNllNeW1ZVDVUOGhPZ0s2NFY2dmlweVdxYnlpZDZMSnRteEp5NE0?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#4 WSM <span class="co">Williams-Sonoma Inc. Common Stock (DE)</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Consumer Discretionary / Home Furnishings</span></div>
+<p>Relative-strength leader (RS percentile 85) pulled back 2.0 ATR to the 20-day SMA on 84% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$261.04</b></div>
+<div class="lv"><span>Stop</span><b>$246.50</b>-5.6%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$290.11</b>+11.1%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>Earnings</dt><dd>2026-11-18 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (19/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> 8-K filed 2026-10-19 (Item 5.02): Board appointed Lynn Martin, President of NYSE Group, as a director effective October 19, 2026, with standard non-employee director compensation. Headlines: RBC maintained Outperform but lowered its price target to $259 from $260 citing freight costs; new 52-week highs reported 10-16 and 10-22; a director sold $200,199.16 in stock (MarketBeat, 2026-10-16).</p>
+<div class="flags"><b>&#9873; Red flags</b><ul><li>Director sold $200,199.16 of stock (MarketBeat, 2026-10-16)</li><li>RBC Capital lowered price target to $259 from $260 on freight costs (Investing.com, 2026-10-29)</li></ul></div><div><b>Recent positives</b><ul><li>Appointed Lynn Martin to Board of Directors (8-K 0000719955-26-000223)</li><li>Reached new 52-week high (MarketBeat, 2026-10-22)</li><li>Evercore ISI raised price target to $255 from $240 (2026-10-20)</li></ul></div><div class="src">Sources: 0000719955-26-000223 · https://news.google.com/rss/articles/CBMi0AFBVV95cUxQclZFZGVmOGVzVC1ublZXSWZZOHBtUjI5UDJjSzRDTGhDal83WEJMcGhITzdUaVdqNS15Sjd1bkQ4SFYwTVViWDNYRkxRQUttZXNJOHBTdGpLMGgzTDhIbkl0ZTZhRzNPOTM3N3ZYLVRYbEtTakhiX1V1a2pHWjVyRHFLV2FjVWZ2dWlwMjBadWpVNl9pelNVOU1zTGxsX2xZaG9hcG5HQkphTUp6d29saUpPbHg5TEV5alpnMnlkbWM4d3dSY3E0VXBnNE5RN3Qy?oc=5 · https://news.google.com/rss/articles/CBMiyAFBVV95cUxPNXdBN3hEalVaSzNqVmVZU3dSZjY2Nmo3N19lanNEZnRCeXR5d3J1RjcxYTVzSUhyMGJrS21Fa3oyaVRGSXpLd3p4OGs1ZmJ2eWEyX2xNMzkxVnZ0VEVpQ1VqYkxYbGxnWGxjblBFcS1fd3JkaGVjRF9xYnVTd2pUdzlBWk1EWU91bjNTT3N1NlFlTnNzeThXRVBqZ213c19GN0tvNjdEZWpDT0pzQWN3WEEwOWs5bzdHem5uLURXQnI4ejc3Ym52WQ?oc=5 · https://news.google.com/rss/articles/CBMiugFBVV95cUxQTFpvOTNxSm5qazRVcElMTjRSVjlqeVpOQV9DMXNvMzVLWFZjRlkyWU92b29hV0FCd3BMV3VXMlcwR0F3THkzMWhKaGJia0lfeWpJZ2g5LXJ0RGZjcXREWE1WVkM1YlN5X29SVHhySnh2U0tUSm5TeTZEQ2FXbVRsRWVhTlRXV0RxV3EyaktXem0xcklvUnBrLW5HYk9RRlVuVzkta20wT2VOOU9NZnpkcHUwdDBXd21FeUE?oc=5 · https://news.google.com/rss/articles/CBMinwFBVV95cUxPS3BZUzdydFh1emQtM2MwVW1Dd1hna1lPOEdRZkhLVy1hUXpqb0xkRHZTekdyVnFoUi15djJnRkdMOUVyMS16NUN1Y3N2aUtpRl9GeGw4a0xTYXAzQlIyYUUzLVdTODNlUzhpSkRUWklJM2ZSLXJ4NGhMMGhBVjVhZ2RSLXZWckVHQzZSTnZJUWZGV3Uya2xWVVJVMXk1QjQ?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#5 ABBV <span class="co">AbbVie Inc. Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">momentum pullback</span><span class="chip">Health Care / Biotechnology: Pharmaceutical Preparations</span></div>
+<p>Relative-strength leader (RS percentile 84) pulled back 2.0 ATR to the 20-day SMA on 88% of average volume, then closed above the prior day&#39;s high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$292.67</b></div>
+<div class="lv"><span>Stop</span><b>$277.34</b>-5.2%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$323.33</b>+10.5%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>Earnings</dt><dd>2026-10-30 <span class="warn">&#9888; Earnings fall inside the ~25-trading-day holding window</span></dd><dt>momentum pullback record</dt><dd>not enough data yet (19/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> 8-K (Item 5.02) filed 2026-10-15: AbbVie expanded its board from twelve to thirteen directors and appointed Dr. John M. Carethers as an independent Class II director. Headlines: Q3 2026 earnings due October 30; BLA submitted to FDA for etentamig in relapsed/refractory multiple myeloma; FDA approved a subcutaneous Skyrizi induction regimen for Crohn&#39;s disease; positive Phase 3 results for lutikizumab in HS.</p>
+<div><b>Recent positives</b><ul><li>FDA approved subcutaneous induction regimen for Skyrizi in Crohn&#39;s disease (Investing News Network, 2026-10-23)</li><li>Submitted BLA to FDA for etentamig in relapsed/refractory multiple myeloma (2026-10-27)</li><li>Positive Phase III trial for lutikizumab in HS (The Pharmaletter, 2026-10-23)</li><li>Appointed Dr. John M. Carethers as independent director (8-K 0001104659-26-116227)</li></ul></div><div><b>Upcoming catalysts</b><ul><li>Q3 2026 earnings report (October 30 per headlines) (2026-10-30)</li></ul></div><div class="src">Sources: 0001104659-26-116227 · https://news.google.com/rss/articles/CBMi8AFBVV95cUxOcC1Rc3B1a2VCajVXWFFKNVJNWDRrLW10UzVMdWZwT3pxWHoyd1ZsZkJSSHpCQ1Z4ck5FTTliTmJaWlFGNjFKQ1YyV3VUa0h2b2xSTER6OUJoVFdNWFBNTVkzTjEwN2lUYzgwNnc3U3l3eHUzUDFuZVFWcDhBRHpEQU1YOTVBRGZYQWMzTUIxd3NsT3N4dURDdS1nb1ZDVnQ1SlB6Z0J0UmZmN3M4SnI5YnQ2UDhTb0xxN1c1TlZoSnA4Vkdrd01WTjNfSWR0VWJxTGk1ckptNDRrTGlGV3RTdS1zSS1ROVdzaWYzNUd1eTc?oc=5 · https://news.google.com/rss/articles/CBMiqAFBVV95cUxPOVRCcEk2U3NWNFUyQ2FMWDZ0a1JjZXpXTVdSTlhvOUktWUdQTXFCRk5MVjZBUUdCRHlfRU83dDlTbXJTTElZQ0RheGxyNjlVU3Y0aEhEZlVPVzdQdVoyZldEUjdrVlAtcnE3TmdVbWw2ZHBMbmZkTWZOUWluZ2p2NEtEQ1JLUi1lbXpnVG9meno3Qlo2cmxXQmI3RUdaalZ2QjVlNURYVXM?oc=5 · https://news.google.com/rss/articles/CBMiqwFBVV95cUxQbXRVMS1MZFZ1M0NqSWotUjVreFlhc2d5QnFjeFlhWl9iX0ZKT0laNkhRaWVlNEJNUk14cEswWHZHa21pMlpFTFo1OEVnVGlfMm8xclZLNFV6ZW1JMWRjWl9jb0dGMmZub2lHZ0ZxdUFUQmJ2WUVxMEVoUi01Q2JiWHg2V2gzRGxRd3QwNzRXUmdzdDluOGkyV051TkJpUE9rYkpNZVdqZFZJbjg?oc=5 · https://news.google.com/rss/articles/CBMiXEFVX3lxTE9yM2J0Q1Q3eU94cUZUYzVsRDBwY3FCdEVoU21BUmdwaFR2NDJvQnJEVERlNzZqR0ZDMzlUbWZjV1FZTnBNeTdTaWY2OHRwaVg2VnBDZmhUMW15b1pC?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#6 SIRI <span class="co">SiriusXM Holdings Inc. Common Stock</span></h3><span class="chip pass">guardrail: pass</span></div>
+<div><span class="chip">base breakout</span><span class="chip">Consumer Discretionary / Broadcasting</span></div>
+<p>Broke out above a 26-session base (volatility contracted to 69% of its starting ATR) on 1.7x average volume, within 12% of the 52-week high.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$28.70</b></div>
+<div class="lv"><span>Stop</span><b>$27.43</b>-4.4%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$31.23</b>+8.8%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>base breakout record</dt><dd>not enough data yet (8/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> 8-K filed 2026-10-29 (Items 2.02, 7.01, 9.01): Q3 2026 revenue $2.15 billion, down slightly year over year; net income up 7% to $317 million; diluted EPS $0.78 versus $0.84; Adjusted EBITDA up 3% to $694 million; free cash flow up 14% to $293 million. Full-year 2026 guidance raised by $25 million each for revenue, Adjusted EBITDA and free cash flow. Self-pay net additions were 5,000.</p>
+<div class="flags"><b>&#9873; Red flags</b><ul><li>Q3 revenue down slightly year over year to $2.15 billion, attributed to lower equipment revenue from higher memory costs</li><li>Diluted EPS declined 7% to $0.78 from $0.84</li><li>A headline says Pandora lost 2.75 million monthly users and ad sales stalled at $456m (PPC Land, 2026-10-29)</li></ul></div><div><b>Recent positives</b><ul><li>Raised full-year 2026 guidance by $25 million for Revenue, Adjusted EBITDA and Free Cash Flow</li><li>Net income up 7%; Adjusted EBITDA up 3%; free cash flow up 14%</li><li>Achieved long-term leverage target per CFO statement in press release</li><li>Company says it expects to meaningfully accelerate share repurchases in 2027</li></ul></div><div class="src">Sources: 0000908937-26-000027 · https://news.google.com/rss/articles/CBMimAFBVV95cUxOQjR6YlVNMTJzV1U2Mk1nUGEwNXJEWGRuNGVXT0l5a0pPc0RxMkRiRjZUaG40Ry1fUzc0WjNpTGVvcW1IQ0VROXhBTzQxQmdEOW9OSEEyN3Q0ZXdOMjNWMWo4TUg5YkhGLUhLUkRUbGlTMUgzcmZMdlV1RVlLZl9IamNzOGU1Rkg1NURYRXVjbnZONVkwdmJ4ag?oc=5</div></article>
+<article class="card">
+<div class="head"><h3>#7 PDI <span class="co">PIMCO Dynamic Income Fund Common Stock</span></h3><span class="chip unknown">guardrail: unknown</span></div>
+<div><span class="chip">insider cluster</span><span class="chip">Financials / Trusts Except Educational Religious and Charitable</span></div>
+<p>2 officers/directors bought $331,132 of stock on the open market (cluster completed 2026-10-27); price has now closed above its 20-day SMA.</p>
+<div class="levels">
+<div class="lv"><span>Entry (buy-stop)</span><b>$14.33</b></div>
+<div class="lv"><span>Stop</span><b>$13.97</b>-2.5%</div>
+<div class="lv"><span>Target (2.0R)</span><b>$15.05</b>+5.0%</div>
+</div>
+<dl>
+<dt>Time stop</dt><dd>close of trading day 20 after entry</dd>
+<dt>Valid until</dt><dd>2026-11-05</dd>
+<dt>Guardrail</dt><dd>no fundamentals available</dd><dt>Insider buys</dt><dd>Morris Sonya (Director) bought $82K (filed 2026-10-27); FLATTUM DAVID C (Director) bought $250K (filed 2026-10-08)</dd><dt>insider cluster record</dt><dd>not enough data yet (1/30 closed live results)</dd>
+</dl>
+<p><b>Summary.</b> Input contains headlines only (no 8-K filings). Relevant items for PIMCO Dynamic Income Fund: a Form 4 reports director Sonya Morris bought $81,624 in shares (transaction dated 23 October). A Seeking Alpha headline reads &#39;A PDI Cut Is Priced In Already&#39;. Other headlines concern PDI Gold, an unrelated ASX company, and are not used.</p>
+<div class="flags"><b>&#9873; Red flags</b><ul><li>Seeking Alpha headline &#39;A PDI Cut Is Priced In Already&#39; (2026-10-15); no details in input</li></ul></div><div><b>Recent positives</b><ul><li>Director Sonya Morris bought $81,624 in shares, Form 4 for 23 October (Investing.com, 2026-10-28)</li></ul></div><div class="src">Sources: https://news.google.com/rss/articles/CBMiyAFBVV95cUxPWmx6WGtIS2VyM2YyYnBsd1VreFE1OVJZeDdFbFdHdkJMUnhlOC1LWjQ1cjU5RS1OUTRTMHM2eHpUeUJaZVgxQ1VkOGtSNGJnMFIyX1RGNUx4VU10UlhjRGtBT0Q2TGc1bUMzb0E1djNKYkc1UEFIWWJreFp3V2d4ZndObXdteWI5SU9FMXRLMHNfcEc0LWY1azlsSFYtUVNsOGRsQVhnRkNtU1VyVk5EMVFZTXFIanFYdTd5SExoQmgtTXhGb2xpbg?oc=5 · https://news.google.com/rss/articles/CBMiygFBVV95cUxPb2Y2MGgtZEh5Z3h3bEtqbmxubUoycFVVTGVmUWNad2RfTEFHbTV6NTBiN1k2N0xwZE1DNGlPaWFHV0V6LURrTFFBT3pCajcyUUU0bzI1SkZWeHFlVXJlcC1oeXpjQnlxUUdxNFFQSVM5dV9LZDEyRVBJZXV3SlVSTEZwaFNfcXhpQjRJaVJYUDhLYWszWnFSLVdiRG9fcnVySmllcUlRV0RaLWZrMmkwUGZDVUlWekx2NHNndjlTbmhBbUU0a0p6X2RB?oc=5 · https://news.google.com/rss/articles/CBMidEFVX3lxTE9NVGs2dHFQTTVQcTdUU2h0LXd3Y0EzMjFPMGNMTlBtYmZiQUU2QnF3aDNYNTd4Q0pfemc5ZWp3a0NPbFl3dUNQN09TRUlUZFJWU2VKV2RNS21lZXNlUDU4dDBGQjA2Ujg5UklVUlFNSTFuOTZl?oc=5</div></article>
+
+
+<h2>Tracking updates since 2026-10-28</h2>
+<div class="tbl"><table>
+<tr><th>Date</th><th>Ticker</th><th>Event</th><th>R</th><th>Return</th><th>Note</th></tr>
+<tr><td>2026-10-29</td><td><b>AAMI</b></td><td>Stopped out</td><td>-1.04R</td><td>-5.1%</td><td>stop</td></tr>
+<tr><td>2026-10-29</td><td><b>ACN</b></td><td>Triggered (entry filled)</td><td>+0.01R</td><td>-</td><td>filled at $246.79</td></tr>
+<tr><td>2026-10-29</td><td><b>BNS</b></td><td>Triggered (entry filled)</td><td>+0.12R</td><td>-</td><td>filled at $95.00</td></tr>
+<tr><td>2026-10-29</td><td><b>CRM</b></td><td>Target hit</td><td>+0.86R</td><td>+2.8%</td><td>breakeven stop after partial</td></tr>
+<tr><td>2026-10-29</td><td><b>CVI</b></td><td>Expired (never triggered)</td><td>-</td><td>-</td><td>setup broke before entry</td></tr>
+<tr><td>2026-10-29</td><td><b>DGX</b></td><td>Triggered (entry filled)</td><td>+0.27R</td><td>-</td><td>filled at $249.73</td></tr>
+<tr><td>2026-10-29</td><td><b>EXPD</b></td><td>Triggered (entry filled)</td><td>-0.24R</td><td>-</td><td>filled at $199.74</td></tr>
+<tr><td>2026-10-29</td><td><b>FTDR</b></td><td>Triggered (entry filled)</td><td>+0.05R</td><td>-</td><td>filled at $87.00</td></tr>
+<tr><td>2026-10-29</td><td><b>SPSC</b></td><td>Stopped out</td><td>-1.01R</td><td>-6.9%</td><td>stop</td></tr>
+<tr><td>2026-10-29</td><td><b>VRTX</b></td><td>Triggered (entry filled)</td><td>+0.11R</td><td>-</td><td>filled at $536.46</td></tr>
+</table></div>
+
+<h2>Open recommendations (68)</h2>
+<div class="tbl"><table>
+<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th><th>Note</th></tr>
+<tr><td><b>DOCU</b></td><td>2026-10-08</td><td>open</td><td>$71.52</td><td>$63.67</td><td>$87.20</td><td>+1.20R</td><td>2026-10-15</td><td></td></tr>
+<tr><td><b>MANH</b></td><td>2026-10-08</td><td>open</td><td>$207.14</td><td>$196.23</td><td>$228.95</td><td>+2.41R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>MATX</b></td><td>2026-10-08</td><td>open</td><td>$228.10</td><td>$217.33</td><td>$249.63</td><td>-0.12R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-13)</td></tr>
+<tr><td><b>PAYC</b></td><td>2026-10-08</td><td>open</td><td>$230.46</td><td>$211.72</td><td>$267.94</td><td>+1.79R</td><td>2026-10-15</td><td>still valid from 2026-10-08 (repeat signal 2026-10-09)</td></tr>
+<tr><td><b>SKWD</b></td><td>2026-10-08</td><td>open</td><td>$60.02</td><td>$57.11</td><td>$65.84</td><td>-0.54R</td><td>2026-10-15</td><td></td></tr>
+<tr><td><b>ATRC</b></td><td>2026-10-09</td><td>open</td><td>$55.89</td><td>$51.36</td><td>$64.95</td><td>+1.35R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12, 2026-10-20)</td></tr>
+<tr><td><b>LFST</b></td><td>2026-10-09</td><td>open</td><td>$12.46</td><td>$11.43</td><td>$14.52</td><td>+1.13R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>NSIT</b></td><td>2026-10-09</td><td>open</td><td>$164.28</td><td>$151.34</td><td>$190.15</td><td>+1.09R</td><td>2026-10-16</td><td>still valid from 2026-10-09 (repeat signal 2026-10-12)</td></tr>
+<tr><td><b>VEEV</b></td><td>2026-10-09</td><td>open</td><td>$297.45</td><td>$271.93</td><td>$348.50</td><td>+0.49R</td><td>2026-10-16</td><td></td></tr>
+<tr><td><b>AAPL</b></td><td>2026-10-12</td><td>open</td><td>$342.63</td><td>$325.17</td><td>$377.55</td><td>+0.22R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>ALRM</b></td><td>2026-10-12</td><td>open</td><td>$56.47</td><td>$52.00</td><td>$65.42</td><td>+2.11R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>MET</b></td><td>2026-10-12</td><td>open</td><td>$100.18</td><td>$95.21</td><td>$110.11</td><td>-0.06R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>VSXY</b></td><td>2026-10-12</td><td>open</td><td>$89.35</td><td>$81.09</td><td>$105.87</td><td>+1.01R</td><td>2026-10-19</td><td></td></tr>
+<tr><td><b>ADP</b></td><td>2026-10-13</td><td>open</td><td>$277.50</td><td>$255.42</td><td>$321.65</td><td>+0.38R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-14)</td></tr>
+<tr><td><b>CDNA</b></td><td>2026-10-13</td><td>open</td><td>$67.39</td><td>$60.77</td><td>$80.64</td><td>+0.61R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>GO</b></td><td>2026-10-13</td><td>open</td><td>$12.53</td><td>$11.18</td><td>$15.23</td><td>+0.25R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-29)</td></tr>
+<tr><td><b>HURN</b></td><td>2026-10-13</td><td>open</td><td>$178.15</td><td>$165.99</td><td>$202.47</td><td>+1.59R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>IT</b></td><td>2026-10-13</td><td>open</td><td>$200.85</td><td>$183.71</td><td>$235.12</td><td>+1.40R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>SXT</b></td><td>2026-10-13</td><td>open</td><td>$134.12</td><td>$127.45</td><td>$147.45</td><td>-0.41R</td><td>2026-10-20</td><td></td></tr>
+<tr><td><b>WST</b></td><td>2026-10-13</td><td>open</td><td>$378.84</td><td>$358.57</td><td>$419.37</td><td>+1.91R</td><td>2026-10-20</td><td>still valid from 2026-10-13 (repeat signal 2026-10-15)</td></tr>
+<tr><td><b>A</b></td><td>2026-10-14</td><td>open</td><td>$175.54</td><td>$162.86</td><td>$200.90</td><td>+0.43R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-28)</td></tr>
+<tr><td><b>AMN</b></td><td>2026-10-14</td><td>open</td><td>$38.00</td><td>$34.48</td><td>$45.03</td><td>+2.26R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-16)</td></tr>
+<tr><td><b>AVTR</b></td><td>2026-10-14</td><td>open</td><td>$16.00</td><td>$14.92</td><td>$18.17</td><td>+0.61R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-16)</td></tr>
+<tr><td><b>BBY</b></td><td>2026-10-14</td><td>open</td><td>$89.12</td><td>$83.40</td><td>$100.56</td><td>+1.67R</td><td>2026-10-21</td><td>still valid from 2026-10-14 (repeat signal 2026-10-15, 2026-10-22)</td></tr>
+<tr><td><b>EC</b></td><td>2026-10-14</td><td>open</td><td>$18.02</td><td>$16.00</td><td>$22.06</td><td>-0.38R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>FTRE</b></td><td>2026-10-14</td><td>open</td><td>$22.15</td><td>$19.67</td><td>$27.12</td><td>+0.39R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>HALO</b></td><td>2026-10-14</td><td>open</td><td>$119.21</td><td>$106.30</td><td>$145.02</td><td>+0.92R</td><td>2026-10-21</td><td></td></tr>
+<tr><td><b>AVPT</b></td><td>2026-10-15</td><td>open</td><td>$14.89</td><td>$13.88</td><td>$16.91</td><td>+2.07R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-20)</td></tr>
+<tr><td><b>BTI</b></td><td>2026-10-15</td><td>open</td><td>$58.77</td><td>$56.73</td><td>$62.85</td><td>+0.97R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>FLYW</b></td><td>2026-10-15</td><td>open</td><td>$19.43</td><td>$17.68</td><td>$22.92</td><td>-0.09R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-22, 2026-10-23, 2026-10-29)</td></tr>
+<tr><td><b>ROKU</b></td><td>2026-10-15</td><td>open</td><td>$155.13</td><td>$149.84</td><td>$165.70</td><td>+0.07R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SHO</b></td><td>2026-10-15</td><td>open</td><td>$11.99</td><td>$11.51</td><td>$12.94</td><td>+1.97R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SIG</b></td><td>2026-10-15</td><td>open</td><td>$120.00</td><td>$111.93</td><td>$136.15</td><td>-0.15R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>SWKS</b></td><td>2026-10-15</td><td>open</td><td>$79.17</td><td>$73.33</td><td>$90.85</td><td>+1.74R</td><td>2026-10-22</td><td>still valid from 2026-10-15 (repeat signal 2026-10-16)</td></tr>
+<tr><td><b>WDAY</b></td><td>2026-10-15</td><td>open</td><td>$200.23</td><td>$180.80</td><td>$239.08</td><td>-0.26R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>GMAB</b></td><td>2026-10-19</td><td>open</td><td>$39.00</td><td>$34.93</td><td>$47.14</td><td>+3.14R</td><td>2026-10-26</td><td>still valid from 2026-10-19 (repeat signal 2026-10-20, 2026-10-21)</td></tr>
+<tr><td><b>IOSP</b></td><td>2026-10-19</td><td>open</td><td>$98.49</td><td>$93.43</td><td>$108.60</td><td>+0.56R</td><td>2026-10-26</td><td>still valid from 2026-10-19 (repeat signal 2026-10-20, 2026-10-26)</td></tr>
+<tr><td><b>AMPL</b></td><td>2026-10-20</td><td>open</td><td>$15.91</td><td>$14.56</td><td>$18.62</td><td>+0.87R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>AZTA</b></td><td>2026-10-20</td><td>open</td><td>$36.41</td><td>$32.73</td><td>$43.76</td><td>+1.31R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>CRL</b></td><td>2026-10-20</td><td>open</td><td>$317.59</td><td>$287.11</td><td>$378.55</td><td>+1.95R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>GTLB</b></td><td>2026-10-20</td><td>open</td><td>$55.73</td><td>$50.02</td><td>$67.16</td><td>+0.15R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>HNGE</b></td><td>2026-10-20</td><td>open</td><td>$108.00</td><td>$97.02</td><td>$129.96</td><td>+0.79R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>MMSI</b></td><td>2026-10-20</td><td>open</td><td>$91.59</td><td>$86.32</td><td>$102.14</td><td>+0.32R</td><td>2026-10-27</td><td></td></tr>
+<tr><td><b>SAIC</b></td><td>2026-10-20</td><td>open</td><td>$135.57</td><td>$128.74</td><td>$149.23</td><td>+2.10R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>ZBRA</b></td><td>2026-10-20</td><td>open</td><td>$384.74</td><td>$364.78</td><td>$424.66</td><td>-0.46R</td><td>2026-10-27</td><td>still valid from 2026-10-20 (repeat signal 2026-10-21)</td></tr>
+<tr><td><b>ILMN</b></td><td>2026-10-21</td><td>open</td><td>$286.40</td><td>$252.43</td><td>$354.35</td><td>+0.10R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>MEDP</b></td><td>2026-10-21</td><td>open</td><td>$666.65</td><td>$588.20</td><td>$823.56</td><td>+0.13R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>NTAP</b></td><td>2026-10-21</td><td>open</td><td>$217.84</td><td>$201.58</td><td>$250.36</td><td>+0.02R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-26)</td></tr>
+<tr><td><b>NTRA</b></td><td>2026-10-21</td><td>open</td><td>$420.15</td><td>$378.52</td><td>$503.41</td><td>+0.37R</td><td>2026-10-28</td><td>still valid from 2026-10-21 (repeat signal 2026-10-27)</td></tr>
+<tr><td><b>P</b></td><td>2026-10-21</td><td>open</td><td>$133.00</td><td>$120.61</td><td>$157.78</td><td>+0.33R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>TEN</b></td><td>2026-10-21</td><td>open</td><td>$52.70</td><td>$48.77</td><td>$60.56</td><td>+0.45R</td><td>2026-10-28</td><td></td></tr>
+<tr><td><b>CSX</b></td><td>2026-10-22</td><td>open</td><td>$52.04</td><td>$50.20</td><td>$55.72</td><td>+0.08R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>DBX</b></td><td>2026-10-22</td><td>open</td><td>$37.84</td><td>$34.55</td><td>$44.41</td><td>-0.48R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>FTDR</b></td><td>2026-10-22</td><td>open</td><td>$87.00</td><td>$81.85</td><td>$97.30</td><td>+0.05R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>UNP</b></td><td>2026-10-22</td><td>open</td><td>$299.38</td><td>$289.05</td><td>$320.05</td><td>+0.22R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>MSFT</b></td><td>2026-10-26</td><td>open</td><td>$533.25</td><td>$514.59</td><td>$570.57</td><td>-0.20R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>NAT</b></td><td>2026-10-26</td><td>open</td><td>$8.10</td><td>$7.26</td><td>$9.77</td><td>+0.00R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>NTNX</b></td><td>2026-10-26</td><td>open</td><td>$72.84</td><td>$66.07</td><td>$86.40</td><td>-0.33R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>TNK</b></td><td>2026-10-26</td><td>open</td><td>$102.53</td><td>$92.84</td><td>$121.92</td><td>-0.14R</td><td>2026-11-02</td><td></td></tr>
+<tr><td><b>CAI</b></td><td>2026-10-27</td><td>open</td><td>$34.06</td><td>$30.14</td><td>$41.89</td><td>+0.52R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>EXPD</b></td><td>2026-10-27</td><td>open</td><td>$199.74</td><td>$193.30</td><td>$212.63</td><td>-0.24R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>VTRS</b></td><td>2026-10-27</td><td>open</td><td>$18.83</td><td>$17.81</td><td>$20.87</td><td>+0.34R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>ACN</b></td><td>2026-10-28</td><td>open</td><td>$246.79</td><td>$226.40</td><td>$287.57</td><td>+0.01R</td><td>2026-11-04</td><td></td></tr>
+<tr><td><b>BNS</b></td><td>2026-10-28</td><td>open</td><td>$94.75</td><td>$92.16</td><td>$99.93</td><td>+0.12R</td><td>2026-11-04</td><td></td></tr>
+<tr><td><b>DGX</b></td><td>2026-10-28</td><td>open</td><td>$249.73</td><td>$238.93</td><td>$271.34</td><td>+0.27R</td><td>2026-11-04</td><td></td></tr>
+<tr><td><b>VRTX</b></td><td>2026-10-28</td><td>open</td><td>$534.94</td><td>$507.65</td><td>$589.53</td><td>+0.11R</td><td>2026-11-04</td><td>still valid from 2026-10-28 (repeat signal 2026-10-29)</td></tr>
+<tr><td><b>SONO</b></td><td>2026-10-27</td><td>pending</td><td>$17.89</td><td>$16.65</td><td>$20.38</td><td>-</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>CHE</b></td><td>2026-10-28</td><td>pending</td><td>$562.24</td><td>$534.33</td><td>$618.06</td><td>-</td><td>2026-11-04</td><td></td></tr>
+</table></div>
+
+<h2>Statistics (live)</h2>
+<p>117 recommendations tracked: 66 open, 9 pending, 28 closed, 14 expired unfilled. Closed-trade averages vs SPY -4.7%, vs sector ETF -5.4%.</p>
+<h3>By module vs baseline</h3>
+<div class="tbl"><table>
+<tr><th>Module</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>PF</th><th>vs SPY</th><th>Baseline R</th><th>Edge (R)</th><th></th></tr>
+<tr><td>All modules</td><td>28</td><td>11%</td><td>-0.96R</td><td>-0.96R</td><td>0.09</td><td>-4.7%</td><td>-0.75R</td><td>-0.21R</td><td class="wrap"></td></tr>
+<tr><td>base breakout</td><td>8</td><td>12%</td><td>-0.91R</td><td>-0.91R</td><td>0.12</td><td>-2.8%</td><td>-0.75R</td><td>-0.16R</td><td class="wrap">not enough data yet (8/30 closed)</td></tr>
+<tr><td>insider cluster</td><td>1</td><td>0%</td><td>-1.14R</td><td>-1.14R</td><td>0.00</td><td>-3.5%</td><td>-1.43R</td><td>+0.29R</td><td class="wrap">not enough data yet (1/30 closed)</td></tr>
+<tr><td>momentum pullback</td><td>19</td><td>11%</td><td>-0.97R</td><td>-0.97R</td><td>0.09</td><td>-5.5%</td><td>-0.79R</td><td>-0.18R</td><td class="wrap">not enough data yet (19/30 closed)</td></tr>
+</table></div>
+<h3>By rank bucket</h3>
+<div class="tbl"><table>
+<tr><th>Rank</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>vs SPY</th><th>Baseline R</th></tr>
+<tr><td>1-10</td><td>20</td><td>10%</td><td>-0.98R</td><td>-0.98R</td><td>-5.2%</td><td>-0.77R</td></tr>
+<tr><td>11-20</td><td>8</td><td>12%</td><td>-0.91R</td><td>-0.91R</td><td>-3.3%</td><td>-0.90R</td></tr>
+</table></div>
+<p class="src">Modules need 30 closed live results before their record is shown as meaningful.</p>
+
+<footer>Research tool, not financial advice. All candidates are tracked, including ones not shown.</footer>
+</main>
+</body>
+</html>

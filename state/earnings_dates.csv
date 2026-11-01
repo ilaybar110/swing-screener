@@ -19,6 +19,7 @@ AAT,2026-10-27,AMC,nasdaq_calendar,
 AAUC,2026-11-04,,nasdaq_calendar,
 AB,2026-10-27,BMO,nasdaq_calendar,
 ABAT,2026-11-05,,nasdaq_calendar,
+ABBV,2026-10-30,BMO,8k_2.02,2026-10-30T07:51:51
 ABBV,2026-10-30,,nasdaq_calendar,
 ABCB,2026-10-22,AMC,nasdaq_calendar,
 ABCB,2026-10-23,AMC,8k_2.02,2026-10-22T16:15:59
@@ -354,6 +355,7 @@ AMX,2026-10-20,AMC,nasdaq_calendar,
 AMZN,2026-10-29,AMC,nasdaq_calendar,
 AMZN,2026-10-30,AMC,8k_2.02,2026-10-29T16:05:27
 AN,2026-10-22,,nasdaq_calendar,
+AN,2026-10-30,BMO,8k_2.02,2026-10-30T07:11:15
 AN,2026-10-30,,nasdaq_calendar,
 ANAB,2026-11-03,,nasdaq_calendar,
 ANDE,2026-11-03,AMC,nasdaq_calendar,
@@ -963,7 +965,9 @@ BTGO,2026-11-11,,nasdaq_calendar,
 BTLN,2026-11-12,,nasdaq_calendar,
 BTMD,2026-11-04,AMC,nasdaq_calendar,
 BTOC,2026-11-12,,nasdaq_calendar,
+BTSG,2026-10-30,BMO,8k_2.02,2026-10-30T06:05:15
 BTSG,2026-10-30,,nasdaq_calendar,
+BTSGU,2026-10-30,BMO,8k_2.02,2026-10-30T06:05:15
 BTU,2026-10-29,,nasdaq_calendar,
 BTU,2026-11-04,BMO,nasdaq_calendar,
 BUD,2026-10-29,BMO,nasdaq_calendar,
@@ -1094,6 +1098,7 @@ CBL,2026-11-05,AMC,nasdaq_calendar,
 CBLL,2026-11-03,AMC,nasdaq_calendar,
 CBNA,2026-10-27,,nasdaq_calendar,
 CBNK,2026-10-26,,nasdaq_calendar,
+CBOE,2026-10-30,BMO,8k_2.02,2026-10-30T07:30:16
 CBOE,2026-10-30,,nasdaq_calendar,
 CBRE,2026-10-22,BMO,8k_2.02,2026-10-22T07:03:46
 CBRE,2026-10-22,BMO,nasdaq_calendar,
@@ -1206,6 +1211,7 @@ CHCI,2026-11-12,,nasdaq_calendar,
 CHCO,2026-10-28,,nasdaq_calendar,
 CHCT,2026-10-27,,nasdaq_calendar,
 CHCT,2026-11-03,AMC,nasdaq_calendar,
+CHD,2026-10-30,BMO,8k_2.02,2026-10-30T07:04:05
 CHD,2026-10-30,,nasdaq_calendar,
 CHDN,2026-10-28,AMC,nasdaq_calendar,
 CHDN,2026-10-29,AMC,8k_2.02,2026-10-28T16:14:39
@@ -1256,6 +1262,7 @@ CIVB,2026-10-22,BMO,nasdaq_calendar,
 CIX,2026-11-04,AMC,nasdaq_calendar,
 CJMB,2026-11-13,,nasdaq_calendar,
 CKX,2026-11-09,,nasdaq_calendar,
+CL,2026-10-30,BMO,8k_2.02,2026-10-30T07:56:34
 CL,2026-10-30,,nasdaq_calendar,
 CLAR,2026-11-05,AMC,nasdaq_calendar,
 CLB,2026-10-28,AMC,nasdaq_calendar,
@@ -1441,6 +1448,7 @@ CPHI,2026-11-11,,nasdaq_calendar,
 CPIX,2026-11-03,,nasdaq_calendar,
 CPK,2026-11-05,AMC,nasdaq_calendar,
 CPNG,2026-11-03,AMC,nasdaq_calendar,
+CPRI,2026-10-30,BMO,8k_2.02,2026-10-30T07:03:14
 CPRI,2026-10-30,,nasdaq_calendar,
 CPRI,2026-11-03,,nasdaq_calendar,
 CPRT,2026-11-19,,nasdaq_calendar,
@@ -1475,6 +1483,7 @@ CRH,2026-10-29,BMO,8k_2.02,2026-10-29T07:41:19
 CRH,2026-10-29,BMO,nasdaq_calendar,
 CRH,2026-11-04,,nasdaq_calendar,
 CRI,2026-10-26,,nasdaq_calendar,
+CRI,2026-10-30,BMO,8k_2.02,2026-10-30T06:11:46
 CRI,2026-10-30,,nasdaq_calendar,
 CRIS,2026-11-05,,nasdaq_calendar,
 CRK,2026-11-04,AMC,nasdaq_calendar,
@@ -1560,6 +1569,7 @@ CTW,2026-10-15,AMC,nasdaq_calendar,
 CUB,2026-11-11,,nasdaq_calendar,
 CUBB,2026-10-23,AMC,8k_2.02,2026-10-22T16:45:50
 CUBE,2026-10-29,AMC,nasdaq_calendar,
+CUBE,2026-10-30,BMO,8k_2.02,2026-10-30T07:23:40
 CUBI,2026-10-22,AMC,nasdaq_calendar,
 CUBI,2026-10-23,AMC,8k_2.02,2026-10-22T16:45:50
 CUE,2026-11-11,,nasdaq_calendar,
@@ -1601,6 +1611,7 @@ CVSA,2026-10-29,AMC,nasdaq_calendar,
 CVSA,2026-10-30,AMC,8k_2.02,2026-10-29T16:16:28
 CVU,2026-11-12,,nasdaq_calendar,
 CVV,2026-11-09,,nasdaq_calendar,
+CVX,2026-10-30,BMO,8k_2.02,2026-10-30T06:16:00
 CVX,2026-10-30,,nasdaq_calendar,
 CW,2026-11-04,AMC,nasdaq_calendar,
 CWBC,2026-10-15,,nasdaq_calendar,
@@ -1643,6 +1654,7 @@ CZNC,2026-11-05,,nasdaq_calendar,
 CZR,2026-10-27,AMC,nasdaq_calendar,
 CZR,2026-10-28,AMC,8k_2.02,2026-10-27T16:12:34
 CZWI,2026-10-26,,nasdaq_calendar,
+D,2026-10-30,BMO,8k_2.02,2026-10-30T07:31:09
 D,2026-10-30,,nasdaq_calendar,
 DAC,2026-11-16,,nasdaq_calendar,
 DAIO,2026-10-29,,nasdaq_calendar,
@@ -1820,6 +1832,7 @@ DUK,2026-11-05,BMO,nasdaq_calendar,
 DUKR,2026-11-13,,nasdaq_calendar,
 DUOL,2026-11-03,AMC,nasdaq_calendar,
 DUOT,2026-11-11,,nasdaq_calendar,
+DV,2026-11-02,AMC,8k_2.02,2026-10-30T16:10:46
 DV,2026-11-06,,nasdaq_calendar,
 DVA,2026-10-29,AMC,nasdaq_calendar,
 DVA,2026-10-30,AMC,8k_2.02,2026-10-29T16:06:43
@@ -2079,6 +2092,7 @@ EW,2026-11-04,AMC,nasdaq_calendar,
 EWBC,2026-10-20,AMC,nasdaq_calendar,
 EWBC,2026-10-21,AMC,8k_2.02,2026-10-20T16:04:23
 EWTX,2026-11-05,,nasdaq_calendar,
+EXC,2026-10-30,BMO,8k_2.02,2026-10-30T06:57:41
 EXC,2026-10-30,,nasdaq_calendar,
 EXE,2026-10-27,AMC,nasdaq_calendar,
 EXE,2026-10-28,AMC,8k_2.02,2026-10-27T16:03:12
@@ -2144,6 +2158,7 @@ FCFS,2026-10-22,BMO,nasdaq_calendar,
 FCFS,2026-10-23,,8k_2.02,2026-10-22T13:12:33
 FCFS,2026-10-29,,nasdaq_calendar,
 FCN,2026-10-29,BMO,nasdaq_calendar,
+FCN,2026-11-02,AMC,8k_2.02,2026-10-30T16:30:19
 FCNCA,2026-10-23,BMO,8k_2.02,2026-10-23T06:31:24
 FCNCA,2026-10-23,,nasdaq_calendar,
 FCNCN,2026-10-23,BMO,8k_2.02,2026-10-23T06:31:24
@@ -2321,6 +2336,7 @@ FRPT,2026-11-02,,nasdaq_calendar,
 FRPT,2026-11-04,BMO,nasdaq_calendar,
 FRSH,2026-11-03,AMC,nasdaq_calendar,
 FRST,2026-10-22,AMC,nasdaq_calendar,
+FRT,2026-10-30,BMO,8k_2.02,2026-10-30T07:31:28
 FRT,2026-10-30,,nasdaq_calendar,
 FRTT,2026-11-12,,nasdaq_calendar,
 FRVO,2026-11-11,,nasdaq_calendar,
@@ -2422,6 +2438,7 @@ GCTK,2026-11-12,,nasdaq_calendar,
 GCTS,2026-11-11,,nasdaq_calendar,
 GCTS,2026-11-12,AMC,nasdaq_calendar,
 GD,2026-10-23,,nasdaq_calendar,
+GD,2026-10-30,BMO,8k_2.02,2026-10-30T08:09:27
 GD,2026-10-30,,nasdaq_calendar,
 GDC,2026-11-02,,nasdaq_calendar,
 GDDY,2026-10-29,AMC,nasdaq_calendar,
@@ -2511,6 +2528,7 @@ GLNG,2026-11-18,BMO,nasdaq_calendar,
 GLOB,2026-11-12,,nasdaq_calendar,
 GLP,2026-11-06,BMO,nasdaq_calendar,
 GLPI,2026-10-29,AMC,nasdaq_calendar,
+GLPI,2026-11-02,,8k_2.02,2026-10-30T14:16:32
 GLRE,2026-11-02,AMC,nasdaq_calendar,
 GLSI,2026-11-13,,nasdaq_calendar,
 GLUE,2026-11-05,,nasdaq_calendar,
@@ -2627,6 +2645,7 @@ GT,2026-11-04,AMC,nasdaq_calendar,
 GTBP,2026-11-13,,nasdaq_calendar,
 GTE,2026-10-29,,nasdaq_calendar,
 GTEC,2026-11-06,,nasdaq_calendar,
+GTES,2026-10-30,BMO,8k_2.02,2026-10-30T07:32:36
 GTES,2026-10-30,,nasdaq_calendar,
 GTLB,2026-12-01,,nasdaq_calendar,
 GTM,2026-11-02,,nasdaq_calendar,
@@ -2708,6 +2727,7 @@ HELP,2026-11-12,,nasdaq_calendar,
 HEPS,2026-11-04,,nasdaq_calendar,
 HEPS,2026-11-05,AMC,nasdaq_calendar,
 HERE,2026-12-01,,nasdaq_calendar,
+HESM,2026-10-30,BMO,8k_2.02,2026-10-30T07:00:15
 HESM,2026-10-30,,nasdaq_calendar,
 HESM,2026-11-02,,nasdaq_calendar,
 HFBL,2026-10-22,,nasdaq_calendar,
@@ -2950,6 +2970,7 @@ IMKTA,2026-11-25,,nasdaq_calendar,
 IMMX,2026-11-06,,nasdaq_calendar,
 IMNM,2026-11-05,,nasdaq_calendar,
 IMNN,2026-11-12,,nasdaq_calendar,
+IMO,2026-10-30,BMO,8k_2.02,2026-10-30T08:02:41
 IMO,2026-10-30,,nasdaq_calendar,
 IMOS,2026-11-10,,nasdaq_calendar,
 IMPP,2026-12-10,,nasdaq_calendar,
@@ -3293,6 +3314,7 @@ KRC,2026-10-22,AMC,nasdaq_calendar,
 KRC,2026-10-23,AMC,8k_2.02,2026-10-22T16:56:14
 KREF,2026-10-20,,nasdaq_calendar,
 KREF,2026-10-28,AMC,nasdaq_calendar,
+KRG,2026-10-30,BMO,8k_2.02,2026-10-30T06:47:09
 KRG,2026-10-30,,nasdaq_calendar,
 KRMD,2026-11-10,AMC,nasdaq_calendar,
 KRMD,2026-11-11,,nasdaq_calendar,
@@ -3320,6 +3342,7 @@ KULR,2026-11-17,,nasdaq_calendar,
 KURA,2026-11-03,,nasdaq_calendar,
 KUST,2026-11-11,,nasdaq_calendar,
 KVHI,2026-11-05,,nasdaq_calendar,
+KVUE,2026-10-30,BMO,8k_2.02,2026-10-30T06:49:14
 KVUE,2026-10-30,,nasdaq_calendar,
 KVUE,2026-11-02,,nasdaq_calendar,
 KVYO,2026-11-04,AMC,nasdaq_calendar,
@@ -3374,6 +3397,7 @@ LCUT,2026-11-05,BMO,nasdaq_calendar,
 LDI,2026-11-05,,nasdaq_calendar,
 LDOS,2026-11-03,BMO,nasdaq_calendar,
 LE,2026-12-08,,nasdaq_calendar,
+LEA,2026-10-30,BMO,8k_2.02,2026-10-30T07:15:37
 LEA,2026-10-30,,nasdaq_calendar,
 LECO,2026-10-27,BMO,8k_2.02,2026-10-27T09:03:22
 LECO,2026-10-27,BMO,nasdaq_calendar,
@@ -3464,6 +3488,7 @@ LNG,2026-10-29,BMO,nasdaq_calendar,
 LNN,2026-10-22,BMO,nasdaq_calendar,
 LNSR,2026-11-05,,nasdaq_calendar,
 LNT,2026-10-29,AMC,nasdaq_calendar,
+LNT,2026-10-30,AMC,8k_2.02,2026-10-29T18:06:43
 LNT,2026-11-05,,nasdaq_calendar,
 LNTH,2026-11-05,,nasdaq_calendar,
 LNZA,2026-11-16,BMO,nasdaq_calendar,
@@ -3556,6 +3581,7 @@ LXP,2026-10-29,,nasdaq_calendar,
 LXRX,2026-11-05,BMO,nasdaq_calendar,
 LXU,2026-10-28,AMC,nasdaq_calendar,
 LXU,2026-11-04,,nasdaq_calendar,
+LYB,2026-10-30,BMO,8k_2.02,2026-10-30T06:31:17
 LYB,2026-10-30,,nasdaq_calendar,
 LYEL,2026-11-11,,nasdaq_calendar,
 LYFT,2026-11-04,,nasdaq_calendar,
@@ -4173,6 +4199,7 @@ NVRI,2026-11-05,BMO,nasdaq_calendar,
 NVRI,2026-11-10,,nasdaq_calendar,
 NVS,2026-10-27,BMO,nasdaq_calendar,
 NVST,2026-11-04,AMC,nasdaq_calendar,
+NVT,2026-10-30,BMO,8k_2.02,2026-10-30T06:47:30
 NVT,2026-10-30,,nasdaq_calendar,
 NVTS,2026-11-02,,nasdaq_calendar,
 NVTS,2026-11-03,AMC,nasdaq_calendar,
@@ -4181,6 +4208,7 @@ NWCL,2026-11-11,,nasdaq_calendar,
 NWE,2026-11-04,AMC,nasdaq_calendar,
 NWFL,2026-10-27,BMO,nasdaq_calendar,
 NWG,2026-10-30,,nasdaq_calendar,
+NWL,2026-10-30,BMO,8k_2.02,2026-10-30T07:01:31
 NWL,2026-10-30,,nasdaq_calendar,
 NWN,2026-11-04,,nasdaq_calendar,
 NWN,2026-11-05,BMO,nasdaq_calendar,
@@ -4297,6 +4325,7 @@ OMCL,2026-10-29,BMO,nasdaq_calendar,
 OMDA,2026-11-05,AMC,nasdaq_calendar,
 OMER,2026-11-12,,nasdaq_calendar,
 OMEX,2026-11-11,,nasdaq_calendar,
+OMF,2026-10-30,BMO,8k_2.02,2026-10-30T06:31:01
 OMF,2026-10-30,,nasdaq_calendar,
 ON,2026-11-02,AMC,nasdaq_calendar,
 ONB,2026-10-21,BMO,8k_2.02,2026-10-21T07:07:45
@@ -4565,6 +4594,7 @@ PINE,2026-10-22,AMC,nasdaq_calendar,
 PINS,2026-10-29,AMC,nasdaq_calendar,
 PINS,2026-10-30,AMC,8k_2.02,2026-10-29T16:07:13
 PINS,2026-11-03,,nasdaq_calendar,
+PIPR,2026-10-30,BMO,8k_2.02,2026-10-30T08:06:16
 PIPR,2026-10-30,,nasdaq_calendar,
 PJT,2026-11-03,BMO,nasdaq_calendar,
 PK,2026-11-04,AMC,nasdaq_calendar,
@@ -4828,6 +4858,7 @@ RAMP,2026-11-04,,nasdaq_calendar,
 RAND,2026-11-04,BMO,nasdaq_calendar,
 RAND,2026-11-06,,nasdaq_calendar,
 RANI,2026-11-05,,nasdaq_calendar,
+RAPP,2026-11-02,AMC,8k_2.02,2026-10-30T17:12:36
 RAPP,2026-11-05,,nasdaq_calendar,
 RARE,2026-11-03,AMC,nasdaq_calendar,
 RAVE,2026-11-05,,nasdaq_calendar,
@@ -4835,6 +4866,7 @@ RBA,2026-11-09,BMO,nasdaq_calendar,
 RBB,2026-10-19,AMC,nasdaq_calendar,
 RBBN,2026-10-27,AMC,nasdaq_calendar,
 RBBN,2026-10-28,,nasdaq_calendar,
+RBC,2026-10-30,BMO,8k_2.02,2026-10-30T09:08:59
 RBC,2026-10-30,,nasdaq_calendar,
 RBCAA,2026-10-16,,nasdaq_calendar,
 RBCAA,2026-10-23,,nasdaq_calendar,
@@ -4883,6 +4915,7 @@ REFI,2026-11-03,,nasdaq_calendar,
 REFI,2026-11-10,BMO,nasdaq_calendar,
 REFR,2026-11-05,,nasdaq_calendar,
 REG,2026-11-05,AMC,nasdaq_calendar,
+REGN,2026-10-30,BMO,8k_2.02,2026-10-30T06:50:20
 REGN,2026-10-30,,nasdaq_calendar,
 REI,2026-11-05,AMC,nasdaq_calendar,
 REKR,2026-11-12,,nasdaq_calendar,
@@ -5579,6 +5612,8 @@ SWX,2026-11-04,BMO,nasdaq_calendar,
 SXC,2026-10-27,BMO,nasdaq_calendar,
 SXC,2026-11-03,,nasdaq_calendar,
 SXI,2026-10-29,AMC,nasdaq_calendar,
+SXI,2026-11-02,AMC,8k_2.02,2026-10-30T16:28:28
+SXT,2026-10-30,BMO,8k_2.02,2026-10-30T07:10:09
 SXT,2026-10-30,,nasdaq_calendar,
 SXTP,2026-11-12,,nasdaq_calendar,
 SY,2026-11-16,,nasdaq_calendar,
@@ -5668,6 +5703,7 @@ TEVA,2026-11-03,BMO,nasdaq_calendar,
 TEX,2026-10-28,BMO,8k_2.02,2026-10-28T07:04:37
 TEX,2026-10-28,BMO,nasdaq_calendar,
 TEX,2026-10-29,,nasdaq_calendar,
+TEX,2026-11-02,,8k_2.02,2026-10-30T13:27:06
 TFC,2026-10-16,BMO,8k_2.02,2026-10-16T06:31:29
 TFC,2026-10-16,,nasdaq_calendar,
 TFII,2026-10-29,AMC,nasdaq_calendar,
@@ -5895,6 +5931,7 @@ TXG,2026-11-05,AMC,nasdaq_calendar,
 TXMD,2026-11-11,,nasdaq_calendar,
 TXN,2026-10-21,AMC,nasdaq_calendar,
 TXN,2026-10-22,AMC,8k_2.02,2026-10-21T16:04:14
+TXNM,2026-10-30,BMO,8k_2.02,2026-10-30T07:07:40
 TXNM,2026-10-30,,nasdaq_calendar,
 TXO,2026-11-03,,nasdaq_calendar,
 TXRH,2026-11-05,AMC,nasdaq_calendar,
@@ -6339,6 +6376,7 @@ WSO,2026-11-04,,nasdaq_calendar,
 WSO/B,2026-10-27,BMO,8k_2.02,2026-10-27T07:30:13
 WST,2026-10-29,BMO,8k_2.02,2026-10-29T07:06:28
 WST,2026-10-29,BMO,nasdaq_calendar,
+WT,2026-10-30,BMO,8k_2.02,2026-10-30T08:00:25
 WT,2026-10-30,,nasdaq_calendar,
 WTBA,2026-10-29,BMO,nasdaq_calendar,
 WTFC,2026-10-19,AMC,nasdaq_calendar,
@@ -6400,6 +6438,7 @@ XNCR,2026-11-04,,nasdaq_calendar,
 XNDU,2026-11-04,,nasdaq_calendar,
 XNDU,2026-11-11,AMC,nasdaq_calendar,
 XNET,2026-11-12,,nasdaq_calendar,
+XOM,2026-10-30,BMO,8k_2.02,2026-10-30T06:32:50
 XOM,2026-10-30,,nasdaq_calendar,
 XOS,2026-11-12,,nasdaq_calendar,
 XP,2026-11-16,,nasdaq_calendar,

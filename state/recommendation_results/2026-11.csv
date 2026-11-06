@@ -1,0 +1,3 @@
+rec_id,final_status,entry_date,entry_fill,exit_date,avg_exit_price,exit_reason,r_multiple,pct_return,days_held,mae_r,mfe_r,spy_return,sector_etf_return,excess_vs_spy,excess_vs_sector
+2026-11-02_HCI,stopped,2026-11-03,202.74,2026-11-05,193.4725,stop,-1.021876449959536,-0.046711255795600315,2,-1.0,0.47801436945727516,-0.02621123242156964,0.002440714577383929,-0.020500023374030674,-0.049151970372984244
+2026-11-03_NBIX,expired,,,2026-11-05,,setup_broken,,,,,,,,,

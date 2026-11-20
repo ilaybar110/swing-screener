@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Swing Screener - 2026-11-19</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#5b6572;--line:#dfe3e8;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--badbg:#ffebe9;--warnbg:#fff8c5;--goodbg:#dafbe1}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#8b949e;--line:#30363d;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--badbg:#3d1418;--warnbg:#3a2d0a;--goodbg:#10301b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:12px}
+h1{font-size:1.3rem;margin:.2rem 0 .6rem}h2{font-size:1.1rem;margin:1.6rem 0 .5rem}h3{margin:0;font-size:1.15rem}
+.banner{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
+.banner.Favorable{background:var(--goodbg);border-color:var(--good)}.banner.Caution{background:var(--warnbg);border-color:var(--warn)}.banner.Unfavorable{background:var(--badbg);border-color:var(--bad)}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;justify-content:space-between}
+.co{color:var(--mut);font-size:.9rem}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
+.chip.pass,.chip.pass_partial{color:var(--good);border-color:var(--good)}.chip.fail{color:var(--bad);border-color:var(--bad)}.chip.unknown{color:var(--warn);border-color:var(--warn)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.lv{background:var(--bg);border-radius:8px;padding:6px 8px}.lv b{display:block;font-size:1.05rem}.lv span{color:var(--mut);font-size:.78rem;text-transform:uppercase}
+dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:3px 12px}dt{color:var(--mut)}dd{margin:0}
+.warn{color:var(--warn);font-weight:600}
+.flags{background:var(--badbg);border:1px solid var(--bad);border-radius:8px;padding:6px 12px;margin:8px 0}.flags b{color:var(--bad)}
+ul{margin:.3rem 0;padding-left:1.2rem}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+td.wrap{white-space:normal}
+.src{font-size:.78rem;color:var(--mut);word-break:break-all}
+footer{color:var(--mut);font-size:.82rem;margin:2rem 0 1rem;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>Swing Screener - 2026-11-19</h1>
+<div class="banner Unfavorable"><b>Market regime: Unfavorable</b><br>SPY $715.87 is below its 200-day average ($732.69); 40% of the universe is above its 50-day average.<br><b>No new recommendations today.</b> Candidates are still tracked; the table is suppressed in an Unfavorable regime.</div>
+
+<h2>New recommendations (0)</h2>
+<p>No new recommendations (Unfavorable regime).</p>
+
+
+<h2>Tracking updates since 2026-11-18</h2>
+<div class="tbl"><table>
+<tr><th>Date</th><th>Ticker</th><th>Event</th><th>R</th><th>Return</th><th>Note</th></tr>
+<tr><td>2026-11-19</td><td><b>ACN</b></td><td>Stopped out</td><td>-1.01R</td><td>-8.4%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>ARHS</b></td><td>Expired (never triggered)</td><td>-</td><td>-</td><td>setup broke before entry</td></tr>
+<tr><td>2026-11-19</td><td><b>ASND</b></td><td>Stopped out</td><td>-1.02R</td><td>-4.7%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>AVPT</b></td><td>Triggered (entry filled)</td><td>+0.30R</td><td>-</td><td>filled at $16.61</td></tr>
+<tr><td>2026-11-19</td><td><b>CDW</b></td><td>Triggered (entry filled)</td><td>-0.29R</td><td>-</td><td>filled at $169.91</td></tr>
+<tr><td>2026-11-19</td><td><b>CTAS</b></td><td>Stopped out</td><td>-1.36R</td><td>-4.7%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>EPAM</b></td><td>Stopped out</td><td>-1.02R</td><td>-7.0%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>FDS</b></td><td>Stopped out</td><td>-1.08R</td><td>-8.0%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>MEDP</b></td><td>Time stop</td><td>-0.42R</td><td>-5.0%</td><td>20-day time stop</td></tr>
+<tr><td>2026-11-19</td><td><b>UFPT</b></td><td>Triggered (entry filled)</td><td>-0.53R</td><td>-</td><td>filled at $309.84</td></tr>
+<tr><td>2026-11-19</td><td><b>V</b></td><td>Stopped out</td><td>-1.34R</td><td>-4.4%</td><td>stop</td></tr>
+<tr><td>2026-11-19</td><td><b>WSM</b></td><td>Expired (never triggered)</td><td>-</td><td>-</td><td>setup broke before entry</td></tr>
+</table></div>
+
+<h2>Open recommendations (42)</h2>
+<div class="tbl"><table>
+<tr><th>Ticker</th><th>Signal</th><th>Status</th><th>Entry</th><th>Stop</th><th>Target</th><th>Current R</th><th>Valid until</th><th>Note</th></tr>
+<tr><td><b>ROKU</b></td><td>2026-10-15</td><td>open</td><td>$155.13</td><td>$149.84</td><td>$165.70</td><td>+0.03R</td><td>2026-10-22</td><td></td></tr>
+<tr><td><b>FTDR</b></td><td>2026-10-22</td><td>open</td><td>$87.00</td><td>$81.85</td><td>$97.30</td><td>+1.29R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>UNP</b></td><td>2026-10-22</td><td>open</td><td>$299.38</td><td>$289.05</td><td>$320.05</td><td>-0.88R</td><td>2026-10-29</td><td></td></tr>
+<tr><td><b>VTRS</b></td><td>2026-10-27</td><td>open</td><td>$18.83</td><td>$17.81</td><td>$20.87</td><td>+1.50R</td><td>2026-11-03</td><td></td></tr>
+<tr><td><b>DGX</b></td><td>2026-10-28</td><td>open</td><td>$249.73</td><td>$238.93</td><td>$271.34</td><td>+0.84R</td><td>2026-11-04</td><td></td></tr>
+<tr><td><b>VRTX</b></td><td>2026-10-28</td><td>open</td><td>$534.94</td><td>$507.65</td><td>$589.53</td><td>-0.60R</td><td>2026-11-04</td><td>still valid from 2026-10-28 (repeat signal 2026-10-29)</td></tr>
+<tr><td><b>ABBV</b></td><td>2026-10-29</td><td>open</td><td>$292.67</td><td>$277.34</td><td>$323.33</td><td>-0.61R</td><td>2026-11-05</td><td>still valid from 2026-10-29 (repeat signal 2026-11-11)</td></tr>
+<tr><td><b>SIRI</b></td><td>2026-10-29</td><td>open</td><td>$28.70</td><td>$27.43</td><td>$31.23</td><td>+2.27R</td><td>2026-11-05</td><td>still valid from 2026-10-29 (repeat signal 2026-10-30)</td></tr>
+<tr><td><b>SN</b></td><td>2026-10-29</td><td>open</td><td>$209.55</td><td>$191.63</td><td>$245.38</td><td>+0.37R</td><td>2026-11-05</td><td></td></tr>
+<tr><td><b>PGNY</b></td><td>2026-10-30</td><td>open</td><td>$29.22</td><td>$27.46</td><td>$32.74</td><td>+2.73R</td><td>2026-11-06</td><td>still valid from 2026-10-30 (repeat signal 2026-11-02)</td></tr>
+<tr><td><b>PPG</b></td><td>2026-11-02</td><td>open</td><td>$125.44</td><td>$115.17</td><td>$145.98</td><td>-0.64R</td><td>2026-11-09</td><td></td></tr>
+<tr><td><b>TBBB</b></td><td>2026-11-02</td><td>open</td><td>$57.30</td><td>$55.28</td><td>$61.36</td><td>+1.99R</td><td>2026-11-09</td><td></td></tr>
+<tr><td><b>AN</b></td><td>2026-11-04</td><td>open</td><td>$186.00</td><td>$169.57</td><td>$218.87</td><td>-0.82R</td><td>2026-11-11</td><td></td></tr>
+<tr><td><b>MCK</b></td><td>2026-11-04</td><td>open</td><td>$1,073.95</td><td>$951.40</td><td>$1,319.05</td><td>-0.20R</td><td>2026-11-11</td><td></td></tr>
+<tr><td><b>UPBD</b></td><td>2026-11-04</td><td>open</td><td>$24.30</td><td>$22.08</td><td>$28.74</td><td>-0.02R</td><td>2026-11-11</td><td></td></tr>
+<tr><td><b>ETON</b></td><td>2026-11-06</td><td>open</td><td>$58.59</td><td>$52.41</td><td>$70.96</td><td>+0.44R</td><td>2026-11-13</td><td></td></tr>
+<tr><td><b>CHRD</b></td><td>2026-11-10</td><td>open</td><td>$140.13</td><td>$131.70</td><td>$156.98</td><td>-0.58R</td><td>2026-11-17</td><td></td></tr>
+<tr><td><b>ADP</b></td><td>2026-11-11</td><td>open</td><td>$306.65</td><td>$294.60</td><td>$330.74</td><td>-0.82R</td><td>2026-11-18</td><td>still valid from 2026-11-11 (repeat signal 2026-11-12)</td></tr>
+<tr><td><b>ALRM</b></td><td>2026-11-11</td><td>open</td><td>$66.73</td><td>$63.44</td><td>$73.31</td><td>-0.43R</td><td>2026-11-18</td><td>still valid from 2026-11-11 (repeat signal 2026-11-17)</td></tr>
+<tr><td><b>BOX</b></td><td>2026-11-11</td><td>open</td><td>$43.58</td><td>$40.78</td><td>$49.18</td><td>-0.19R</td><td>2026-11-18</td><td>still valid from 2026-11-11 (repeat signal 2026-11-12)</td></tr>
+<tr><td><b>HCI</b></td><td>2026-11-12</td><td>open</td><td>$191.88</td><td>$183.38</td><td>$208.87</td><td>-0.39R</td><td>2026-11-19</td><td></td></tr>
+<tr><td><b>BRKR</b></td><td>2026-11-13</td><td>open</td><td>$61.94</td><td>$57.43</td><td>$70.96</td><td>+0.02R</td><td>2026-11-20</td><td>still valid from 2026-11-13 (repeat signal 2026-11-18)</td></tr>
+<tr><td><b>COR</b></td><td>2026-11-13</td><td>open</td><td>$359.39</td><td>$331.66</td><td>$414.85</td><td>-0.78R</td><td>2026-11-20</td><td></td></tr>
+<tr><td><b>CRAI</b></td><td>2026-11-13</td><td>open</td><td>$205.81</td><td>$193.63</td><td>$230.17</td><td>+0.66R</td><td>2026-11-20</td><td>still valid from 2026-11-13 (repeat signal 2026-11-16)</td></tr>
+<tr><td><b>CRBG</b></td><td>2026-11-13</td><td>open</td><td>$36.37</td><td>$33.27</td><td>$42.56</td><td>-0.90R</td><td>2026-11-20</td><td></td></tr>
+<tr><td><b>JOYY</b></td><td>2026-11-13</td><td>open</td><td>$80.88</td><td>$71.76</td><td>$99.12</td><td>-0.76R</td><td>2026-11-20</td><td></td></tr>
+<tr><td><b>CBRL</b></td><td>2026-11-16</td><td>open</td><td>$68.59</td><td>$63.16</td><td>$79.45</td><td>+0.55R</td><td>2026-11-23</td><td>still valid from 2026-11-16 (repeat signal 2026-11-17)</td></tr>
+<tr><td><b>DLTR</b></td><td>2026-11-17</td><td>open</td><td>$142.18</td><td>$130.23</td><td>$166.08</td><td>-0.17R</td><td>2026-11-24</td><td>still valid from 2026-11-17 (repeat signal 2026-11-18)</td></tr>
+<tr><td><b>SLDE</b></td><td>2026-11-17</td><td>open</td><td>$26.90</td><td>$23.98</td><td>$32.74</td><td>-0.03R</td><td>2026-11-24</td><td></td></tr>
+<tr><td><b>AVPT</b></td><td>2026-11-18</td><td>open</td><td>$16.61</td><td>$15.56</td><td>$18.72</td><td>+0.30R</td><td>2026-11-25</td><td>still valid from 2026-11-18 (repeat signal 2026-11-19)</td></tr>
+<tr><td><b>CDW</b></td><td>2026-11-18</td><td>open</td><td>$169.91</td><td>$161.41</td><td>$186.92</td><td>-0.29R</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>UFPT</b></td><td>2026-11-18</td><td>open</td><td>$308.09</td><td>$287.09</td><td>$350.08</td><td>-0.53R</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>AGYS</b></td><td>2026-11-16</td><td>pending</td><td>$123.85</td><td>$111.57</td><td>$148.41</td><td>-</td><td>2026-11-23</td><td></td></tr>
+<tr><td><b>DG</b></td><td>2026-11-16</td><td>pending</td><td>$137.77</td><td>$132.53</td><td>$148.25</td><td>-</td><td>2026-11-23</td><td></td></tr>
+<tr><td><b>WST</b></td><td>2026-11-16</td><td>pending</td><td>$420.66</td><td>$385.62</td><td>$490.74</td><td>-</td><td>2026-11-23</td><td></td></tr>
+<tr><td><b>BAX</b></td><td>2026-11-18</td><td>pending</td><td>$26.46</td><td>$24.65</td><td>$30.07</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>KSS</b></td><td>2026-11-18</td><td>pending</td><td>$24.59</td><td>$22.35</td><td>$29.08</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>LRN</b></td><td>2026-11-18</td><td>pending</td><td>$79.10</td><td>$73.25</td><td>$90.79</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>LTH</b></td><td>2026-11-18</td><td>pending</td><td>$48.48</td><td>$44.07</td><td>$57.30</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>PRGO</b></td><td>2026-11-18</td><td>pending</td><td>$17.07</td><td>$15.68</td><td>$19.85</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>RYAN</b></td><td>2026-11-18</td><td>pending</td><td>$48.72</td><td>$45.51</td><td>$55.13</td><td>-</td><td>2026-11-25</td><td></td></tr>
+<tr><td><b>SBH</b></td><td>2026-11-18</td><td>pending</td><td>$19.11</td><td>$17.97</td><td>$21.40</td><td>-</td><td>2026-11-25</td><td></td></tr>
+</table></div>
+
+<h2>Statistics (live)</h2>
+<p>179 recommendations tracked: 32 open, 10 pending, 111 closed, 26 expired unfilled. Closed-trade averages vs SPY +0.1%, vs sector ETF -1.2%.</p>
+<h3>By module vs baseline</h3>
+<div class="tbl"><table>
+<tr><th>Module</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>PF</th><th>vs SPY</th><th>Baseline R</th><th>Edge (R)</th><th></th></tr>
+<tr><td>All modules</td><td>111</td><td>29%</td><td>-0.39R</td><td>-0.39R</td><td>0.50</td><td>+0.1%</td><td>-0.03R</td><td>-0.37R</td><td class="wrap"></td></tr>
+<tr><td>base breakout</td><td>17</td><td>24%</td><td>-0.49R</td><td>-0.49R</td><td>0.40</td><td>-0.6%</td><td>+0.13R</td><td>-0.61R</td><td class="wrap">not enough data yet (17/30 closed)</td></tr>
+<tr><td>earnings gap drift</td><td>2</td><td>0%</td><td>-1.02R</td><td>-1.02R</td><td>0.00</td><td>-1.6%</td><td>-1.02R</td><td>-0.00R</td><td class="wrap">not enough data yet (2/30 closed)</td></tr>
+<tr><td>insider cluster</td><td>5</td><td>20%</td><td>-0.70R</td><td>-0.70R</td><td>0.17</td><td>-4.8%</td><td>-0.90R</td><td>+0.20R</td><td class="wrap">not enough data yet (5/30 closed)</td></tr>
+<tr><td>momentum pullback</td><td>87</td><td>31%</td><td>-0.34R</td><td>-0.34R</td><td>0.56</td><td>+0.6%</td><td>+0.05R</td><td>-0.39R</td><td class="wrap"></td></tr>
+</table></div>
+<h3>By rank bucket</h3>
+<div class="tbl"><table>
+<tr><th>Rank</th><th>Closed</th><th>Win</th><th>Avg R</th><th>Expect.</th><th>vs SPY</th><th>Baseline R</th></tr>
+<tr><td>1-10</td><td>100</td><td>29%</td><td>-0.39R</td><td>-0.39R</td><td>+0.3%</td><td>-0.01R</td></tr>
+<tr><td>11-20</td><td>11</td><td>27%</td><td>-0.42R</td><td>-0.42R</td><td>-1.0%</td><td>+0.20R</td></tr>
+</table></div>
+<p class="src">Modules need 30 closed live results before their record is shown as meaningful.</p>
+
+<footer>Research tool, not financial advice. All candidates are tracked, including ones not shown.</footer>
+</main>
+</body>
+</html>
